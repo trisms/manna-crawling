@@ -15,7 +15,7 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "dev:admin": "npm run dev -w manna-crawling -- --mode dev",
     "build:admin": "npm run build -w manna-crawling --",
-    "deploy:admin": "npm i && npm run build:admin && pm2 startOrReload ecosystem.config.js --only manna-crawling"
+    "deploy": "npm i && npm run build && pm2 startOrReload ecosystem.config.cjs --only manna-crawling"
   },
   "dependencies": {
     "@caohenghu/vue-colorpicker": "^1.2.4",
@@ -45,12 +45,15 @@
     "bootstrap-social": "^5.1.1",
     "chalk": "^5.5.0",
     "chart.js": "^4.4.3",
+    "compression": "^1.8.1",
     "connect-history-api-fallback": "^2.0.0",
     "crypto-js": "^4.2.0",
     "date-fns": "^3.6.0",
+    "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "flag-icon-css": "^4.1.7",
     "highlight.js": "^11.10.0",
+    "ip": "^2.0.1",
     "json-server": "^0.17.3",
     "jsvectormap": "^1.6.0",
     "leaflet": "^1.9.4",
