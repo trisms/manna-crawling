@@ -165,7 +165,6 @@
 <script setup lang="ts">
 import {ref, computed, watch} from 'vue'
 import {useRestaurantStore} from "@/stores/restaurant/useRestaurantStore";
-import Select from "@/components/common/select.vue";
 import SelectLabel from "@/components/common/SelectLabel.vue";
 import Pagenation from "@/components/common/Pagenation.vue";
 import 'vue3-toastify/dist/index.css';
