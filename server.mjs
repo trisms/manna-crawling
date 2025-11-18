@@ -11,39 +11,13 @@ const __dirname = path.resolve();
 const DIST_PATH =
   process.env.NODE_ENV === "development"
     ? path.join(__dirname, "dist")
-    : path.join(__dirname, "manna-crawling", "dist");
-
-const DIST_INDEX_PATH =
-  process.env.NODE_ENV === "development"
-    ? path.join(__dirname, "dist", "index.html")
-    : path.join(__dirname, "manna-crawling", "dist", "index.html");
+    : path.join(__dirname, "dist");
 
 const app = express();
 
 app.use(compression());
-app.use(
-  history({
-    rewrites: [
-      {
-        from: /^\/(?!assets\/).*/, // /assets/로 시작하지 않는 모든 요청만 index.html로 rewrite
-        to: "/index.html",
-      },
-    ],
-  })
-);
-app.use(
-  express.static(DIST_PATH, {
-    maxAge: "7d", // 캐싱 적용
-    etag: true,
-    index: false,
-  })
-);
-
-app.get(/.*/, (req, res) => {
-  res.setHeader("Cache-Control", "no-store");
-  res.setHeader("max-age", "60");
-  res.sendFile(DIST_INDEX_PATH);
-});
+app.use(history());
+app.use(express.static(DIST_PATH));
 
 const PORT = 4100;
 

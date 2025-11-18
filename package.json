@@ -4,7 +4,6 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "start": "pm2 start ecosystem.config.js --env production",
     "serve": "node server.js",
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview --port 5050",
@@ -15,7 +14,8 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "dev:admin": "npm run dev -w manna-crawling -- --mode dev",
     "build:admin": "npm run build -w manna-crawling --",
-    "deploy": "npm i && npm run build && pm2 startOrReload ecosystem.config.cjs --only manna-crawling"
+    "deploy:test": "npm i && npm run build && pm2 startOrReload ecosystem.config.cjs --env env_test --only manna-crawling",
+    "deploy:prod": "npm i && npm run build && pm2 startOrReload ecosystem.config.cjs --env env_prod --only manna-crawling"
   },
   "dependencies": {
     "@caohenghu/vue-colorpicker": "^1.2.4",
