@@ -12,6 +12,7 @@ import {restaurantAPI} from "@/api/restaurant/restaurant";
 import {isBlank} from "@/utils/ValidateUtils";
 import {SearchParams} from "@/dto/restaurant/SearchParams";
 import { ref, unref} from "vue";
+import algorithm = _default.defaults.algorithm;
 export const useRestaurantStore = defineStore('useRestaurantStore', {
 	state: () => ({
 		items: ref([]),
@@ -93,7 +94,10 @@ export const useRestaurantStore = defineStore('useRestaurantStore', {
 			await useCallDeleteMsgAPI(() => restaurantAPI.deleteImage(grStGoodsNoList),message, callback, );
 		},
 		async updateStCodeAPI(params: any, callback): Promise<void> | null {
-			await useCallUpdateDirectAPI(() => restaurantAPI.updateStCode(params), callback);
+			const res = await useCallUpdateDirectAPI(() => restaurantAPI.updateStCode(params), callback);
+			if (res) {
+				console.log(res)
+			}
 		},
 		async callDetailAPI(id: number | string) {
 			const res = await useCallAPI(() => restaurantAPI.detail(id));

@@ -164,10 +164,10 @@ onMounted(() => {
 				</div>
 			</div>
 			<div class="navbar-item navbar-user dropdown">
-				<a href="#" class="navbar-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown">
-					<div class="image image-icon bg-gray-800 text-gray-600">
+				<a href="#" class="navbar-link dropdown-toggle d-flex align-items-center " style="padding-right: 31px" data-bs-toggle="dropdown">
+<!--					<div class="image image-icon bg-gray-800 text-gray-600">
 						<i class="fa fa-user"></i>
-					</div>
+					</div>-->
 					<span>
             <button data-v-c6ffd390="" type="button" class="btn btn-sm btn-white" @click="logout"><i data-v-c6ffd390="" class="fas fa-lg fa-fw me-10px fa-power-off"></i> 로그아웃</button>
 <!--						<span class="d-none d-md-inline">Adam Schwartz</span>
