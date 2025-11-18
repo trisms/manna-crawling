@@ -71,7 +71,6 @@ export const useRestaurantStore = defineStore('useRestaurantStore', {
 		},
 		async callRegionList() {
 			const res = await useCallAPI(() => restaurantAPI.regionList());
-
 			if (res) {
 				this.sidoList = res.data.data.sidoList
 				this.sidoList.unshift({sidoType : 'A1' ,sidoCode : '', addrName : '시/도'})
