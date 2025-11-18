@@ -12,7 +12,10 @@
     "test:e2e": "start-server-and-test preview http://127.0.0.1:5050/ 'cypress open'",
     "test:e2e:ci": "start-server-and-test preview http://127.0.0.1:5050/ 'cypress run'",
     "typecheck": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
+    "dev:admin": "npm run dev -w manna-crawling -- --mode dev",
+    "build:admin": "npm run build -w manna-crawling --",
+    "deploy:admin": "npm i && npm run build:admin && pm2 startOrReload ecosystem.config.js --only manna-crawling",
   },
   "dependencies": {
     "@caohenghu/vue-colorpicker": "^1.2.4",
