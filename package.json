@@ -1,5 +1,5 @@
 {
-  "name": "color-admin-vue",
+  "name": "manna-crawling",
   "version": "5.1.5",
   "type": "module",
   "scripts": {
@@ -15,7 +15,7 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "dev:admin": "npm run dev -w manna-crawling -- --mode dev",
     "build:admin": "npm run build -w manna-crawling --",
-    "deploy:admin": "npm i && npm run build:admin && pm2 startOrReload ecosystem.config.js --only manna-crawling",
+    "deploy:admin": "npm i && npm run build:admin && pm2 startOrReload ecosystem.config.js --only manna-crawling"
   },
   "dependencies": {
     "@caohenghu/vue-colorpicker": "^1.2.4",
@@ -62,11 +62,13 @@
     "photoswipe": "^5.4.4",
     "picocolors": "^1.1.1",
     "pinia": "^2.1.7",
+    "rollup-plugin-visualizer": "^6.0.5",
     "simple-line-icons": "^2.5.5",
     "sweetalert2": "^11.14.5",
     "ufo": "^1.6.1",
     "v-calendar": "^3.0.0-alpha.8",
     "vee-validate": "^4.14.7",
+    "vite-plugin-imagemin": "^0.6.1",
     "vue": "^3.4.33",
     "vue-awesome-paginate": "^1.2.0",
     "vue-axios": "^3.5.2",

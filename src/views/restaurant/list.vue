@@ -67,11 +67,11 @@
       </div>
 
       <div class="d-flex justify-content-between">
-        <div class="card border-0">
+        <div class="card border-0"@click="deleteCode()">
           <div class=" d-md-flex fw-bold ms-auto">
-            <div class="mt-md-0 mt-2 btn btn-danger btn-sm d-flex me-2 pe-3 rounded-3"><div  class="text-white text-decoration-none rounded " @click="deleteCode()"><i class="fa fa-cancel fa-fw me-1 text-white"></i> 삭제</div></div>
+            <div class="mt-md-0 mt-2 btn btn-danger btn-sm d-flex me-2 pe-3 rounded-3"><div  class="text-white text-decoration-none rounded " ><i class="fa fa-cancel fa-fw me-1 text-white"></i> 삭제</div></div>
           </div>
-        </div>
+        </div>제
         <div class="card border-0">
           <div class=" d-md-flex fw-bold ms-auto">
             <div class="mt-md-0 mt-2 btn btn-secondary btn-sm d-flex me-2 pe-3 rounded-3"><div  class="text-white text-decoration-none rounded " @click="rebaseUplode()"><i class="fa fa-upload fa-fw me-1 text-white"></i> 기존상품삭제후 신규업로드</div></div>
@@ -309,9 +309,14 @@ const updateStCode =  async (grStNo: number , stCode: string) => {
 };
 
 const deleteCode = async () => {
-  await store.deleteCodeAPI({grStNoList : checkedItems.value},() => {
-    search();
-  })
+  if( checkedItems.value.length > 0){
+    await store.deleteCodeAPI({grStNoList : checkedItems.value},() => {
+      search();
+    })
+  } else {
+    alert('삭제할 가맹점을 최소 1개 이상 선택해주세요.');
+  }
+
 }
 
 function goToDetail(grStNo: string | number) {

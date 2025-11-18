@@ -212,3 +212,27 @@ export const useCallDeleteAPI = async (api: Function, callback: Function): Promi
 		},
 	});
 };
+
+//삭제할 때 사용하는 composable 메시지 변경버전
+export const useCallDeleteMsgAPI = async (api: Function,message: string, callback: Function): Promise<void> => {
+
+	window.$emitter.emit('confirm', {
+		message: message,
+		callback: async () => {
+			toggleLoading(true);
+
+			try {
+				const res = await api();
+
+				if (validateAPIResult(res)) {
+					window.$emitter.emit('success', '삭제가 완료되었습니다.');
+					await callback();
+				}
+			} catch (e) {
+				console.error('useCallDeleteAPI Error: ', e);
+			} finally {
+				toggleLoading(false);
+			}
+		},
+	});
+};

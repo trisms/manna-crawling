@@ -1,5 +1,12 @@
 import { defineStore } from 'pinia';
-import {useCallAPI, useCallDeleteAPI, useCallUpdateAPI, useCallUpdateDirectAPI, validateForm} from '@/utils/FormUtils';
+import {
+	useCallAPI,
+	useCallDeleteAPI,
+	useCallDeleteMsgAPI,
+	useCallUpdateAPI,
+	useCallUpdateDirectAPI,
+	validateForm
+} from '@/utils/FormUtils';
 import { authAPI } from '@/api/auth/auth'
 import {restaurantAPI} from "@/api/restaurant/restaurant";
 import {isBlank} from "@/utils/ValidateUtils";
@@ -73,10 +80,18 @@ export const useRestaurantStore = defineStore('useRestaurantStore', {
 			}
 		},
 		async deleteCodeAPI(grStNoList : any, callback: Function) {
-			await useCallDeleteAPI(() => restaurantAPI.deleteCode(grStNoList), callback);
+			const message =
+				'<h3>DB삭제시 복구가 불가능합니다 </h3>' +
+				grStNoList.grStNoList.length +
+				'개의 데이터를 삭제하시겠습니까?';
+			await useCallDeleteMsgAPI(() => restaurantAPI.deleteCode(grStNoList),message, callback);
 		},
-		async deleteImageAPI(grStGoodsNoList : any, callback: Function) {
-			await useCallDeleteAPI(() => restaurantAPI.deleteImage(grStGoodsNoList), callback);
+		async deleteImageAPI(grStGoodsNoList : [], callback: Function) {
+			const message =
+				'<h3>DB삭제시 복구가 불가능합니다 </h3>' +
+				grStGoodsNoList.grStGoodsNoList.length +
+				'개의 데이터를 삭제하시겠습니까?';
+			await useCallDeleteMsgAPI(() => restaurantAPI.deleteImage(grStGoodsNoList),message, callback, );
 		},
 		async updateStCodeAPI(params: any, callback): Promise<void> | null {
 			await useCallUpdateDirectAPI(() => restaurantAPI.updateStCode(params), callback);

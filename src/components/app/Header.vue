@@ -169,12 +169,12 @@ onMounted(() => {
 						<i class="fa fa-user"></i>
 					</div>
 					<span>
-            <button data-v-c6ffd390="" type="button" class="btn btn-sm btn-white"><i data-v-c6ffd390="" class="fas fa-lg fa-fw me-10px fa-power-off"></i> 로그아웃</button>
+            <button data-v-c6ffd390="" type="button" class="btn btn-sm btn-white" @click="logout"><i data-v-c6ffd390="" class="fas fa-lg fa-fw me-10px fa-power-off"></i> 로그아웃</button>
 <!--						<span class="d-none d-md-inline">Adam Schwartz</span>
 						<b class="caret"></b>-->
 					</span>
 				</a>
-				<div class="dropdown-menu dropdown-menu-end me-1">
+<!--				<div class="dropdown-menu dropdown-menu-end me-1">
 					<a href="javascript:;" class="dropdown-item">Edit Profile</a>
 					<a href="javascript:;" class="dropdown-item d-flex align-items-center">
 						Inbox
@@ -184,7 +184,7 @@ onMounted(() => {
 					<a href="javascript:;" class="dropdown-item">Settings</a>
 					<div class="dropdown-divider"></div>
 					<a href="javascript:;" class="dropdown-item" @click="logout">Log Out</a>
-				</div>
+				</div>-->
 			</div>
 			<div class="navbar-divider d-none d-md-block" v-if="appOption.appSidebarTwo"></div>
 			<div class="navbar-item d-none d-md-block" v-if="appOption.appSidebarTwo">

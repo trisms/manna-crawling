@@ -330,18 +330,23 @@ const selectGrpList = (grStGrpNo : number | string) => {
   })
 }
 const deleteImage = async () => {
-  await store.deleteImageAPI({grStGoodsNoList : checkedItems.value},() => {
-    allChecked.value = false;
-    checkedItems.value= [];
-    if(store.grpList) {
-       store.callGrpListAPI(store.form.grStNo,  selectGrStGrpNo.value, ()=> {
-         checkedItems.value.map((item) => {
-           toggleItem(item)
-         });
-         checkedItems.value= [];
-       })
-    }
-  })
+  if( checkedItems.value.length > 0){
+    await store.deleteImageAPI({grStGoodsNoList : checkedItems.value},() => {
+      allChecked.value = false;
+      checkedItems.value= [];
+      if(store.grpList) {
+        store.callGrpListAPI(store.form.grStNo,  selectGrStGrpNo.value, ()=> {
+          checkedItems.value.map((item) => {
+            toggleItem(item)
+          });
+          checkedItems.value= [];
+        })
+      }
+    })
+  } else {
+    alert('삭제할 이미지를 최소 1개 이상 선택해주세요.');
+  }
+
 }
 const fileInputs = ref<HTMLInputElement[]>([])
 

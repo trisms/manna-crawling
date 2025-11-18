@@ -21,7 +21,7 @@ const alert = (type: string, message: string) => {
 const confirm = (message: string, callback: Function) => {
   window.Swal.fire({
     icon: 'question',
-    text: message,
+    html: message,
     showCancelButton: true,
     confirmButtonText: '확인',
     cancelButtonText: '취소',

@@ -18,9 +18,9 @@ function appSidebarMobileToggled() {
 
 function toggleAppSidebarMinified(e) {
 	e.preventDefault();
-	
+
 	appOption.appSidebarMinified = (appOption.appSidebarMinified) ? '' : true;
-	
+
 	if (localStorage) {
 		localStorage.appSidebarMinified = appOption.appSidebarMinified;
 	}
@@ -28,12 +28,12 @@ function toggleAppSidebarMinified(e) {
 
 function appSidebarProfileToggle(e) {
 	e.preventDefault();
-	
+
 	var targetSidebar = document.querySelector('.app-sidebar:not(.app-sidebar-end)');
 	var targetMenu = e.target.closest('.menu-profile');
 	var targetProfile = document.querySelector('#appSidebarProfileMenu');
 	var expandTime = (targetSidebar && targetSidebar.getAttribute('data-disable-slide-animation')) ? 0 : 250;
-	
+
 	if (targetProfile) {
 		if (targetProfile.style.display == 'block') {
 			targetMenu.classList.remove('active');
@@ -63,9 +63,9 @@ function handleSidebarMinifyFloatMenuClick() {
 				var targetStyle = getComputedStyle(target);
 				var close = (targetStyle.getPropertyValue('display') != 'none') ? true : false;
 				var expand = (targetStyle.getPropertyValue('display') != 'none') ? false : true;
-				
+
 				slideToggle(target);
-				
+
 				var loopHeight = setInterval(function() {
 					var targetMenu = document.querySelector('#app-sidebar-float-submenu');
 					var targetMenuArrow = document.querySelector('#app-sidebar-float-submenu-arrow');
@@ -142,7 +142,7 @@ function handleSidebarMinifyFloatMenu() {
 						var targetLeft    = (!appElm.classList.contains('app-sidebar-end') && bodyStyle.getPropertyValue('direction') != 'rtl') ? sidebarX : 'auto';
 						var targetRight   = (!appElm.classList.contains('app-sidebar-end') && bodyStyle.getPropertyValue('direction') != 'rtl') ? 'auto' : sidebarX;
 						var windowHeight  = document.body.clientHeight;
-						
+
 						if (!document.querySelector('#app-sidebar-float-submenu')) {
 							var overflowClass = '';
 							if (targetHeight > windowHeight) {
@@ -158,7 +158,7 @@ function handleSidebarMinifyFloatMenu() {
 							'	<div class="app-sidebar-float-submenu-line" id="app-sidebar-float-submenu-line"></div>'+
 							'	<div class="app-sidebar-float-submenu '+ overflowClass +'">'+ targetMenuHtml + '</div>';
 							appElm.appendChild(html);
-							
+
 							var elm = document.getElementById('app-sidebar-float-submenu');
 							elm.onmouseover = function() {
 								clearTimeout(appSidebarFloatSubmenuTimeout);
@@ -171,7 +171,7 @@ function handleSidebarMinifyFloatMenu() {
 						} else {
 							var floatSubmenu = document.querySelector('#app-sidebar-float-submenu');
 							var floatSubmenuElm = document.querySelector('#app-sidebar-float-submenu' + ' .app-sidebar-float-submenu');
-							
+
 							if (targetHeight > windowHeight) {
 								if (floatSubmenuElm) {
 									var splitClass = ('overflow-scroll mh-100vh').split(' ');
@@ -184,7 +184,7 @@ function handleSidebarMinifyFloatMenu() {
 							floatSubmenu.setAttribute('data-menu-offset-top', targetTop);
 							floatSubmenuElm.innerHTML = targetMenuHtml;
 						}
-				
+
 						var targetHeight = document.querySelector('#app-sidebar-float-submenu').clientHeight;
 						var floatSubmenuElm = document.querySelector('#app-sidebar-float-submenu');
 						var floatSubmenuArrowElm = document.querySelector('#app-sidebar-float-submenu-arrow');
@@ -278,7 +278,7 @@ function handleSearchFunction(event) {
 						targetElm.classList.remove('d-none');
 						targetElm.classList.add('has-text');
 					}
-					
+
 					var targetElm = elm.closest('.menu-item.has-sub');
 					if (targetElm) {
 						var targetElm = targetElm.querySelector('.menu-submenu .menu-item.d-none');
@@ -286,21 +286,21 @@ function handleSearchFunction(event) {
 							targetElm.classList.remove('d-none');
 						}
 					}
-					
+
 					var targetElm = elm.closest('.menu-submenu');
 					if (targetElm) {
 						targetElm.style.display = 'block';
-						
+
 						var targetElm = targetElm.querySelector('.menu-item:not(.has-text)');
 						if (targetElm) {
 							targetElm.classList.add('d-none');
 						}
-						
+
 						var targetElm = elm.closest('.has-sub:not(.has-text)');
 						if (targetElm) {
 							targetElm.classList.remove('d-none');
 							targetElm.classList.add('expand');
-							
+
 							var targetElm = targetElm.closest('.has-sub:not(.has-text)');
 							if (targetElm) {
 								targetElm.classList.remove('d-none');
@@ -318,21 +318,21 @@ function handleSearchFunction(event) {
 				elm.removeAttribute('style');
 			});
 		}
-		
+
 		var elms = [].slice.call(document.querySelectorAll('.app-sidebar:not(.app-sidebar-end) .menu > .menu-item:not(.menu-profile):not(.menu-header):not(.menu-search)'));
 		if (elms) {
 			elms.map(function(elm) {
 				elm.classList.remove('d-none');
 			});
 		}
-		
+
 		var elms = [].slice.call(document.querySelectorAll('.app-sidebar:not(.app-sidebar-end) .menu-submenu > .menu-item'));
 		if (elms) {
 			elms.map(function(elm) {
 				elm.classList.remove('d-none');
 			});
 		}
-		
+
 		var elms = [].slice.call(document.querySelectorAll('.app-sidebar:not(.app-sidebar-end) .expand'));
 		if (elms) {
 			elms.map(function(elm) {
@@ -340,7 +340,7 @@ function handleSearchFunction(event) {
 			});
 		}
 	}
-}	
+}
 
 onMounted(() => {
 	var handleSidebarMenuToggle = function(menus, expandTime) {
@@ -348,7 +348,7 @@ onMounted(() => {
 			menu.onclick = function(e) {
 				e.preventDefault();
 				var target = this.nextElementSibling;
-	
+
 				menus.map(function(m) {
 					var otherTarget = m.nextElementSibling;
 					if (otherTarget !== target) {
@@ -357,9 +357,9 @@ onMounted(() => {
 						otherTarget.closest('.menu-item').classList.add('closed');
 					}
 				});
-	
+
 				var targetItemElm = target.closest('.menu-item');
-			
+
 				if (targetItemElm.classList.contains('expand') || (targetItemElm.classList.contains('active') && !target.style.display)) {
 					targetItemElm.classList.remove('expand');
 					targetItemElm.classList.add('closed');
@@ -372,11 +372,11 @@ onMounted(() => {
 			}
 		});
 	};
-	
+
   var targetSidebar       = document.querySelector('.app-sidebar:not(.app-sidebar-end)');
 	var expandTime          = (targetSidebar && targetSidebar.getAttribute('data-disable-slide-animation')) ? 0 : 250;
 	var disableAutoCollapse = (targetSidebar && targetSidebar.getAttribute('data-disable-auto-collapse')) ? 1 : 0;
-	
+
 	var menuBaseSelector = '.app-sidebar .menu > .menu-item.has-sub';
 	var submenuBaseSelector = ' > .menu-submenu > .menu-item.has-sub';
 
@@ -394,9 +394,9 @@ onMounted(() => {
 	var submenuLvl2Selector = menuBaseSelector + submenuBaseSelector + submenuBaseSelector;
 	var submenusLvl2 = [].slice.call(document.querySelectorAll(submenuLvl2Selector + ' > .menu-link'));
 	handleSidebarMenuToggle(submenusLvl2, expandTime);
-	
+
 	handleSidebarMinifyFloatMenu();
-	
+
 	if (localStorage) {
 		if (typeof localStorage.appSidebarMinified !== 'undefined') {
 			appOption.appSidebarMinified = localStorage.appSidebarMinified;
@@ -406,13 +406,13 @@ onMounted(() => {
 });
 </script>
 <template>
-	<div id="sidebar" class="app-sidebar" v-bind:class="{ 
+	<div id="sidebar" class="app-sidebar" v-bind:class="{
 		'app-sidebar-grid': appOption.appSidebarGrid,
 		'app-sidebar-transparent': appOption.appSidebarTransparent
 	}">
 		<perfect-scrollbar class="app-sidebar-content" v-bind:class="{ 'h-100': appOption.appSidebarFixed }">
 			<div class="menu">
-				<div class="menu-profile">
+				<div class="menu-profile" style="height: 130px">
 					<a href="javascript:;" class="menu-profile-link" v-on:click="appSidebarProfileToggle($event)">
 						<div class="menu-profile-cover with-shadow"></div>
 						<div class="menu-profile-image menu-profile-image-icon bg-gray-900 text-gray-600">
@@ -421,11 +421,11 @@ onMounted(() => {
 						<div class="menu-profile-info">
 							<div class="d-flex align-items-center">
 								<div class="flex-grow-1 d-flex align-items-center">
-									Sean Ngu
+                  사용자
 								</div>
 								<div class="menu-caret ms-auto"></div>
 							</div>
-							<small>Frontend developer</small>
+							<small>권한 : 관리자</small>
 						</div>
 					</a>
 				</div>
@@ -433,19 +433,13 @@ onMounted(() => {
 					<div class="menu-item pt-5px">
 						<a href="javascript:;" class="menu-link">
 							<div class="menu-icon"><i class="fa fa-cog"></i></div>
-							<div class="menu-text">Settings</div>
+							<div class="menu-text">계정관리</div>
 						</a>
 					</div>
 					<div class="menu-item">
 						<a href="javascript:;" class="menu-link">
 							<div class="menu-icon"><i class="fa fa-pencil-alt"></i></div>
-							<div class="menu-text"> Send Feedback</div>
-						</a>
-					</div>
-					<div class="menu-item pb-5px">
-						<a href="javascript:;" class="menu-link">
-							<div class="menu-icon"><i class="fa fa-question-circle"></i></div>
-							<div class="menu-text"> Helps</div>
+							<div class="menu-text"> 정보수정</div>
 						</a>
 					</div>
 					<div class="menu-divider m-0"></div>
@@ -460,7 +454,7 @@ onMounted(() => {
 						<sidebar-nav v-if="menu.title" v-bind:menu="menu"></sidebar-nav>
 					</template>
 				</template>
-					
+
 				<!-- BEGIN minify-button -->
 				<div class="menu-item d-flex">
 					<a href="javascript:;" class="app-sidebar-minify-btn ms-auto d-flex align-items-center text-decoration-none" v-on:click="toggleAppSidebarMinified($event)"><i class="fa fa-angle-double-left"></i></a>
