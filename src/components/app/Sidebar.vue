@@ -6,6 +6,8 @@ import { slideToggle } from '@/composables/slideToggle.js';
 import { slideUp } from '@/composables/slideUp.js';
 import { slideDown } from '@/composables/slideDown.js';
 import SidebarNav from '@/components/app/SidebarNav.vue';
+import {useAuthStore} from "@/stores/auth/useAuthStore";
+const store = useAuthStore();
 
 const appSidebarMenu = useAppSidebarMenuStore();
 const appOption = useAppOptionStore();
@@ -16,6 +18,12 @@ function appSidebarMobileToggled() {
 	appOption.appSidebarMobileToggled = !appOption.appSidebarMobileToggled;
 }
 
+//모달추가
+const emit = defineEmits(['open-modal']);
+
+function openModal(type: 'account' | 'edit') {
+  emit('open-modal', type);
+}
 function toggleAppSidebarMinified(e) {
 	e.preventDefault();
 
@@ -421,27 +429,27 @@ onMounted(() => {
 						<div class="menu-profile-info">
 							<div class="d-flex align-items-center">
 								<div class="flex-grow-1 d-flex align-items-center">
-                  사용자
+                   {{ store.userInfo.name}}
 								</div>
 								<div class="menu-caret ms-auto"></div>
 							</div>
-							<small>권한 : 관리자</small>
+							<small>권한 : {{ store.userInfo.role === '1' ? '관리자' : '사용자'}}</small>
 						</div>
 					</a>
 				</div>
 				<div id="appSidebarProfileMenu" class="collapse">
 					<div class="menu-item pt-5px">
-						<a href="javascript:;" class="menu-link">
+						<a href="javascript:;" class="menu-link"  @click="openModal('account')">
 							<div class="menu-icon"><i class="fa fa-cog"></i></div>
 							<div class="menu-text">계정관리</div>
 						</a>
 					</div>
-					<div class="menu-item">
-						<a href="javascript:;" class="menu-link">
+<!--					<div class="menu-item">
+						<a href="javascript:;" class="menu-link" @click="openModal('edit')">
 							<div class="menu-icon"><i class="fa fa-pencil-alt"></i></div>
 							<div class="menu-text"> 정보수정</div>
 						</a>
-					</div>
+					</div>-->
 					<div class="menu-divider m-0"></div>
 				</div>
 				<div class="menu-search mb-n3" v-if="appOption.appSidebarSearch">

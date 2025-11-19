@@ -130,7 +130,7 @@
               <div class="nav-link btn btn-sm btn-white   px-2"  :class="{ active: index == 0 }"  data-bs-toggle="tab" aria-selected="false" role="tab" @click="selectGrpList(item.grStGrpNo)">{{ item.grpName }}</div>
             </div>
           </div>
-          <div class="nav nav-tabs nav-tabs-v2 border-bottom-0" role="tablist">
+         <div class="nav nav-tabs nav-tabs-v2 border-bottom-0" role="tablist">
             <button type="button" class="btn btn-sm btn-gray" @click="deleteImage" ><i class="far fa-lg fa-fw me-10px fa-circle-xmark ms-n1"></i> 선택 이미지 삭제</button>
           </div>
         </div>
@@ -165,7 +165,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="item in store.grpItems" :key="item.grStGoodsNo">
+                <tr v-for="(item, index) in store.grpItems" :key="item.grStGoodsNo">
                   <td class="w-10px align-middle"  @click.stop="toggleItem(item.grStGoodsNo)">
                     <div class="form-check">
                       <input
@@ -175,7 +175,7 @@
                           :value="item.grStGoodsNo"
                           :checked="checkedItems.includes(item.grStGoodsNo)"
                       />
-                      {{ item.grStGoodsNo }}
+                      {{ index+1 }}
                       <label class="form-check-label" :for="'product' + item.grStGoodsNo"></label>
                     </div>
                   </td>
@@ -236,7 +236,7 @@
 	</panel>
   <div v-if="showImageModal" class="image-modal-backdrop" @click="closeImageModal">
     <div class="image-modal-content" @click.stop>
-      <img :src="modalImageSrc" alt="이미지 확대" />
+      <img :src="modalImageSrc || noImg" alt="이미지 확대" />
       <button class="btn-close" @click="closeImageModal">×</button>
     </div>
   </div>
@@ -247,6 +247,7 @@ import {ref, computed, watch, onBeforeMount} from 'vue'
 import {useRestaurantStore} from "@/stores/restaurant/useRestaurantStore";
 import Pagenation from "@/components/common/Pagenation.vue";
 import FormMultipleImage from "@/components/form/FormMultipleImage.vue";
+import noImg from '@/assets/img/noimg.gif';
 const store = useRestaurantStore();
 const selectGrStGrpNo = ref(1);
 onBeforeMount(()=>  {
@@ -458,7 +459,7 @@ async function handleFileChange(e: Event, item: any) {
 
 .image-modal-content img {
   max-width: 100%;
-  max-height: 100%;
+  max-height: 850px;
   display: block;
 }
 
