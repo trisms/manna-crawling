@@ -79,6 +79,7 @@ export const useAdminStore = defineStore('useAdminStore', {
 				delete reqBody['userNo'];
 				delete reqBody['dataStatus'];
 				delete reqBody['passwordChk'];
+				console.log(result)
 				await useCallInsertAPI(() => systemsAPI.insert(reqBody), callback);
 			}
 		},

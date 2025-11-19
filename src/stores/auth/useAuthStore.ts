@@ -22,9 +22,9 @@ export const useAuthStore = defineStore('authStore', {
 			const res = await useCallAPI(() => authAPI.login(this.form));
 			if (res) {
 				const { accessToken,name,role } = res.data.data;
-				this.userInfo.name = res.data.data.name;
-				this.userInfo.role = res.data.data.role;
 				localStorage.setItem('accessToken', accessToken);
+				localStorage.setItem('name', name);
+				localStorage.setItem('role', role);
 
 			/*	const adminStore = useAdminStore();
 				const infoRes = await adminStore.callDetailAPI(res.data.data.userNo);*/
