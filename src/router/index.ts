@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import {useRestaurantStore} from "@/stores/restaurant/useRestaurantStore";
 import {useAppOptionStore} from "@/stores/app-option";
+import {useAdminStore} from "@/stores/systems/useAdminStore";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -9,6 +10,10 @@ const router = createRouter({
       path: '/:pathMatch(.*)*',
       name: 'Error',
       component: () => import('@/components/common/Error-404.vue'),
+    },
+    {
+      path: '/',
+      redirect: '/restaurant/',
     },
     {
       path: '/login',
@@ -25,15 +30,6 @@ const router = createRouter({
             const store = useRestaurantStore()
             await store.callListAPI(()=>{});
             await store.callRegionList();
-           /* const districtStore = useDistrictStore();
-            await districtStore.callListAPI();
-            const store = useFacilityStore();
-
-            if (districtStore.districts.length > 0) {
-              store.searchParams.districtNo = districtStore.districts[0].districtNo;
-              await store.callListAPI();
-            }*/
-
             next();
           },
           meta: {
@@ -52,12 +48,6 @@ const router = createRouter({
             if(store.grpList) {
              await store.callGrpListAPI(store.form.grStNo, store.grpList[0].grStGrpNo, ()=> {})
             }
-
-
-           /* if (districtStore.districts.length > 0) {
-              store.searchParams.districtNo = districtStore.districts[0].districtNo;
-              await store.callListAPI();
-            }*/
             next();
           },
           meta: {
@@ -66,6 +56,44 @@ const router = createRouter({
             depth: 1,
           },
         },
+        {
+          path: '/system/',
+          component: () => import('@/views/system/admin/list.vue'),
+          beforeEnter: async (to, from, next) => {
+            const store = useAdminStore();
+            await store.callListAPI();
+            next();
+          },
+          meta: {
+            title: '계정 관리',
+            nav: ['시스템설정', '계정 관리', '목록'],
+            depth: 2,
+          },
+        },
+        {
+          path: '/system/add',
+          component: () => import('@/views/system/admin/add.vue'),
+          meta: {
+            title: '관리자 등록',
+            nav: ['시스템설정', '계정 관리', '등록'],
+            depth: 2,
+          },
+        },
+        {
+          path: '/system/:adminId',
+          component: () => import('@/views/system/admin/detail.vue'),
+          beforeEnter: async (to, from, next) => {
+            const store = useAdminStore();
+            await store.callDetailAPI(to.params.adminId);
+            next();
+          },
+          meta: {
+            title: '관리자 정보',
+            nav: ['시스템설정', '계정 관리', '정보'],
+            depth: 2,
+          },
+        },
+
 /*        { path: '/restaurant/list', component: () => import('@/views/restaurant/list.vue') },
         { path: '/restaurant/menu', component: () => import('@/views/restaurant/menuList.vue') },*/
       ]

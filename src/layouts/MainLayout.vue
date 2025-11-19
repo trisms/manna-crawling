@@ -9,6 +9,7 @@ import AppHeader from '@/components/app/Header.vue';
 import AppTopMenu from '@/components/app/TopMenu.vue';
 import AppFooter from '@/components/app/Footer.vue';
 import AppThemePanel from '@/components/app/ThemePanel.vue';
+import AccountModal from '@/views/system/SystemModal.vue';
 import { slideUp } from '@/composables/slideUp.js';
 import router from '@/router';
 
@@ -21,6 +22,17 @@ const toggleMobileMenu = () => {
     }
   }
 };
+import { ref } from 'vue';
+import SystemModal from "@/views/system/SystemModal.vue";
+
+
+const modalVisible = ref(false);
+const modalType = ref<'account' | 'edit' | null>(null);
+
+function handleOpenModal(type) {
+  modalType.value = type;
+  modalVisible.value = true;
+}
 </script>
 
 <template>
@@ -52,8 +64,8 @@ const toggleMobileMenu = () => {
 	}">
     <vue3-progress-bar />
     <app-header v-if="!appOption.appHeaderHide" />
-    <app-sidebar v-if="!appOption.appSidebarHide" />
-    <app-sidebar-right v-if="appOption.appSidebarTwo" />
+    <app-sidebar v-if="!appOption.appSidebarHide" @open-modal="handleOpenModal" />
+    <app-sidebar-right v-if="appOption.appSidebarTwo"  />
     <app-top-menu v-if="appOption.appTopMenu" />
     <div
         id="app-content"
@@ -69,6 +81,11 @@ const toggleMobileMenu = () => {
       <router-view></router-view>
     </div>
     <app-footer v-if="appOption.appFooter" />
+    <SystemModal
+        :visible="modalVisible"
+        :type="modalType"
+        @close="modalVisible = false"
+    ></SystemModal>
 <!--    <app-theme-panel />-->
   </div>
 </template>
