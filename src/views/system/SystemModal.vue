@@ -15,7 +15,7 @@
           <!-- 검색 필터 -->
           <div class="mb-3">
             <div class="row g-2">
-              <div class="col-3">
+              <div class="col-2">
                 <label class="form-label small">상태</label>
                 <select class="form-select form-select-sm" v-model="store.searchParams.dataStatus">
                   <option value="">전체</option>
@@ -23,7 +23,7 @@
                   <option value="0">휴면</option>
                 </select>
               </div>
-              <div class="col-3">
+              <div class="col-2">
                 <label class="form-label small">권한</label>
                 <select class="form-select form-select-sm" v-model="store.searchParams.role">
                   <option value="">전체</option>
@@ -31,7 +31,7 @@
                   <option value="2">사용자</option>
                 </select>
               </div>
-              <div class="col-3">
+              <div class="col-2">
                 <label class="form-label small">검색 유형</label>
                 <select class="form-select form-select-sm" v-model="store.searchParams.searchType">
                   <option value="">전체</option>
@@ -40,14 +40,19 @@
                   <option value="phone">전화번호</option>
                 </select>
               </div>
-              <div class="col-3">
+              <div class="col-6">
                 <label class="form-label small">키워드</label>
-                <input type="text" class="form-control form-control-sm" v-model="store.searchParams.keyword" placeholder="검색어" />
+                <div class="input-group">
+                  <input type="text" class="form-control form-control-sm " v-model="store.searchParams.keyword" placeholder="검색어" />
+                  <button class="btn btn-sm btn-primary" @click="applyFilter">검색</button>
+                  <button class="btn btn-sm btn-secondary " @click="resetFilter">초기화</button>
+                </div>
+
+
               </div>
             </div>
             <div class="mt-2 text-end">
-              <button class="btn btn-sm btn-primary" @click="applyFilter">검색</button>
-              <button class="btn btn-sm btn-secondary ms-1" @click="resetFilter">초기화</button>
+
             </div>
           </div>
           <div class="widget-todolist rounded mb-4" data-id="widget">
@@ -103,7 +108,6 @@
                     </div>
                   </div>
                   <div class="widget-todolist-icon">
-
                     {{ item.name }} <i class="fa fa-user-circle text-secondary"></i>
                   </div>
                 </div>
