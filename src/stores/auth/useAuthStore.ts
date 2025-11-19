@@ -7,22 +7,23 @@ export const useAuthStore = defineStore('authStore', {
 			id: '' as string,
 			password: '' as string,
 		},
-		/*userInfo: {
+		userInfo: {
 			userNo: 0,
 			loginId: '',
-			userName: '',
+			name: '',
 			departName: '',
 			phone: '',
 			role: '',
 			useYn: '',
 		},
-		info: JSON.parse(localStorage.getItem('userInfo')) || {},*/
 	}),
 	actions: {
 		async callLoginAPI(callback: Function) {
 			const res = await useCallAPI(() => authAPI.login(this.form));
 			if (res) {
-				const { accessToken } = res.data.data;
+				const { accessToken,name,role } = res.data.data;
+				this.userInfo.name = res.data.data.name;
+				this.userInfo.role = res.data.data.role;
 				localStorage.setItem('accessToken', accessToken);
 
 			/*	const adminStore = useAdminStore();

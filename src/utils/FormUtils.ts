@@ -81,8 +81,15 @@ export const useCallAPI = async (api: Function): Promise<AxiosResponse<any> | nu
 		toggleLoading(true);
 
 		const res: AxiosResponse<any> = await api();
+		/*if (validateAPIResult(res)) {
+			return res;
+		}*/
 		if (validateAPIResult(res)) {
 			return res;
+		} else {
+			if(res.response){
+				window.$emitter.emit('success', res.response.data.message)
+			}
 		}
 	} catch (e) {
 		console.error('useCallAPI Error: ', e);
