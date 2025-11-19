@@ -4,18 +4,15 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "serve": "node server.js",
-    "build": "vue-tsc --noEmit && vite build",
+    "build": "vue-tsc --noEmit && vite build --mode $npm_config_mode",
+    "deploy": "npm i && npm run build && pm2 startOrReload ecosystem.config.cjs --only manna-crawling",
     "preview": "vite preview --port 5050",
     "test:unit": "vitest --environment jsdom",
     "test:e2e": "start-server-and-test preview http://127.0.0.1:5050/ 'cypress open'",
     "test:e2e:ci": "start-server-and-test preview http://127.0.0.1:5050/ 'cypress run'",
     "typecheck": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
-    "dev:admin": "npm run dev -w manna-crawling -- --mode dev",
-    "build:admin": "npm run build -w manna-crawling --",
-    "deploy:test": "npm i && npm run build && pm2 startOrReload ecosystem.config.cjs --env env_test --only manna-crawling",
-    "deploy:prod": "npm i && npm run build && pm2 startOrReload ecosystem.config.cjs --env env_prod --only manna-crawling"
+    "dev:admin": "npm run dev -w manna-crawling -- --mode dev"
   },
   "dependencies": {
     "@caohenghu/vue-colorpicker": "^1.2.4",
