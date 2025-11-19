@@ -124,6 +124,10 @@ export const useCallInsertAPI = async (
 						} else {
 							await callback();
 						}
+					} else {
+						if(res.response){
+							window.$emitter.emit('success', res.response.data.message)
+						}
 					}
 				} catch (e) {
 					console.error('useCallInsertAPI Error: ', e);

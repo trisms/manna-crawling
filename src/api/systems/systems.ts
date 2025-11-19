@@ -12,6 +12,7 @@ export const systemsAPI = {
 		return await getApiCall().put(getV1(`/user/${userNo}`), params);
 	},
 	async insert(params: any) {
+		console.log(5)
 		return await getApiCall().post(getV1(`/auth/register`), params);
 	},
 };

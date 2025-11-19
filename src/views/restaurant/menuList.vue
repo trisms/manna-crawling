@@ -190,7 +190,8 @@
 
                       </div>
                       <div class="ms-3">
-                        <a href="extra_product_details.html" class="text-dark text-decoration-none">{{ item.goodsName }}</a>
+                        {{ item.goodsName }}
+<!--                        <a href="extra_product_details.html" class="text-dark text-decoration-none">{{ item.goodsName }}</a>-->
                       </div>
                     </div>
                   </td>

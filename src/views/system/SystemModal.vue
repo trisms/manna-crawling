@@ -50,31 +50,35 @@
               <button class="btn btn-sm btn-secondary ms-1" @click="resetFilter">초기화</button>
             </div>
           </div>
+          <div class="widget-todolist rounded mb-4" data-id="widget">
 
+            <div class="widget-todolist-header">
+              <div class="widget-todolist-header-title">계정 목록</div>
+              <div class="widget-todolist-header-total">
+                <span>{{ store.items.length }} </span><small>명</small>
+              </div>
+            </div>
+            <div class="widget-todolist-item" @click="createNew">
+              <div class="widget-todolist-input border-bottom">
+                <i class="fa fa-plus text-body text-opacity-30 fa-fw"></i>
+              </div>
+              <div class="widget-todolist-content border-0 border-bottom">
+                <input
+                    type="text"
+                    class="form-control border-0 shadow-none rounded-0 p-0 h-20px bg-none"
+                    placeholder="새 계정 추가..."
+                    @focus="createNew"
+                />
+
+              </div>
+
+            </div>
+          </div>
           <!-- 리스트 (widget 스타일) -->
           <div class="flex-grow-1 overflow-auto">
 
             <div class="widget-todolist rounded mb-4" data-id="widget">
 
-              <div class="widget-todolist-header">
-                <div class="widget-todolist-header-title">계정 목록</div>
-                <div class="widget-todolist-header-total">
-                  <span>{{ store.items.length }}</span><small>명</small>
-                </div>
-              </div>
-              <div class="widget-todolist-item" @click="createNew">
-                <div class="widget-todolist-input border-bottom">
-                  <i class="fa fa-plus text-body text-opacity-30 fa-fw"></i>
-                </div>
-                <div class="widget-todolist-content border-0 border-bottom">
-                  <input
-                      type="text"
-                      class="form-control border-0 shadow-none rounded-0 p-0 h-20px bg-none"
-                      placeholder="새 계정 추가..."
-                      @focus="createNew"
-                  />
-                </div>
-              </div>
               <div class="widget-todolist-body">
                 <div
                     v-for="item in store.items"
@@ -93,7 +97,7 @@
                     </div>
                   </div>
                   <div class="widget-todolist-content">
-                    <h6 class="mb-2px">ID :{{ item.id }} </h6>
+                    <h6 class="mb-2px">{{ item.id }} </h6>
                     <div class="text-body text-opacity-75 fw-bold fs-11px">
                       {{ item.phone }} · {{ item.role === '1' ? '관리자': '사용자' }} · {{ item.dataStatus === '1' ? '사용중': '정지'}}
                     </div>
@@ -127,7 +131,7 @@
               <input type="text" class="form-control" v-model="editForm.id" />
             </div>
             <div class="mb-2">
-              <label class="form-label"> {{ isNewMode ? "신규 계정 추가" : "비밀번호 (미입력시 변경없음)" }}</label>
+              <label class="form-label"> {{ isNewMode ? "비밀번호" : "비밀번호 (미입력시 변경없음)" }}</label>
               <input type="password" class="form-control" v-model="editForm.password" />
             </div>
             <div class="mb-2">
@@ -157,7 +161,7 @@
             </div>
 
             <div class="mt-4 d-flex gap-2">
-              <button class="btn btn-primary w-100" @click="save"> {{ isNewMode ? "추가" : "수정" }}</button>
+              <input type="button" class="btn btn-primary w-100" @click="save" :value="isNewMode ? '추가' : '수정'">
 <!--              <button
                   v-if="!isNewMode"
                   class="btn btn-danger w-50"
@@ -269,8 +273,8 @@ async function save() {
     // 신규 등록
     const result = await store.callInsertAPI({
       dataStatus: editForm.dataStatus,
-      id: editForm.id,
       name: editForm.name,
+      id:editForm.id,
       password: editForm.password,
       passwordChk: editForm.passwordChk,
       phone: editForm.phone,
@@ -279,8 +283,9 @@ async function save() {
       searchList();
       isNewMode.value = false;
       selected.value = result;
+      createNew();
     });
-    await loadDetail(editForm.userNo);
+   /* loadDetail(editForm.userNo);*/
 
   } else {
     // 수정
@@ -294,7 +299,7 @@ async function save() {
       phone: editForm.phone,
       role: editForm.role,
     },() => {
-  /*    searchList();*/
+  //*!*    searchList();*!/*/
       loadDetail(editForm.userNo);
     });
 

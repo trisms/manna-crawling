@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useAppSidebarMenuStore } from '@/stores/app-sidebar-menu';
 import { useAppOptionStore } from '@/stores/app-option';
-import { onMounted } from 'vue';
+import {onMounted, ref} from 'vue';
 import { slideToggle } from '@/composables/slideToggle.js';
 import { slideUp } from '@/composables/slideUp.js';
 import { slideDown } from '@/composables/slideDown.js';
@@ -13,6 +13,10 @@ const appSidebarMenu = useAppSidebarMenuStore();
 const appOption = useAppOptionStore();
 var appSidebarFloatSubmenuTimeout = '';
 var appSidebarFloatSubmenuDom = '';
+
+const name = ref(localStorage.getItem('name'));
+const role = ref(localStorage.getItem('role'));
+
 
 function appSidebarMobileToggled() {
 	appOption.appSidebarMobileToggled = !appOption.appSidebarMobileToggled;
@@ -420,7 +424,7 @@ onMounted(() => {
 	}">
 		<perfect-scrollbar class="app-sidebar-content" v-bind:class="{ 'h-100': appOption.appSidebarFixed }">
 			<div class="menu">
-				<div class="menu-profile" style="height: 130px">
+				<div class="menu-profile active" style="height: 130px">
 					<a href="javascript:;" class="menu-profile-link" v-on:click="appSidebarProfileToggle($event)">
 						<div class="menu-profile-cover with-shadow"></div>
 						<div class="menu-profile-image menu-profile-image-icon bg-gray-900 text-gray-600">
@@ -429,15 +433,15 @@ onMounted(() => {
 						<div class="menu-profile-info">
 							<div class="d-flex align-items-center">
 								<div class="flex-grow-1 d-flex align-items-center">
-                   {{ store.userInfo.name}}
+                   {{ name}}
 								</div>
 								<div class="menu-caret ms-auto"></div>
 							</div>
-							<small>권한 : {{ store.userInfo.role === '1' ? '관리자' : '사용자'}}</small>
+							<small>권한 : {{ role === '1' ? '관리자' : '사용자'}}</small>
 						</div>
 					</a>
 				</div>
-				<div id="appSidebarProfileMenu" class="collapse">
+				<div id="appSidebarProfileMenu" class="collapse expand" style="display: block; box-sizing: border-box;" v-if="role === '1'">
 					<div class="menu-item pt-5px">
 						<a href="javascript:;" class="menu-link"  @click="openModal('account')">
 							<div class="menu-icon"><i class="fa fa-cog"></i></div>
