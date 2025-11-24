@@ -26,7 +26,7 @@
                         {{ isWorkTimeExpanded ? '▲' : '▼' }}
                       </button>
                     </div>
-                    <pre class="block-content" :class="{ 'expanded': isWorkTimeExpanded }">{{ store.form.originWorkTime }}</pre>
+                    <pre class="block-content-time" :class="{ 'expanded': isWorkTimeExpanded }">{{ store.form.originWorkTime }}</pre>
                   </div>
                 </div>
               </div>
@@ -428,8 +428,8 @@ async function handleFileChange(e: Event, item: any) {
   flex: 2;
   min-width: 300px;
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  flex-direction: row;
+  gap: 8px;
 }
 
 
@@ -443,9 +443,6 @@ async function handleFileChange(e: Event, item: any) {
   color: #222;
 }
 
-.block-content.expanded {
-  max-height: 500px; /* 전체 높이 */
-}
 
 .toggle-btn {
   border: none;
@@ -483,8 +480,9 @@ async function handleFileChange(e: Event, item: any) {
 }
 
 .block-content {
+  width: 450px;
   white-space: pre-wrap;
-  max-height: 30px;
+  max-height: 90px;
   overflow-y: scroll;
   margin: 0;
   font-size: 13px;
@@ -495,5 +493,18 @@ async function handleFileChange(e: Event, item: any) {
   max-height: 500px; /* 전체 높이 */
 }
 
+
+.block-content-time {
+  white-space: pre-wrap;
+  max-height: 90px;
+  overflow-y: scroll;
+  margin: 0;
+  font-size: 13px;
+  transition: max-height 0.3s ease;
+}
+
+.block-content-time.expanded {
+  max-height: 500px; /* 전체 높이 */
+}
 
 </style>
