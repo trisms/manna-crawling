@@ -1,126 +1,102 @@
 
 <template>
-	<!-- BEGIN breadcrumb -->
-<!--	<ol class="breadcrumb float-xl-end">
-		<li class="breadcrumb-item"><a href="javascript:;">Home</a></li>
-		<li class="breadcrumb-item"><a href="javascript:;">Library</a></li>
-		<li class="breadcrumb-item active">Data</li>
-	</ol>
-	&lt;!&ndash; END breadcrumb &ndash;&gt;
-	&lt;!&ndash; BEGIN page-header &ndash;&gt;
-	<h1 class="page-header">음식점<small></small></h1>
-	&lt;!&ndash; END page-header &ndash;&gt;-->
-
-	<!-- BEGIN panel -->
-<!--  <div class="list-group list-group-flush fw-bold">
-    <div class="list-group-item d-flex align-items-center">
-      <div class="flex-fill">
-        <div>Name</div>
-        <div class="text-body text-opacity-60">Sean Ngu</div>
-      </div>
-      <div class="w-100px">
-        <a href="#modalEdit" data-bs-toggle="modal" class="btn btn-secondary w-100px">Edit</a>
-      </div>
-    </div>
-    <div class="list-group-item d-flex align-items-center">
-      <div class="flex-fill">
-        <div>Username</div>
-        <div class="text-body text-opacity-60">@seantheme</div>
-      </div>
-      <div>
-        <a href="#modalEdit" data-bs-toggle="modal" class="btn btn-secondary w-100px">Edit</a>
-      </div>
-    </div>
-  </div>-->
-
 	<panel>
-<!--		<panel-header>
-			<panel-title>
-
-
-      </panel-title>
-			<panel-toolbar />
-		</panel-header>-->
-
 		<panel-body>
-
       <div class="card border-0">
-        <div class="note  mb-0 border">
+        <div class="note  mb-0 border ">
           <div class="note-content ">
             <h4> <i class="fa fa-info-circle fa-fw"></i> <b>가맹점 정보</b> - ( {{ store.form.stName }} ) </h4>
-            <table class="table table-condensed p-0 bg-none mb-0">
-              <tbody>
-              <!-- 📌 기본정보 -->
-              <tr>
-                <td nowrap="" class="w-50">
-                  <div class="d-flex align-items-center">
-                    <div class="bg-indigo-200 w-15px h-15px rounded me-2"></div>
-                    <div><b>가맹점번호</b> : {{ store.form.grStNo }}</div>
+            <div class="card-group">
+              <!-- BEGIN card -->
+              <div class="card bg-none border-0">
+                <div class="card-body info-left bg-none d-flex justify-content-between">
+                  <div class="info-block">
+                    <div class="block-title">
+                      매장소개
+                      <button class="toggle-btn " @click="isAppMemoExpanded = !isAppMemoExpanded">
+                        {{ isAppMemoExpanded ? '▲' : '▼' }}
+                      </button>
+                    </div>
+                    <pre class="block-content" :class="{ 'expanded': isAppMemoExpanded }">{{ store.form.stAppMemo }}</pre>
                   </div>
-                </td>
-                <td nowrap="" class="w-50">
-                  <div class="d-flex align-items-center">
-                    <div class="bg-indigo-100 w-15px h-15px rounded me-2"></div>
-                    <div><b>가입경로</b> : {{ getAppName(store.form.appType) }}</div>
+                  <div class="info-block">
+                    <div class="block-title">
+                      운영시간
+                      <button class="toggle-btn" @click="isWorkTimeExpanded = !isWorkTimeExpanded">
+                        {{ isWorkTimeExpanded ? '▲' : '▼' }}
+                      </button>
+                    </div>
+                    <pre class="block-content" :class="{ 'expanded': isWorkTimeExpanded }">{{ store.form.originWorkTime }}</pre>
                   </div>
-                </td>
-              </tr>
-              <tr>
-                <td nowrap="">
-                  <div class="d-flex align-items-center">
-                    <div class="bg-indigo-200 w-15px h-15px rounded me-2"></div>
-                    <div><b>가맹점코드</b> : {{ store.form.stCode }}</div>
-                  </div>
-                </td>
-                <td nowrap="">
-                  <div class="d-flex align-items-center">
-                    <div class="bg-indigo-100 w-15px h-15px rounded me-2"></div>
-                    <div><b>생성일</b> : {{ store.form.putDate }}</div>
-                  </div>
-                </td>
-              </tr>
+                </div>
+              </div>
+              <!-- END card -->
+              <!-- BEGIN card -->
+              <div class="card border-0">
+                <div class="card-body bg-none ">
+                  <table class="table table-condensed p-0 bg-none mb-0 p-1">
+                    <tbody>
+                    <!-- 📌 기본정보 -->
+                    <tr>
+                      <td nowrap="" class="">
+                        <div class="d-flex align-items-center">
+                          <div class="bg-indigo-200 w-15px h-15px rounded me-2"></div>
+                          <div><b>가맹점번호</b> : {{ store.form.grStNo }}</div>
+                        </div>
+                      </td>
+                      <td nowrap="" class="">
+                        <div class="d-flex align-items-center">
+                          <div class="bg-indigo-100 w-15px h-15px rounded me-2"></div>
+                          <div><b>가입경로</b> : {{ getAppName(store.form.appType) }}</div>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td nowrap="" class="">
+                        <div class="d-flex align-items-center">
+                          <div class="bg-indigo-200 w-15px h-15px rounded me-2"></div>
+                          <div><b>가맹점코드</b> : {{ store.form.stCode }}</div>
+                        </div>
+                      </td>
+                      <td nowrap="" class="">
+                        <div class="d-flex align-items-center">
+                          <div class="bg-indigo-100 w-15px h-15px rounded me-2"></div>
+                          <div><b>생성일</b> : {{ store.form.putDate }}</div>
+                        </div>
+                      </td>
+                    </tr>
 
-              <!-- 📌 사업자 정보 -->
-              <tr>
-                <td nowrap="">
-                  <div class="d-flex align-items-center">
-                    <div class="bg-indigo-200 w-15px h-15px rounded me-2"></div>
-                    <div><b>대표자</b> : {{ store.form.stOwner }}</div>
-                  </div>
-                </td>
-                <td nowrap="">
-                  <div class="d-flex align-items-center">
-                    <div class="bg-indigo-100 w-15px h-15px rounded me-2"></div>
-                    <div><b>전화번호</b> : {{ store.form.stTel }}</div>
-                  </div>
-                </td>
-              </tr>
+                    <!-- 📌 사업자 정보 -->
+                    <tr>
+                      <td nowrap="" class="">
+                        <div class="d-flex align-items-center">
+                          <div class="bg-indigo-200 w-15px h-15px rounded me-2"></div>
+                          <div><b>대표자</b> : {{ store.form.stOwner }}</div>
+                        </div>
+                      </td>
+                      <td nowrap="" class="">
+                        <div class="d-flex align-items-center">
+                          <div class="bg-indigo-100 w-15px h-15px rounded me-2"></div>
+                          <div><b>전화번호</b> : {{ store.form.stTel }}</div>
+                        </div>
+                      </td>
+                    </tr>
 
-              <!-- 📌 연락처 / 주소 -->
-              <tr>
-                <td nowrap="">
-                  <div class="d-flex align-items-center">
-                    <div class="bg-indigo-300 w-15px h-15px rounded me-2"></div>
-                    <div><b>가맹점주소</b> : {{ store.form.stAddr }}</div>
-                  </div>
-                </td>
-                <td nowrap="" >
-                  <div class="d-flex align-items-center">
-                    <div class="bg-indigo-300 w-15px h-15px rounded me-2"></div>
-                    <div><b>영업시간</b> : {{ store.form.originWorkTime }}</div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td nowrap="" colspan="2">
-                  <div class="d-flex align-items-center">
-                    <div class="bg-indigo-300 w-15px h-15px rounded me-2"></div>
-                    <div><b>매장소개</b> : {{ store.form.stAppMemo }}</div>
-                  </div>
-                </td>
-              </tr>
-              </tbody>
-            </table>
+                    <!-- 📌 연락처 / 주소 -->
+                    <tr>
+                      <td nowrap="" class="" colspan="2">
+                        <div class="d-flex align-items-center">
+                          <div class="bg-indigo-100 w-15px h-15px rounded me-2"></div>
+                          <div><b>가맹점주소</b> : {{ store.form.stAddr }}</div>
+                        </div>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
         <div class="d-flex between nav nav-tabs nav-tabs-v2 pt-3 justify-content-between">
@@ -165,7 +141,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="(item, index) in store.grpItems" :key="item.grStGoodsNo">
+                <tr v-for="(item, index) in paginatedData" :key="item.grStGoodsNo">
                   <td class="w-10px align-middle"  @click.stop="toggleItem(item.grStGoodsNo)">
                     <div class="form-check">
                       <input
@@ -256,6 +232,8 @@ onBeforeMount(()=>  {
     selectGrStGrpNo.value = store.grpList[0].grStGrpNo;
   }
 })
+const isAppMemoExpanded = ref(false)
+const isWorkTimeExpanded = ref(false)
 
 // 모든 체크박스 상태
 const checkedItems = ref<string[]>([]); // grStNo를 기준으로 체크 상태 관리
@@ -297,15 +275,16 @@ function toggleItem(grStGoodsNo: string) {
 }
 
 
-// ✅ 페이지 계산
 const paginatedData = computed(() => {
-  const arr = store.grpList || []        // store.items가 proxy면 자체가 배열임
-  const start = (currentPage.value - 1) * itemsPerPage
-  return arr.slice(start, start + itemsPerPage)
-})
+  const arr = store.grpItems || [];
+  const start = (currentPage.value - 1) * itemsPerPage;
+  return arr.slice(start, start + itemsPerPage);
+});
+
 
 
 const currentPage = ref(1)
+
 const itemsPerPage = 10
 const getAppName = (appType: string | number) => {
   if (appType === '1' || appType === 1) return '배민';
@@ -315,8 +294,8 @@ const getAppName = (appType: string | number) => {
 
 
 const adultYn = (appType: string | number) => {
-  if (appType === 'Y' ) return '인증';
-  if (appType === 'N' ) return '미인증';
+  if (appType === '1' ) return '인증';
+  if (appType === '0' ) return '미인증';
   return '';
 };
 function formatPrice(value: number | string) {
@@ -326,6 +305,7 @@ function formatPrice(value: number | string) {
 
 
 const selectGrpList = (grStGrpNo : number | string) => {
+  currentPage.value=1;
   selectGrStGrpNo.value = grStGrpNo;
   store.callGrpListAPI(store.form.grStNo, grStGrpNo, ()=> {
 
@@ -399,44 +379,7 @@ async function handleFileChange(e: Event, item: any) {
   color: var(--bs-card-color);
   background: #f4f4f4;
 }
-.info-section {
-  border: 1px solid #e6e6e6;
-  border-radius: 6px;
-  padding: 12px 14px;
-  margin-bottom: 12px;
-  background: #fafafa;
-}
 
-.info-title {
-  font-weight: 600;
-  margin-bottom: 8px;
-  font-size: 14px;
-  color: #333;
-}
-
-.info-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  row-gap: 6px;
-  column-gap: 20px;
-}
-
-.info-row {
-  display: flex;
-  align-items: center;
-}
-
-.info-label {
-  color: #777;
-  width: 100px;       /* 라벨 정렬이 핵심 */
-  font-size: 13px;
-}
-
-.info-value {
-  font-weight: 500;
-  color: #222;
-  font-size: 13px;
-}
 
 .image-modal-backdrop {
   position: fixed;
@@ -479,4 +422,78 @@ async function handleFileChange(e: Event, item: any) {
   overflow: hidden;      /* 넘치면 숨김 */
   text-overflow: ellipsis; /* ... 처리 */
 }
+
+/* LEFT */
+.info-left {
+  flex: 2;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+
+.info-table th {
+  width: 90px;
+  color: #555;
+  font-weight: 600;
+}
+
+.info-table td {
+  color: #222;
+}
+
+.block-content.expanded {
+  max-height: 500px; /* 전체 높이 */
+}
+
+.toggle-btn {
+  border: none;
+  background: none;
+  color: #ddd;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 2px 0;
+}
+
+.info-block {
+  position: relative; /* 버튼 절대 위치 기준 */
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 6px;
+  padding: 10px;
+}
+
+.block-title {
+  font-weight: 600;
+  margin-bottom: 6px;
+  font-size: 13px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.toggle-btn {
+  border: none;
+  background: none;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 0;
+  color: black;
+}
+
+.block-content {
+  white-space: pre-wrap;
+  max-height: 30px;
+  overflow-y: scroll;
+  margin: 0;
+  font-size: 13px;
+  transition: max-height 0.3s ease;
+}
+
+.block-content.expanded {
+  max-height: 500px; /* 전체 높이 */
+}
+
+
 </style>

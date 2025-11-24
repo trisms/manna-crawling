@@ -71,7 +71,7 @@
           <div class=" d-md-flex fw-bold ms-auto">
             <div class="mt-md-0 mt-2 btn btn-danger btn-sm d-flex me-2 pe-3 rounded-3"><div  class="text-white text-decoration-none rounded " ><i class="fa fa-cancel fa-fw me-1 text-white"></i> 삭제</div></div>
           </div>
-        </div>제
+        </div>
         <div class="card border-0">
           <div class=" d-md-flex fw-bold ms-auto">
             <div class="mt-md-0 mt-2 btn btn-secondary btn-sm d-flex me-2 pe-3 rounded-3"><div  class="text-white text-decoration-none rounded " @click="rebaseUplode()"><i class="fa fa-upload fa-fw me-1 text-white"></i> 기존상품삭제후 신규업로드</div></div>
@@ -114,7 +114,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr v-for="item in store.items" :key="item.grStNo"  @click="goToDetail(item.grStNo)">
+            <tr v-for="item in store.items" :key="paginatedData"  @click="goToDetail(item.grStNo)" style="cursor: pointer;">
               <td class="w-10px align-middle"  @click.stop="toggleItem(item.grStNo)">
                 <div class="form-check">
                   <input
