@@ -55,29 +55,30 @@
 
             </div>
           </div>
-          <div class="widget-todolist rounded mb-4" data-id="widget">
-
-            <div class="widget-todolist-header">
-              <div class="widget-todolist-header-title">계정 목록</div>
-              <div class="widget-todolist-header-total">
-                <span>{{ store.items.length }} </span><small>명</small>
+          <div class="widget-todolist rounded mb-1" data-id="widget">
+            <div class="d-flex w-100">
+              <div class="widget-todolist-header w-75">
+                <div class="widget-todolist-header-title">계정 목록  (총 <span>{{ store.items.length }} </span><small>명</small>)</div>
+<!--                <div class="widget-todolist-header-total">
+                  <span>{{ store.items.length }} </span><small>명</small>
+                </div>-->
+              </div>
+              <div class="widget-todolist-item w-25 border-bottom" @click="createNew">
+                <div class="widget-todolist-content border-0 m-auto text-right">
+                  <div  class="form-control border-0 shadow-none rounded-0 p-0 h-20px bg-none" @click="createNew">  <i class="fa fa-plus text-body text-opacity-30 fa-fw ms-auto"></i> 계정 추가 </div>
+                </div>
               </div>
             </div>
-            <div class="widget-todolist-item" @click="createNew">
+
+
+<!--            <div class="widget-todolist-item" @click="createNew">
               <div class="widget-todolist-input border-bottom">
                 <i class="fa fa-plus text-body text-opacity-30 fa-fw"></i>
               </div>
               <div class="widget-todolist-content border-0 border-bottom">
-                <input
-                    type="text"
-                    class="form-control border-0 shadow-none rounded-0 p-0 h-20px bg-none"
-                    placeholder="새 계정 추가..."
-                    @focus="createNew"
-                />
-
+                <div  class="form-control border-0 shadow-none rounded-0 p-0 h-20px bg-none" @click="createNew">새 계정 추가</div>
               </div>
-
-            </div>
+            </div>-->
           </div>
           <!-- 리스트 (widget 스타일) -->
           <div class="flex-grow-1 overflow-auto">
@@ -132,7 +133,7 @@
             </div>
             <div class="mb-2">
               <label class="form-label">아이디</label>
-              <input type="text" class="form-control" v-model="editForm.id" />
+              <input type="text" class="form-control" v-model="editForm.id" :disabled="!isNewMode"   @input="editForm.id = editForm.id.replace(/[^a-zA-Z0-9]/g, '')"/>
             </div>
             <div class="mb-2">
               <label class="form-label"> {{ isNewMode ? "비밀번호" : "비밀번호 (미입력시 변경없음)" }}</label>
@@ -274,6 +275,14 @@ async function select(item: any) {
 // 저장 (추가 or 수정)
 async function save() {
   if (isNewMode.value) {
+
+    if (isNewMode.value) {
+      if (!/^[a-zA-Z0-9]+$/.test(editForm.id)) {
+        alert("아이디는 영문과 숫자만 입력 가능합니다.");
+        return;
+      }
+    }
+
     // 신규 등록
     const result = await store.callInsertAPI({
       dataStatus: editForm.dataStatus,
@@ -400,6 +409,9 @@ watch(
 .form-select {
   height: 36px;
   font-size: 14px;
+}
+.text-right {
+  text-align: right;
 }
 
 </style>
