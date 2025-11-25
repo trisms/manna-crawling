@@ -101,6 +101,13 @@ export default ({ mode }) => {
           cookiePathRewrite: '/',
           cookieDomainRewrite: process.env.VITE_ENV === 'development' ? 'localhost' : '',
         },
+        '/broad/v1': {
+          target: process.env.VITE_JIG_BAE_APP_API_URL,
+          changeOrigin: true,
+          secure: false,
+          cookiePathRewrite: '/',
+          cookieDomainRewrite: process.env.VITE_ENV === 'development' ? 'localhost' : '',
+        },
       },
     },
   });

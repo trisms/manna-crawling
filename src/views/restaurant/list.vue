@@ -273,17 +273,17 @@ const search = async () => {
 
 //기존상품유지후 추가업로드
 const rebaseUplode = async () => {
-/*  await store.rebaseUpload(()=> {
+  await store.rebaseUpload({grStNoList: checkedItems.value},()=> {
     search();
-  });*/
+  });
 
 }
 
 //기존상품삭제후 신규업로드
 const usageUpload = async () => {
-/*  await store.usageUpload(()=>{
+  await store.usageUpload({grStNoList: checkedItems.value},()=>{
     search();
-  })*/
+  })
 }
 
 const updateStCode =  async (grStNo: number , stCode: string) => {
