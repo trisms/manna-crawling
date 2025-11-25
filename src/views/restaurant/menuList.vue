@@ -8,28 +8,6 @@
             <h4> <i class="fa fa-info-circle fa-fw"></i> <b>가맹점 정보</b> - ( {{ store.form.stName }} ) </h4>
             <div class="card-group">
               <!-- BEGIN card -->
-              <div class="card bg-none border-0">
-                <div class="card-body info-left bg-none d-flex justify-content-between">
-                  <div class="info-block">
-                    <div class="block-title">
-                      매장소개
-                      <button class="toggle-btn " @click="isAppMemoExpanded = !isAppMemoExpanded">
-                        {{ isAppMemoExpanded ? '▲' : '▼' }}
-                      </button>
-                    </div>
-                    <pre class="block-content" :class="{ 'expanded': isAppMemoExpanded }">{{ store.form.stAppMemo }}</pre>
-                  </div>
-                  <div class="info-block">
-                    <div class="block-title">
-                      운영시간
-                      <button class="toggle-btn" @click="isWorkTimeExpanded = !isWorkTimeExpanded">
-                        {{ isWorkTimeExpanded ? '▲' : '▼' }}
-                      </button>
-                    </div>
-                    <pre class="block-content-time" :class="{ 'expanded': isWorkTimeExpanded }">{{ store.form.originWorkTime }}</pre>
-                  </div>
-                </div>
-              </div>
               <!-- END card -->
               <!-- BEGIN card -->
               <div class="card border-0">
@@ -95,7 +73,30 @@
                   </table>
                 </div>
               </div>
+              <div class="card bg-none border-0">
+                <div class="card-body info-left bg-none d-flex justify-content-between">
+                  <div class="info-block">
+                    <div class="block-title">
+                      매장소개
+                      <button class="toggle-btn " @click="isAppMemoExpanded = !isAppMemoExpanded">
+                        {{ isAppMemoExpanded ? '▲' : '▼' }}
+                      </button>
+                    </div>
+                    <pre class="block-content" :class="{ 'expanded': isAppMemoExpanded }">{{ store.form.stAppMemo }}</pre>
+                  </div>
+                  <div class="info-block">
+                    <div class="block-title">
+                      운영시간
+                      <button class="toggle-btn" @click="isWorkTimeExpanded = !isWorkTimeExpanded">
+                        {{ isWorkTimeExpanded ? '▲' : '▼' }}
+                      </button>
+                    </div>
+                    <pre class="block-content-time" :class="{ 'expanded': isWorkTimeExpanded }">{{ store.form.originWorkTime }}</pre>
+                  </div>
+                </div>
+              </div>
             </div>
+
 
           </div>
         </div>
@@ -177,7 +178,18 @@
                   <td class="align-middle">{{ adultYn(item.adultYn)}}</td>
                   <td class="align-middle text-ellipsis">{{ item.goodsMemo}}</td>
                   <td class="align-middle">{{ item.goodsMappCnt}} 개</td>
-                  <td class="align-middle"><button type="button" class="btn btn-sm btn-white"><i class="fa fa-fw fa-check ms-n1"></i> 이미지 선택</button>
+                  <td class="align-middle">
+                    <input
+                        type="file"
+                        ref="fileInputs"
+                        class="d-none"
+                        accept="image/*"
+                        @change="handleFileChange($event, item)"
+                    />
+                    <button type="button" class="btn btn-sm btn-white"
+                            @click="triggerFileInput($event)"
+                    >
+                      <i class="fa fa-fw fa-check ms-n1"></i> 이미지 선택</button>
                   </td>
                   <td class="align-middle">
                     <input
@@ -294,8 +306,9 @@ const getAppName = (appType: string | number) => {
 
 
 const adultYn = (appType: string | number) => {
-  if (appType === '1' ) return '인증';
-  if (appType === '0' ) return '미인증';
+  if (appType === 'Y' ) return '인증';
+  if (appType === 'N' ) return '미인증';
+  if (appType === '0' ) return '알수없음';
   return '';
 };
 function formatPrice(value: number | string) {
@@ -362,11 +375,36 @@ async function handleFileChange(e: Event, item: any) {
       })
     }
   })
-
   // input 파일 초기화
   target.value = ""
 }
 
+
+// 파일 선택 시 처리
+async function handleFileChangeSystem(e: Event, item: any) {
+  const target = e.target as HTMLInputElement
+  if (!target.files || target.files.length === 0) return
+
+  const file = target.files[0]
+
+  const formData = new FormData()
+  formData.append("image", file)
+
+  const query = { dest : 'goods', grStGoodsNo : item.grStGoodsNo }
+  // 🚀 API 호출 (예시)
+  await store.calluploadSystemImgAPI(formData,query, (res) => {
+    allChecked.value = false;
+    checkedItems.value= [];
+    // 업로드 후 이미지 경로 업데이트
+    if(store.grpList) {
+      store.callGrpListAPI(store.form.grStNo,  selectGrStGrpNo.value, ()=> {
+
+      })
+    }
+  })
+  // input 파일 초기화
+  target.value = ""
+}
 
 </script>
 <style scoped>

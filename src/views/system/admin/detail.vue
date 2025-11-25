@@ -1,7 +1,8 @@
+<!--
 <template>
   <panel>
     <panel-body>
-      <!-- 검색 및 필터 영역 -->
+      &lt;!&ndash; 검색 및 필터 영역 &ndash;&gt;
       <div class="row gx-2 pb-30px">
         <div class="col-lg-3 d-lg-block d-none ">
           <a href="#" class="btn  d-flex align-items-center rounded-3 p-0">
@@ -62,7 +63,7 @@
             </a>
           </div>
         </div>
-        <!-- 중략 (기존 필터 버튼/검색창 부분 그대로 유지) -->
+        &lt;!&ndash; 중략 (기존 필터 버튼/검색창 부분 그대로 유지) &ndash;&gt;
 
       </div>
 
@@ -71,19 +72,19 @@
           <div class=" d-md-flex fw-bold ms-auto">
             <div class="mt-md-0 mt-2 btn btn-danger btn-sm d-flex me-2 pe-3 rounded-3"><div  class="text-white text-decoration-none rounded " ><i class="fa fa-cancel fa-fw me-1 text-white"></i> 삭제</div></div>
           </div>
-        </div>제
+        </div>
         <div class="card border-0">
           <div class=" d-md-flex fw-bold ms-auto">
-            <div class="mt-md-0 mt-2 btn btn-secondary btn-sm d-flex me-2 pe-3 rounded-3"><div  class="text-white text-decoration-none rounded " @click="rebaseUplode()"><i class="fa fa-upload fa-fw me-1 text-white"></i> 기존상품삭제후 신규업로드</div></div>
-            <div class="mt-md-0 mt-2 btn btn-secondary btn-sm d-flex me-2 pe-3 rounded-3"><div  class="text-white text-decoration-none" @click="usageUpload()"><i class="fa fa-upload fa-fw me-1 "></i> 기존상품유지후 추가업로드</div></div>
+            <div class="mt-md-0 ㅔt-2 btn btn-secondary btn-sm d-flex me-2 pe-3 rounded-3" @click="rebaseUplode()"><div  class="text-white text-decoration-none rounded " ><i class="fa fa-upload fa-fw me-1 text-white"></i> 기존상품삭제후 신규업로드</div></div>
+            <div class="mt-md-0 mt-2 btn btn-secondary btn-sm d-flex me-2 pe-3 rounded-3" @click="usageUpload()"><div  class="text-white text-decoration-none" ><i class="fa fa-upload fa-fw me-1 "></i> 기존상품유지후 추가업로드</div></div>
           </div>
         </div>
       </div>
-      <!-- 업로드 버튼 -->
+      &lt;!&ndash; 업로드 버튼 &ndash;&gt;
 
 
       <hr />
-      <!-- 테이블 -->
+      &lt;!&ndash; 테이블 &ndash;&gt;
       <div class="card border-0">
         <div class="table-responsive mb-3">
           <table class="table table-hover table-panel text-nowrap align-middle mb-0">
@@ -328,3 +329,4 @@ function goToDetail(grStNo: string | number) {
   z-index: unset;
 }
 </style>
+-->

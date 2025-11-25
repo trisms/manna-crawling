@@ -228,12 +228,10 @@ export const useCallDeleteAPI = async (api: Function, callback: Function): Promi
 
 //삭제할 때 사용하는 composable 메시지 변경버전
 export const useCallDeleteMsgAPI = async (api: Function,message: string, callback: Function): Promise<void> => {
-
 	window.$emitter.emit('confirm', {
 		message: message,
 		callback: async () => {
 			toggleLoading(true);
-
 			try {
 				const res = await api();
 
@@ -248,4 +246,39 @@ export const useCallDeleteMsgAPI = async (api: Function,message: string, callbac
 			}
 		},
 	});
+};
+
+
+//업로드용할 때 사용하는 composable
+export const useCallUploadAPI = async (
+	api: Function,
+	callback: Function,
+	formEl?: Ref<HTMLFormElement> | HTMLFormElement,
+): Promise<void> => {
+	//form엘리먼트가 있을 경우에만 vee-validate 체크
+	const result = formEl ? await validateForm(formEl) : { valid: true };
+
+	if (result.valid) {
+		window.$emitter.emit('confirm', {
+			message: '업로드 하시겠습니까?',
+			callback: async () => {
+				toggleLoading(true);
+				try {
+					const res = await api();
+					if (validateAPIResult(res)) {
+						window.$emitter.emit('success', '업로드에 성공하였습니다.');
+						callback(res);
+					} else {
+						window.$emitter.emit('success', res.response.data.message)
+					}
+				} catch (e) {
+					console.error('useCallUpdateAPI Error: ', e);
+				} finally {
+					toggleLoading(false);
+				}
+			},
+		});
+	} else {
+		return result.errors;
+	}
 };

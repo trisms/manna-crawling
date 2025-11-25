@@ -20,8 +20,8 @@ export const restaurantAPI = {
 	async update(districtNo: number, equipNo: number, params: any) {
 		return await getApiCall().put(getV1(`/equip/${districtNo}/loc/${equipNo}`), params);
 	},
-	async rebaseUpload(districtNo: number, equipNo: number, params: any) {
-		return await getApiCall().put(getV1(`/equip/${districtNo}/loc/${equipNo}`), params);
+	async rebaseUpload(params: any) {
+		return await getApiCall().put(getV1(`/rebase/`), params);
 	},
 	async usageUpload(districtNo: number, equipNo: number, params: any) {
 		return await getApiCall().put(getV1(`/equip/${districtNo}/loc/${equipNo}`), params);
@@ -36,6 +36,9 @@ export const restaurantAPI = {
 		return await getApiCall().delete(getV1(`/store/img`), grStGoodsNoList);
 	},
 	async upload(params: any,query : any) {
+		return await getApiCall().post(getV1(`/store/img?dest=${query.dest}&grStGoodsNo=${query.grStGoodsNo}`), params);
+	},
+	async uploadSystem(params: any,query : any) {
 		return await getApiCall().post(getV1(`/store/img?dest=${query.dest}&grStGoodsNo=${query.grStGoodsNo}`), params);
 	},
 };

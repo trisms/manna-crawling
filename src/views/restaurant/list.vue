@@ -74,8 +74,8 @@
         </div>
         <div class="card border-0">
           <div class=" d-md-flex fw-bold ms-auto">
-            <div class="mt-md-0 mt-2 btn btn-secondary btn-sm d-flex me-2 pe-3 rounded-3"><div  class="text-white text-decoration-none rounded " @click="rebaseUplode()"><i class="fa fa-upload fa-fw me-1 text-white"></i> 기존상품삭제후 신규업로드</div></div>
-            <div class="mt-md-0 mt-2 btn btn-secondary btn-sm d-flex me-2 pe-3 rounded-3"><div  class="text-white text-decoration-none" @click="usageUpload()"><i class="fa fa-upload fa-fw me-1 "></i> 기존상품유지후 추가업로드</div></div>
+            <div class="mt-md-0 mt-2 btn btn-secondary btn-sm d-flex me-2 pe-3 rounded-3" @click="rebaseUplode()"><div  class="text-white text-decoration-none rounded " ><i class="fa fa-upload fa-fw me-1 text-white"></i> 기존상품삭제후 신규업로드</div></div>
+            <div class="mt-md-0 mt-2 btn btn-secondary btn-sm d-flex me-2 pe-3 rounded-3" @click="usageUpload()"><div  class="text-white text-decoration-none" ><i class="fa fa-upload fa-fw me-1 "></i> 기존상품유지후 추가업로드</div></div>
           </div>
         </div>
       </div>
@@ -108,8 +108,8 @@
               <th>주문앱</th>
               <th>주소</th>
               <th>상품수</th>
-              <th>등록일</th>
-              <th>DB 생성일</th>
+              <th>수집일</th>
+              <th>DB 등록일</th>
               <th>가맹점코드</th>
             </tr>
             </thead>
@@ -254,9 +254,9 @@ watch(() => store.searchParams.sidoCode, () => {
 });
 
 
-watch(() => filteredSigunList.value, () => {
+/*watch(() => filteredSigunList.value, () => {
   console.log(filteredSigunList.value)
-});
+});*/
 
 
 // ✅ 검색 적용
@@ -266,18 +266,24 @@ function applySearch() {
 
 const search = async () => {
   await store.callListAPI(() => {
+
   });
 };
 
 
 //기존상품유지후 추가업로드
-const rebaseUplode = () => {
+const rebaseUplode = async () => {
+/*  await store.rebaseUpload(()=> {
+    search();
+  });*/
 
 }
 
 //기존상품삭제후 신규업로드
-const usageUpload = () => {
-
+const usageUpload = async () => {
+/*  await store.usageUpload(()=>{
+    search();
+  })*/
 }
 
 const updateStCode =  async (grStNo: number , stCode: string) => {
