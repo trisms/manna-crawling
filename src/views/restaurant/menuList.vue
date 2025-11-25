@@ -19,29 +19,30 @@
                       <td nowrap="" class="">
                         <div class="d-flex align-items-center">
                           <div class="bg-indigo-200 w-15px h-15px rounded me-2"></div>
-                          <div><b>가맹점번호</b> : {{ store.form.grStNo }}</div>
-                        </div>
-                      </td>
-                      <td nowrap="" class="">
-                        <div class="d-flex align-items-center">
-                          <div class="bg-indigo-100 w-15px h-15px rounded me-2"></div>
-                          <div><b>가입경로</b> : {{ getAppName(store.form.appType) }}</div>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td nowrap="" class="">
-                        <div class="d-flex align-items-center">
-                          <div class="bg-indigo-200 w-15px h-15px rounded me-2"></div>
                           <div><b>가맹점코드</b> : {{ store.form.stCode }}</div>
                         </div>
                       </td>
                       <td nowrap="" class="">
                         <div class="d-flex align-items-center">
                           <div class="bg-indigo-100 w-15px h-15px rounded me-2"></div>
-                          <div><b>생성일</b> : {{ store.form.putDate }}</div>
+                          <div><b>주문앱</b> : {{ getAppName(store.form.appType) }}</div>
                         </div>
                       </td>
+                    </tr>
+                    <tr>
+                      <td nowrap="" class="">
+                        <div class="d-flex align-items-center">
+                          <div class="bg-indigo-100 w-15px h-15px rounded me-2"></div>
+                          <div><b>수집일</b> : {{ store.form.putDate }}</div>
+                        </div>
+                      </td>
+                      <td nowrap="" class="">
+                        <div class="d-flex align-items-center">
+                          <div class="bg-indigo-200 w-15px h-15px rounded me-2"></div>
+                          <div><b>DB등록일</b> : {{ store.form.modDate }}</div>
+                        </div>
+                      </td>
+
                     </tr>
 
                     <!-- 📌 사업자 정보 -->
