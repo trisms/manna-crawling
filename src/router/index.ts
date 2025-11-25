@@ -79,7 +79,7 @@ const router = createRouter({
             depth: 2,
           },
         },
-        {
+       /* {
           path: '/system/:adminId',
           component: () => import('@/views/system/admin/detail.vue'),
           beforeEnter: async (to, from, next) => {
@@ -92,7 +92,7 @@ const router = createRouter({
             nav: ['시스템설정', '계정 관리', '정보'],
             depth: 2,
           },
-        },
+        },*/
 
 /*        { path: '/restaurant/list', component: () => import('@/views/restaurant/list.vue') },
         { path: '/restaurant/menu', component: () => import('@/views/restaurant/menuList.vue') },*/
