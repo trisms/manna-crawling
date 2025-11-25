@@ -1,5 +1,5 @@
-import { getApiCall } from '@/api/services';
-import { getV1 } from '@/utils/api/ApiPath';
+import {getApiCall, getJigBaeApiCall, getNoAuthApiCall} from '@/api/services';
+import {getBoardV1, getV1} from '@/utils/api/ApiPath';
 
 export const restaurantAPI = {
 	async list(params: any) {
@@ -20,11 +20,14 @@ export const restaurantAPI = {
 	async update(districtNo: number, equipNo: number, params: any) {
 		return await getApiCall().put(getV1(`/equip/${districtNo}/loc/${equipNo}`), params);
 	},
-	async rebaseUpload(params: any) {
-		return await getApiCall().put(getV1(`/rebase/`), params);
+	/*async rebaseUpload(grStNoList: any) {
+		return await getJigBaeApiCall().post(`https://api-d.jigbae.co.kr:8443/broad/v1/upload-data?type=1`, grStNoList);
+	},*/
+	async rebaseUpload(grStNoList: any) {
+		return await getJigBaeApiCall().post(getBoardV1(`/upload-data?type=1`), grStNoList);
 	},
-	async usageUpload(districtNo: number, equipNo: number, params: any) {
-		return await getApiCall().put(getV1(`/equip/${districtNo}/loc/${equipNo}`), params);
+	async usageUpload(grStNoList: any) {
+		return await getJigBaeApiCall().post(getBoardV1(`/upload-data?type=2`), grStNoList);
 	},
 	async updateStCode(params: any) {
 		return await getApiCall().patch(getV1(`/store/stcode`), params);

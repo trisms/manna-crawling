@@ -96,18 +96,34 @@
                 </div>
               </div>
             </div>
-
-
           </div>
         </div>
+
         <div class="d-flex between nav nav-tabs nav-tabs-v2 pt-3 justify-content-between">
-          <div class="nav nav-tabs nav-tabs-v2 border-bottom-0 " role="tablist">
-            <div class="nav-item me-2" role="presentation "><div class="nav-link btn btn-sm btn-white   px-2"  aria-selected="true" role="tab" disabled="">상품그룹 :</div></div>
+          <div class="grp-tabs-wrapper">
+            <div class="nav-item me-2" role="presentation">
+              <div class="nav-link btn btn-sm btn-white px-2" disabled>상품그룹 :</div>
+            </div>
+            <button class="grp-btn prev" @click="scrollGrp(-1)" >‹</button>
+            <div class="grp-tabs-container" ref="grpTabsContainer">
+              <div class="nav nav-tabs nav-tabs-v2 border-bottom-0 " role="tablist">
+                <div class="nav-item me-2" role="presentation " v-for="(item, index) in store.grpList" :key="item.grStGrpNo">
+                  <div class="nav-link btn btn-sm btn-white   px-2"  :class="{ active: index == 0 }"  data-bs-toggle="tab" aria-selected="false" role="tab" @click="selectGrpList(item.grStGrpNo)">{{ item.grpName }}</div>
+                </div>
+              </div>
+            </div>
+            <button class="grp-btn next" @click="scrollGrp(1)" >›</button>
+          </div>
+<!--          <div class="nav nav-tabs nav-tabs-v2 border-bottom-0 " role="tablist">
+            <div class="nav-item me-2" role="presentation "><div class="nav-link btn btn-sm btn-white   px-2"  aria-selected="false" role="tab" disabled="">상품그룹 :</div></div>
             <div class="nav-item me-2" role="presentation " v-for="(item, index) in store.grpList" :key="item.grStGrpNo">
               <div class="nav-link btn btn-sm btn-white   px-2"  :class="{ active: index == 0 }"  data-bs-toggle="tab" aria-selected="false" role="tab" @click="selectGrpList(item.grStGrpNo)">{{ item.grpName }}</div>
             </div>
-          </div>
+          </div>-->
          <div class="nav nav-tabs nav-tabs-v2 border-bottom-0" role="tablist">
+           <div class="nav-item me-2" role="presentation">
+             <div class="nav-link btn btn-sm btn-white px-2 " disabled>{{ checkedItems.length }} 개 이미지 선택</div>
+           </div>
             <button type="button" class="btn btn-sm btn-gray" @click="deleteImage" ><i class="far fa-lg fa-fw me-10px fa-circle-xmark ms-n1"></i> 선택 이미지 삭제</button>
           </div>
         </div>
@@ -232,7 +248,7 @@
 	<!-- END panel -->
 </template>
 <script setup lang="ts">
-import {ref, computed, watch, onBeforeMount} from 'vue'
+import {ref, computed, watch, onBeforeMount, nextTick} from 'vue'
 import {useRestaurantStore} from "@/stores/restaurant/useRestaurantStore";
 import Pagenation from "@/components/common/Pagenation.vue";
 import FormMultipleImage from "@/components/form/FormMultipleImage.vue";
@@ -406,6 +422,37 @@ async function handleFileChangeSystem(e: Event, item: any) {
   target.value = ""
 }
 
+
+const grpTabsContainer = ref<HTMLElement | null>(null)
+
+function scrollGrp(direction: number) {
+  if (!grpTabsContainer.value) return
+  const scrollAmount = grpTabsContainer.value.clientWidth * 0.5 // 반 너비 정도 이동
+  grpTabsContainer.value.scrollBy({ left: scrollAmount * direction, behavior: 'smooth' })
+}
+
+// 탭이 바뀔 때 활성 탭이 보이도록 포커스 맞추기
+watch(selectGrStGrpNo, (newVal) => {
+  // 약간의 delay 혹은 nextTick 필요할 수 있음
+  nextTick(() => {
+    const activeEl = grpTabsContainer.value?.querySelector('.nav-link.active')
+    if (activeEl && grpTabsContainer.value) {
+      const el = activeEl as HTMLElement
+      const container = grpTabsContainer.value
+      const elLeft = el.offsetLeft
+      const elRight = elLeft + el.offsetWidth
+      const contLeft = container.scrollLeft
+      const contRight = contLeft + container.clientWidth
+
+      if (elLeft < contLeft) {
+        container.scrollTo({ left: elLeft, behavior: 'smooth' })
+      } else if (elRight > contRight) {
+        container.scrollTo({ left: elRight - container.clientWidth, behavior: 'smooth' })
+      }
+    }
+  })
+})
+
 </script>
 <style scoped>
 .borde-radius-0 {
@@ -545,4 +592,49 @@ async function handleFileChangeSystem(e: Event, item: any) {
   max-height: 500px; /* 전체 높이 */
 }
 
+
+
+.grp-tabs-wrapper {
+  display: flex;
+  align-items: center;
+  width: 80%;
+}
+
+.grp-tabs-container {
+  overflow-x: auto;
+  flex: 1;
+  scrollbar-width: none;
+}
+.grp-tabs-container::-webkit-scrollbar {
+  display: none;
+}
+
+/* ✨ 이게 핵심! 탭들이 절대 줄바꿈되지 않음 */
+.grp-tabs-container .nav {
+  white-space: nowrap;
+}
+
+.grp-btn {
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  margin-bottom: 5px;
+  width: 25px;
+  height: 40px;
+  cursor: pointer;
+}
+
+.nav {
+  --bs-nav-link-padding-x: 1rem;
+  --bs-nav-link-padding-y: 0.5rem;
+  --bs-nav-link-font-weight: 600;
+  --bs-nav-link-color: rgba(var(--app-component-color-rgb), 0.5);
+  --bs-nav-link-hover-color: var(--app-component-color);
+  --bs-nav-link-disabled-color: #ced4da;
+  display: flex;
+  flex-wrap: nowrap;
+  padding-left: 0;
+  margin-bottom: 0;
+  list-style: none;
+}
 </style>

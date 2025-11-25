@@ -94,13 +94,11 @@ export const useRestaurantStore = defineStore('useRestaurantStore', {
 				'개의 데이터를 삭제하시겠습니까?';
 			await useCallDeleteMsgAPI(() => restaurantAPI.deleteImage(grStGoodsNoList),message, callback, );
 		},
-		async rebaseUpload(callback: Function) {
-			const params = null;
-			await useCallUploadAPI(()=> restaurantAPI.rebaseUpload(params),callback);
+		async rebaseUpload(grStNoList: any,callback: Function) {
+			await useCallUploadAPI(()=> restaurantAPI.rebaseUpload(grStNoList),callback);
 		},
-		async usageUpload(callback: Function) {
-			const params = null;
-			await useCallUploadAPI(()=> restaurantAPI.rebaseUpload(params),callback);
+		async usageUpload(grStNoList: any,callback: Function) {
+			await useCallUploadAPI(()=> restaurantAPI.usageUpload(grStNoList),callback);
 		},
 
 		async updateStCodeAPI(params: any, callback): Promise<void> | null {
