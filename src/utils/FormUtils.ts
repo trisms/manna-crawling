@@ -269,7 +269,7 @@ export const useCallUploadAPI = async (
 						window.$emitter.emit('success', '업로드에 성공하였습니다.');
 						callback(res);
 					} else {
-						window.$emitter.emit('success', res.response.data.message)
+						window.$emitter.emit('success', res.response.data.MSG)
 					}
 				} catch (e) {
 					console.error('useCallUpdateAPI Error: ', e);
