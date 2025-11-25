@@ -108,8 +108,8 @@
               <th>주문앱</th>
               <th>주소</th>
               <th>상품수</th>
-              <th>등록일</th>
-              <th>DB 생성일</th>
+              <th>수집일</th>
+              <th>DB 등록일</th>
               <th>가맹점코드</th>
             </tr>
             </thead>

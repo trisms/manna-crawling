@@ -4,7 +4,7 @@ import {
 	useCallDeleteAPI,
 	useCallDeleteMsgAPI,
 	useCallUpdateAPI,
-	useCallUpdateDirectAPI,
+	useCallUpdateDirectAPI, useCallUploadAPI,
 	validateForm
 } from '@/utils/FormUtils';
 import { authAPI } from '@/api/auth/auth'
@@ -13,6 +13,7 @@ import {isBlank} from "@/utils/ValidateUtils";
 import {SearchParams} from "@/dto/restaurant/SearchParams";
 import { ref, unref} from "vue";
 import algorithm = _default.defaults.algorithm;
+import {callback} from "chart.js/helpers";
 export const useRestaurantStore = defineStore('useRestaurantStore', {
 	state: () => ({
 		items: ref([]),
@@ -93,6 +94,15 @@ export const useRestaurantStore = defineStore('useRestaurantStore', {
 				'개의 데이터를 삭제하시겠습니까?';
 			await useCallDeleteMsgAPI(() => restaurantAPI.deleteImage(grStGoodsNoList),message, callback, );
 		},
+		async rebaseUpload(callback: Function) {
+			const params = null;
+			await useCallUploadAPI(()=> restaurantAPI.rebaseUpload(params),callback);
+		},
+		async usageUpload(callback: Function) {
+			const params = null;
+			await useCallUploadAPI(()=> restaurantAPI.rebaseUpload(params),callback);
+		},
+
 		async updateStCodeAPI(params: any, callback): Promise<void> | null {
 			const res = await useCallUpdateDirectAPI(() => restaurantAPI.updateStCode(params), callback);
 			if (res) {
@@ -108,19 +118,32 @@ export const useRestaurantStore = defineStore('useRestaurantStore', {
 		},
 
 		async calluploadImgAPI(form: FormData | HTMLFormElement, query ,callback: Function) {
-
-				window.$emitter.emit('confirm', {
-					message: '등록하시겠습니까?',
-					callback: async () => {
-						if (form) {
-							const res = await useCallAPI(() => restaurantAPI.upload(form,query));
-							if (res) {
-								window.$emitter.emit('success', '이미지 등록이 완료되었습니다.');
-								callback();
-							}
+			window.$emitter.emit('confirm', {
+				message: '등록하시겠습니까?',
+				callback: async () => {
+					if (form) {
+						const res = await useCallAPI(() => restaurantAPI.upload(form,query));
+						if (res) {
+							window.$emitter.emit('success', '이미지 등록이 완료되었습니다.');
+							callback();
 						}
-					},
-				});
+					}
+				},
+			});
+		},
+		async calluploadSystemImgAPI(form: FormData | HTMLFormElement, query ,callback: Function) {
+			window.$emitter.emit('confirm', {
+				message: '등록하시겠습니까?',
+				callback: async () => {
+					if (form) {
+						const res = await useCallAPI(() => restaurantAPI.uploadSystem(form,query));
+						if (res) {
+							window.$emitter.emit('success', '이미지 등록이 완료되었습니다.');
+							callback();
+						}
+					}
+				},
+			});
 		},
 	},
 });
