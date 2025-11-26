@@ -11,6 +11,7 @@ export const restaurantAPI = {
 	async regionList() {
 		return await getApiCall().get(getV1(`/store/region/list`));
 	},
+
 	async detail(grStNo: number | string) {
 		return await getApiCall().get(getV1(`/store/${grStNo}`));
 	},
@@ -43,5 +44,15 @@ export const restaurantAPI = {
 	},
 	async uploadSystem(params: any,query : any) {
 		return await getApiCall().post(getV1(`/store/img?dest=${query.dest}&grStGoodsNo=${query.grStGoodsNo}`), params);
+	},
+
+	async systemImgFrList(params: any) {
+		return await getJigBaeApiCall().get(getBoardV1(`/system/fr/image-list`), params);
+	},
+	async systemImgCommonList(params: any) {
+		return await getJigBaeApiCall().get(getBoardV1(`/system/common/image-list`), params);
+	},
+	async systemImgCateList(params: any) {
+		return await getJigBaeApiCall().get(getBoardV1(`/system/image-code`), params);
 	},
 };

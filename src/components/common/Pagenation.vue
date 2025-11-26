@@ -1,16 +1,24 @@
 <template>
   <div class="d-md-flex align-items-center">
-    <div class="me-md-auto text-md-left text-center mb-2 mb-md-0">
+    <div class="me-md-auto text-md-left text-center mb-2 mb-md-0" v-if="!isShowLeft">
       Showing {{ start }} to {{ end }} of {{ total }} entries
+<!--      전체 {{ total }} 중 {{ start }} ~ {{ end }}-->
     </div>
 
     <ul class="pagination mb-0 justify-content-center">
       <li
           class="page-item"
           :class="{ disabled: modelValue === 1 }"
+          @click="change(1)"
+      >
+        <a class="page-link" href="javascript:void(0)"><<</a>
+      </li>
+      <li
+          class="page-item"
+          :class="{ disabled: modelValue === 1 }"
           @click="change(modelValue - 1)"
       >
-        <a class="page-link" href="javascript:void(0)">Previous</a>
+        <a class="page-link" href="javascript:void(0)"><</a>
       </li>
 
       <li
@@ -30,7 +38,14 @@
           :class="{ disabled: modelValue === totalPages }"
           @click="change(modelValue + 1)"
       >
-        <a class="page-link" href="javascript:void(0)">Next</a>
+        <a class="page-link" href="javascript:void(0)">></a>
+      </li>
+      <li
+          class="page-item"
+          :class="{ disabled: modelValue === totalPages }"
+          @click="change(totalPages)"
+      >
+        <a class="page-link" href="javascript:void(0)">>></a>
       </li>
     </ul>
   </div>
@@ -43,6 +58,7 @@ interface Props {
   modelValue: number
   total: number
   perPage: number
+  isShowLeft?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {

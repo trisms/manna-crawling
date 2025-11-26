@@ -1,5 +1,17 @@
 import { type AxiosInstance, type AxiosResponse } from 'axios';
 import { parseISOStrToyyyyMMddHHmmss } from '@/utils/DateUtils';
+import type AxiosRequestConfigExtends from "@/types/api/AxiosRequestConfigExtends";
+
+
+let authStore;
+if (import.meta.env.VITE_APP_PORT === '9002') {
+	(async () => {
+		const module = await import('/src/stores/auth/useAuthStore');
+		const { useAuthStore } = module;
+
+		authStore = useAuthStore();
+	})();
+}
 
 function convertIsoDates(obj: any) {
 	const isoRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.000Z$/;
@@ -39,7 +51,7 @@ export function setInterceptors(instance: AxiosInstance, isRequireAuth?: boolean
 			return response;
 		},
 		async (error) => {
-			/*if (!('response' in error)) {
+			if (!('response' in error)) {
 				return Promise.reject(error);
 			}
 
@@ -47,11 +59,10 @@ export function setInterceptors(instance: AxiosInstance, isRequireAuth?: boolean
 				config, //request 객체
 				response: { status }, //httpStatusCode
 			}: { config: AxiosRequestConfigExtends; response: AxiosResponse } = error;
-
-			//UnAuthorized(401에러만 핸들링)
-			if (status === 401 && config.baseURL.includes('w-api')) {
+			if (status === 401) {
 				// 로그인 API 또는 계정 리스트 API 호출 시 401발생하면 여기서 에러 핸들링.
-				if (config.url.includes('login') || config.url.includes('system/users/list')) {
+				if (config.url.includes('login')) {
+
 					if (error.response.data.msg) {
 						await window.Swal.fire({
 							icon: 'error',
@@ -69,6 +80,7 @@ export function setInterceptors(instance: AxiosInstance, isRequireAuth?: boolean
 					}
 					return;
 				} else {
+
 					// 이외 API에서 401발생하면 여기서 에러 핸들링.
 					const { isConfirmed } = await window.Swal.fire({
 						icon: 'error',
@@ -82,7 +94,7 @@ export function setInterceptors(instance: AxiosInstance, isRequireAuth?: boolean
 						return;
 					}
 				}
-			}*/
+			}
 			//401 외 에러는 return하여 CheckAxiosError.ts에서 에러 처리
 			return Promise.reject(error);
 		},
