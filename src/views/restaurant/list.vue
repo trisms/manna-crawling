@@ -158,6 +158,9 @@
             :perPage="itemsPerPage"
         />
       </div>
+<!--      <div v-if="isLoading" class="loading-overlay">
+        <div class="spinner-border text-primary" role="status"></div>
+      </div>-->
     </panel-body>
   </panel>
 </template>
@@ -173,6 +176,7 @@ import { toast } from 'vue3-toastify';
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import {useRouter} from "vue-router";
+import {useAppLoadingStore} from "@/stores/useAppLoadingStore";
 const date = ref<Date | null>(null);
 const store = useRestaurantStore();
 const list = ref([]);
@@ -194,7 +198,7 @@ const options = {
   theme: 'auto',
   // and so on ...
 }
-
+const isLoading = useAppLoadingStore();
 const allChecked = ref(false);
 // 모든 체크박스 상태
 const checkedItems = ref<string[]>([]); // grStNo를 기준으로 체크 상태 관리
@@ -223,7 +227,7 @@ function toggleItem(grStNo: string) {
 
 
 
-const currentPage = ref(1)
+const currentPage = ref(1);
 const itemsPerPage = 10
 const getAppName = (appType: string | number) => {
   if (appType === '1' || appType === 1) return '배민';
@@ -273,17 +277,25 @@ const search = async () => {
 
 //기존상품유지후 추가업로드
 const rebaseUplode = async () => {
-  await store.rebaseUpload({grStNoList: checkedItems.value},()=> {
-    search();
-  });
-
-}
+  try {
+    await store.rebaseUpload({ grStNoList: checkedItems.value }, () => {
+      search();
+    });
+  } finally {
+    /*isLoading.value = false; // 로딩 종료*/
+  }
+};
 
 //기존상품삭제후 신규업로드
 const usageUpload = async () => {
-  await store.usageUpload({grStNoList: checkedItems.value},()=>{
-    search();
-  })
+  try {
+    await store.usageUpload({grStNoList: checkedItems.value},()=>{
+      search();
+
+    });
+  } finally {
+    i/*sLoading.value = false; // 로딩 종료*/
+  }
 }
 
 const updateStCode =  async (grStNo: number , stCode: string) => {
@@ -332,5 +344,18 @@ function goToDetail(grStNo: string | number) {
 <style scoped>
 .input-group .btn {
   z-index: unset;
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
 }
 </style>

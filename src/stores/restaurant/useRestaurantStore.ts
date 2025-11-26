@@ -18,9 +18,39 @@ export const useRestaurantStore = defineStore('useRestaurantStore', {
 	state: () => ({
 		items: ref([]),
 		grpItems: [],
-		sidoList: [],
 		selectSido: String,
+		sidoList: [],
 		sigunList: [],
+
+		selectFrList: [{}],
+		selectSyCode: 'NM',
+		selectGrStGoodsNo: String,
+		selectGoodsTypeCd: String,
+		parentDtCodeList: [{dtCode : '' , dtName : '상품분류'}],
+		dtCodeList: [{dtCode : '' , dtName : '상품구분'}],
+		systemImgList: [],
+		systemImgCodeParam:{
+			syCode:'',
+			dtCode:null
+		},
+		systemFrImgCodeParam:{
+			syCode:'',
+		},
+		systemImgSearchParams: {
+			pageNo: 1,
+			pageSize: 10,
+			parentDtCode: '',
+			dtCode: '',
+			findType: '1',
+			findVal:'',
+		},
+		systemFrImgSearchParams: {
+			pageNo: 1,
+			pageSize: 10,
+			frDtCode:'',
+			findType: '1',
+			findVal:'',
+		},
 		form: {},
 		mutableImage: {
 			imageNo: null,
@@ -80,6 +110,8 @@ export const useRestaurantStore = defineStore('useRestaurantStore', {
 				this.sigunList.unshift({sidoType: 'A2', sigunCode : '', addrName : '시/군/구'})
 			}
 		},
+
+
 		async deleteCodeAPI(grStNoList : any, callback: Function) {
 			const message =
 				'<h3>DB삭제시 복구가 불가능합니다 </h3>' +
@@ -142,6 +174,50 @@ export const useRestaurantStore = defineStore('useRestaurantStore', {
 					}
 				},
 			});
+		},
+
+		async callSystemImgList() {
+			this.systemImgList = [];
+			let res = null;
+			if(String(this.selectSyCode) === "FR"){
+				const systemFrImgSearchParams = { ...this.systemFrImgSearchParams };
+				systemFrImgSearchParams.frDtCode = this.systemFrImgCodeParam.syCode
+				res = await useCallAPI(() => restaurantAPI.systemImgFrList(systemFrImgSearchParams));
+			} else {
+				const systemImgSearchParams = { ...this.systemImgSearchParams };
+				systemImgSearchParams.parentDtCode = this.systemImgCodeParam.syCode;
+				systemImgSearchParams.dtCode = this.systemImgCodeParam.dtCode;
+				res = await useCallAPI(() => restaurantAPI.systemImgCommonList(systemImgSearchParams));
+
+			}
+			if (res) {
+
+				this.systemImgList = res.data.DATA.list;
+			} else {
+				this.systemImgList = [];
+			}
+		},
+		async callSystemImgCateList(type : string) {
+			const systemImgCodeParam = { ...this.systemImgCodeParam };
+
+			let res = null;
+
+			if(type === 'FR') {
+				res = await useCallAPI(() => restaurantAPI.systemImgCateList({syCode : 'FT'}));
+				this.selectFrList = res.data.DATA;
+			}
+			if(type === 'NM') {
+				res = await useCallAPI(() => restaurantAPI.systemImgCateList({syCode : 'G1'}));
+				this.parentDtCodeList = res.data.DATA;
+				this.parentDtCodeList.unshift({dtCode : '' , dtName : '상품분류'})
+			}
+			if(type === 'G2') {
+				console.log(this.systemImgCodeParam)
+				res = await useCallAPI(() => restaurantAPI.systemImgCateList({syCode : 'G2', parentSyCode: 'G1', parentDtCode: systemImgCodeParam.syCode}));
+				this.dtCodeList = res.data.DATA;
+				this.dtCodeList.unshift({dtCode : '' , dtName : '상품구분'})
+			}
+
 		},
 	},
 });

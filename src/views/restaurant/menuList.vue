@@ -5,7 +5,10 @@
       <div class="card border-0">
         <div class="note  mb-0 border ">
           <div class="note-content ">
-            <h4> <i class="fa fa-info-circle fa-fw"></i> <b>가맹점 정보</b> - ( {{ store.form.stName }} ) </h4>
+            <h4 class="d-flex justify-content-between">
+              <p><i class="fa fa-info-circle fa-fw"></i> <b>가맹점 정보</b> - ( {{ store.form.stName }} ) </p>
+                <button type="button" class="btn btn-sm btn-white border" @click="router.push('/restaurant/')"><i class="fa fa-arrow-alt-circle-right"></i> 목록으로</button>
+            </h4>
             <div class="card-group">
               <!-- BEGIN card -->
               <!-- END card -->
@@ -196,15 +199,8 @@
                   <td class="align-middle text-ellipsis">{{ item.goodsMemo}}</td>
                   <td class="align-middle">{{ item.goodsMappCnt}} 개</td>
                   <td class="align-middle">
-                    <input
-                        type="file"
-                        ref="fileInputs"
-                        class="d-none"
-                        accept="image/*"
-                        @change="handleFileChange($event, item)"
-                    />
                     <button type="button" class="btn btn-sm btn-white"
-                            @click="triggerFileInput($event)"
+                            @click="selectSystemImg(item.grStGoodsNo)"
                     >
                       <i class="fa fa-fw fa-check ms-n1"></i> 이미지 선택</button>
                   </td>
@@ -240,6 +236,12 @@
       </div>
 		</panel-body>
 	</panel>
+  <SystemImgModal
+      v-if="showSystemImgModal"
+      :fetch-list="fetchSystemImages"
+      @close="showSystemImgModal = false"
+      @select="onSelectSystemImage"
+  />
   <div v-if="showImageModal" class="image-modal-backdrop" @click="closeImageModal">
     <div class="image-modal-content" @click.stop>
       <img :src="modalImageSrc || noImg" alt="이미지 확대" />
@@ -254,15 +256,23 @@ import {useRestaurantStore} from "@/stores/restaurant/useRestaurantStore";
 import Pagenation from "@/components/common/Pagenation.vue";
 import FormMultipleImage from "@/components/form/FormMultipleImage.vue";
 import noImg from '@/assets/img/noimg.gif';
+import {useRouter} from "vue-router";
+import SystemImgModal from "@/views/restaurant/SystemImgModal.vue";
 const store = useRestaurantStore();
 const selectGrStGrpNo = ref(1);
 onBeforeMount(()=>  {
   if( store.grpList){
     selectGrStGrpNo.value = store.grpList[0].grStGrpNo;
   }
-})
-const isAppMemoExpanded = ref(false)
-const isWorkTimeExpanded = ref(false)
+});
+const router = useRouter();
+const isAppMemoExpanded = ref(false);
+const isWorkTimeExpanded = ref(false);
+
+const showSystemImgModal = ref(false);
+const currentTargetItem = ref<any>(null);
+
+
 
 // 모든 체크박스 상태
 const checkedItems = ref<string[]>([]); // grStNo를 기준으로 체크 상태 관리
@@ -453,6 +463,48 @@ watch(selectGrStGrpNo, (newVal) => {
     }
   })
 })
+
+
+
+
+//모달팝업 페이징
+
+async function fetchSystemImages({ page, size, search }) {
+  const res = await store.callSystemImgList({
+    page,
+    size,
+  });
+
+  return {
+    list: res.data,       // [{ id, thumb, full }]
+    totalCount: res.total // 전체 개수
+  };
+}
+
+
+const systemImages = ref([
+  { id: 1, thumb: "/sys/img1_thumb.jpg", full: "/sys/img1.jpg" },
+  { id: 2, thumb: "/sys/img2_thumb.jpg", full: "/sys/img2.jpg" },
+  // 여기에 실제 API로 받아도 됨
+]);
+
+function selectSystemImg(grStGoodsNo: any) {
+  store.selectGrStGoodsNo = grStGoodsNo;
+  showSystemImgModal.value = true;
+}
+
+function onSelectSystemImage(img: any) {
+  showSystemImgModal.value = false;
+
+  // 🚀 실제 API 호출
+  store.calluploadSystemImgAPI(
+      { fullImagePath: img.full },
+      { dest: "goods", grStGoodsNo: currentTargetItem.value.grStGoodsNo },
+      () => {
+        store.callGrpListAPI(store.form.grStNo, selectGrStGrpNo.value, () => {});
+      }
+  );
+}
 
 </script>
 <style scoped>

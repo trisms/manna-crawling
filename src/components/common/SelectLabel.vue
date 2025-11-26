@@ -69,6 +69,9 @@ const normalizedOptions = computed(() =>
       if (o.sidoType === "A2") {
         return { value: o.sigunCode, label: o.addrName };
       }
+      if (o.dtName) {
+        return { value: o.dtCode, label: o.dtName };
+      }
       return { value: o.value, label: o.label };
     })
 );
@@ -84,5 +87,6 @@ const selectedLabel = computed(() => {
 .label-custom {
   padding-left: 5px;
   padding-right: 5px;
+  height: 34px;
 }
 </style>
