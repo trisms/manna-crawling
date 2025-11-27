@@ -24,12 +24,8 @@ export const isAxiosError = (res: AxiosResponse | AxiosError<any>) => {
 				errorAlert('네트워크 연결 에러!');
 				return true;
 			case BAD_REQUEST:
-				if (
-					res.response.data &&
-					typeof res.response.data === 'object' &&
-					'msg' in res.response.data
-				) {
-					errorAlert(res.response.data.msg);
+				if (res.response.data && typeof res.response.data === 'object' && 'message' in res.response.data) {
+					errorAlert(res.response.data.message);
 				} else {
 					errorAlert();
 				}

@@ -1,17 +1,7 @@
 import { type AxiosInstance, type AxiosResponse } from 'axios';
 import { parseISOStrToyyyyMMddHHmmss } from '@/utils/DateUtils';
-import type AxiosRequestConfigExtends from "@/types/api/AxiosRequestConfigExtends";
-
-
-let authStore;
-if (import.meta.env.VITE_APP_PORT === '9002') {
-	(async () => {
-		const module = await import('/src/stores/auth/useAuthStore');
-		const { useAuthStore } = module;
-
-		authStore = useAuthStore();
-	})();
-}
+import type AxiosRequestConfigExtends from '@/types/api/AxiosRequestConfigExtends';
+import { useAuthStore } from '@/stores/auth/useAuthStore';
 
 function convertIsoDates(obj: any) {
 	const isoRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.000Z$/;
@@ -62,11 +52,10 @@ export function setInterceptors(instance: AxiosInstance, isRequireAuth?: boolean
 			if (status === 401) {
 				// 로그인 API 또는 계정 리스트 API 호출 시 401발생하면 여기서 에러 핸들링.
 				if (config.url.includes('login')) {
-
-					if (error.response.data.msg) {
+					if (error.response.data.message) {
 						await window.Swal.fire({
 							icon: 'error',
-							text: error.response.data.msg,
+							text: error.response.data.message,
 							showCancelButton: false,
 							confirmButtonText: '확인',
 						});
@@ -80,7 +69,6 @@ export function setInterceptors(instance: AxiosInstance, isRequireAuth?: boolean
 					}
 					return;
 				} else {
-
 					// 이외 API에서 401발생하면 여기서 에러 핸들링.
 					const { isConfirmed } = await window.Swal.fire({
 						icon: 'error',
@@ -89,7 +77,8 @@ export function setInterceptors(instance: AxiosInstance, isRequireAuth?: boolean
 						confirmButtonText: '확인',
 					});
 					if (isConfirmed) {
-						authStore.logout();
+						const store = useAuthStore();
+						store.logout();
 						location.reload();
 						return;
 					}
