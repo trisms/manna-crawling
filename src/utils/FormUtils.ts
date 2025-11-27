@@ -50,8 +50,7 @@ export const validateForm = async (form: Ref<HTMLFormElement> | HTMLFormElement)
 };
 
 export const validatePassword = (password: string, passwordChk: string) => {
-	const passwordRegex =
-		/^(?![A-Za-z]+$)(?!\d+$)(?![!@#$%^&*(),.?":{}|<>]+$)[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$/;
+	const passwordRegex = /^(?![A-Za-z]+$)(?!\d+$)(?![!@#$%^&*(),.?":{}|<>]+$)[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$/;
 
 	if (isNotBlank(password)) {
 		if (isBlank(passwordChk)) {
@@ -59,10 +58,7 @@ export const validatePassword = (password: string, passwordChk: string) => {
 			return false;
 		}
 		if (!passwordRegex.test(password)) {
-			window.$emitter.emit(
-				'warning',
-				'비밀번호는 영문/숫자/특수문자 중 2가지 이상의 조합으로 최소 8자리로 생성하세요.',
-			);
+			window.$emitter.emit('warning', '비밀번호는 영문/숫자/특수문자 중 2가지 이상의 조합으로 최소 8자리로 생성하세요.');
 			return false;
 		}
 
@@ -86,10 +82,6 @@ export const useCallAPI = async (api: Function): Promise<AxiosResponse<any> | nu
 		}*/
 		if (validateAPIResult(res)) {
 			return res;
-		} else {
-			if(res.response){
-				window.$emitter.emit('success', res.response.data.message)
-			}
 		}
 	} catch (e) {
 		console.error('useCallAPI Error: ', e);
@@ -125,8 +117,8 @@ export const useCallInsertAPI = async (
 							await callback();
 						}
 					} else {
-						if(res.response){
-							window.$emitter.emit('success', res.response.data.message)
+						if (res.response) {
+							window.$emitter.emit('success', res.response.data.message);
 						}
 					}
 				} catch (e) {
@@ -190,8 +182,6 @@ export const useCallUpdateDirectAPI = async (
 			if (validateAPIResult(res)) {
 				/*window.$emitter.emit('success', '수정이 완료되었습니다.');*/
 				callback(res);
-			} else {
-					window.$emitter.emit('success', res.response.data.message)
 			}
 		} catch (e) {
 			console.error('useCallUpdateAPI Error: ', e);
@@ -227,7 +217,7 @@ export const useCallDeleteAPI = async (api: Function, callback: Function): Promi
 };
 
 //삭제할 때 사용하는 composable 메시지 변경버전
-export const useCallDeleteMsgAPI = async (api: Function,message: string, callback: Function): Promise<void> => {
+export const useCallDeleteMsgAPI = async (api: Function, message: string, callback: Function): Promise<void> => {
 	window.$emitter.emit('confirm', {
 		message: message,
 		callback: async () => {
@@ -247,7 +237,6 @@ export const useCallDeleteMsgAPI = async (api: Function,message: string, callbac
 		},
 	});
 };
-
 
 //업로드용할 때 사용하는 composable
 export const useCallUploadAPI = async (
@@ -269,7 +258,7 @@ export const useCallUploadAPI = async (
 						window.$emitter.emit('success', '업로드에 성공하였습니다.');
 						callback(res);
 					} else {
-						window.$emitter.emit('success', res.response.data.MSG)
+						window.$emitter.emit('success', res.response.data.MSG);
 					}
 				} catch (e) {
 					console.error('useCallUpdateAPI Error: ', e);

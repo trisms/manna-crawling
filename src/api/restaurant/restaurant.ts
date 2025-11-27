@@ -1,11 +1,11 @@
-import {getApiCall, getJigBaeApiCall, getNoAuthApiCall} from '@/api/services';
-import {getBoardV1, getV1} from '@/utils/api/ApiPath';
+import { getApiCall, getJigBaeApiCall, getNoAuthApiCall } from '@/api/services';
+import { getBoardV1, getV1 } from '@/utils/api/ApiPath';
 
 export const restaurantAPI = {
 	async list(params: any) {
 		return await getApiCall().get(getV1(`/store/list`), params);
 	},
-	async grpList(grStNo: number | string ,params: any) {
+	async grpList(grStNo: number | string, params: any) {
 		return await getApiCall().get(getV1(`/store/${grStNo}/grp`), params);
 	},
 	async regionList() {
@@ -39,11 +39,11 @@ export const restaurantAPI = {
 	async deleteImage(grStGoodsNoList: any) {
 		return await getApiCall().delete(getV1(`/store/img`), grStGoodsNoList);
 	},
-	async upload(params: any,query : any) {
+	async upload(params: any, query: any) {
 		return await getApiCall().post(getV1(`/store/img?dest=${query.dest}&grStGoodsNo=${query.grStGoodsNo}`), params);
 	},
-	async uploadSystem(params: any,query : any) {
-		return await getApiCall().post(getV1(`/store/img?dest=${query.dest}&grStGoodsNo=${query.grStGoodsNo}`), params);
+	async uploadSystem(params: any) {
+		return await getApiCall().post(getV1('/store/system/img'), params);
 	},
 
 	async systemImgFrList(params: any) {

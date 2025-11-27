@@ -40,7 +40,8 @@ const title = useTitle();
 watch(
     () => route.path,
     () => {
-      title.value = route.meta.title ? `DUA | ${route.meta.title}` : '';
+      // title.value = route.meta.title ? `DUA | ${route.meta.title}` : '';
+      title.value = 'DUA';
     },
 );
 

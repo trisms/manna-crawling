@@ -12,6 +12,7 @@ import '@fortawesome/fontawesome-free/scss/brands.scss';
 import '@fortawesome/fontawesome-free/scss/v4-shims.scss';
 import 'bootstrap';
 import './scss/vue.scss';
+import VueAwesomePaginate from 'vue-awesome-paginate';
 
 import App from './App.vue';
 import router from './router';
@@ -24,12 +25,12 @@ import PanelTitle from '@/components/bootstrap/PanelTitle.vue';
 import PanelFooter from '@/components/bootstrap/PanelFooter.vue';
 import PanelToolbar from '@/components/bootstrap/PanelToolbar.vue';
 
-
 import VCalendar from 'v-calendar';
 import 'v-calendar/dist/style.css';
-window.Swal = Swal;
 const emitter = mitt();
 const app = createApp(App);
+
+window.Swal = Swal;
 
 app.component('Panel', Panel);
 app.component('PanelBody', PanelBody);
@@ -43,6 +44,7 @@ app.use(router);
 app.use(Vue3ProgressPlugin);
 app.use(PerfectScrollbarPlugin);
 app.use(VCalendar);
+app.use(VueAwesomePaginate); //pagination plugin
 
 app.provide('emitter', emitter);
 app.config.globalProperties.$emitter = emitter;
