@@ -48,7 +48,9 @@
 					:options="[
 						{ label: 'DB등록여부', value: '' },
 						{ label: '미등록', value: '1' },
-						{ label: '등록', value: '2' },
+						{ label: '등록완료', value: '2' },
+						{ label: '진행중', value: '3' },
+						{ label: '등록실패', value: '4' },
 					]"
 				/>
 				<div class="col-lg-1"></div>
