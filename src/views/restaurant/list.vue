@@ -12,7 +12,7 @@
 							:enable-time-picker="false"
 							placeholder="DB생성기간 (시작일)"
 						/>
-						<span class="ms-2">~</span>
+						<span class="ms-1 me-1">~</span>
 						<VueDatePicker
 							v-model="store.searchParams.endDate"
 							format="yyyy-MM-dd"
@@ -53,14 +53,15 @@
 						{ label: '등록실패', value: '4' },
 					]"
 				/>
-				<div class="col-lg-1"></div>
-				<div class="col-lg-3 d-flex">
+				<div class="col-lg-1" style="width: 40px"></div>
+				<div class="col-lg-3 d-flex justify-content-end" style="width: 30%">
 					<div class="input-group">
-						<select class="form-select w-25" v-model="store.searchParams.searchType">
+						<select class="form-select" v-model="store.searchParams.searchType">
 							<option value="">전체</option>
 							<option value="bizName">사업자상호</option>
 							<option value="bizNum">사업자번호</option>
 							<option value="stName">등록상호</option>
+							<option value="stCode">가맹점코드</option>
 						</select>
 						<a href="#" class="btn btn-white d-flex align-items-center w-75 p-0" aria-expanded="false">
 							<i class="fa-lg fa-fw me-10px fa fa-search me-10px ms-2 text-opacity-50"></i>
@@ -70,6 +71,7 @@
 									class="form-control bg-light border-0"
 									v-model="store.searchParams.keyword"
 									placeholder="검색어를 입력해주세요."
+									@keypress.enter="search"
 								/>
 								<button type="button" class="btn btn-sm btn-white border-0" @click="search">
 									<i class="fa fa-fw fa-search ms-n1"></i> 검색
@@ -108,7 +110,7 @@
 			<!-- 테이블 -->
 			<div class="card border-0">
 				<div class="table-responsive mb-3">
-					<table class="table table-hover table-panel text-nowrap align-middle mb-0" style="min-width: 1600px; overflow-x: auto">
+					<table class="table table-hover table-panel text-nowrap align-middle mb-0" style="min-width: 1700px; overflow-x: auto">
 						<thead>
 							<tr>
 								<th>
@@ -118,20 +120,20 @@
 									</div>
 								</th>
 								<th>음식점 코드</th>
-								<th>음식점 상호</th>
-								<th>음식점 사업자번호</th>
 								<th>음식점 앱 등록상호</th>
+								<th>음식점 사업자번호</th>
+								<th>사업자 상호</th>
 								<th>주문앱</th>
 								<th>주소</th>
 								<th>상품수</th>
 								<th>수집일</th>
 								<th>DB등록상태</th>
 								<th>DB 등록일</th>
-								<th>가맹점코드</th>
+								<th style="min-width: 250px; max-width: 250px">가맹점코드</th>
 							</tr>
 						</thead>
 						<tbody>
-							<tr v-for="item in store.items" :key="item.grStNo" @click="goToDetail(item.grStNo)" style="cursor: pointer">
+							<tr v-for="item in paginatedData" :key="item.grStNo" @click="goToDetail(item.grStNo)" style="cursor: pointer">
 								<td class="w-10px align-middle" @click.stop="toggleItem(item.grStNo)">
 									<div class="form-check">
 										<input
@@ -150,7 +152,11 @@
 								<td>{{ item.bizName }}</td>
 								<td>
 									<span
-										class="badge border border-success text-success px-2 pt-5px pb-5px rounded fs-12px d-inline-flex align-items-center"
+										class="badge border px-2 pt-5px pb-5px rounded fs-12px d-inline-flex align-items-center"
+										:class="[
+											{ 'border-success text-success': item.appType === '1' },
+											{ 'border-danger text-danger': item.appType === '2' },
+										]"
 									>
 										<i class="fa fa-circle fs-9px fa-fw me-5px"></i> {{ getAppName(item.appType) }}
 									</span>
@@ -160,7 +166,7 @@
 								<td>{{ item.putDate }}</td>
 								<td>{{ convertDataStatus(item.dataStatus) }}</td>
 								<td>{{ item.modDate }}</td>
-								<td>
+								<td style="min-width: 250px; max-width: 250px">
 									<div class="input-group">
 										<input
 											type="text"
@@ -200,6 +206,7 @@ import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import { useRouter } from 'vue-router';
 import { useAppLoadingStore } from '@/stores/useAppLoadingStore';
+import { isBlank } from '@/utils/ValidateUtils';
 const date = ref<Date | null>(null);
 const store = useRestaurantStore();
 const list = ref([]);
@@ -249,7 +256,7 @@ function toggleItem(grStNo: string) {
 }
 
 const currentPage = ref(1);
-const itemsPerPage = 10;
+const itemsPerPage = 15;
 const getAppName = (appType: string | number) => {
 	if (appType === '1' || appType === 1) return '배민';
 	if (appType === '2' || appType === 2) return '쿠팡';
@@ -279,9 +286,18 @@ watch(
 	},
 );
 
-/*watch(() => filteredSigunList.value, () => {
-  console.log(filteredSigunList.value)
-});*/
+watch(
+	() => store.searchParams.startDate,
+	() => {
+		search();
+	},
+);
+watch(
+	() => store.searchParams.endDate,
+	() => {
+		search();
+	},
+);
 
 // ✅ 검색 적용
 function applySearch() {
@@ -294,28 +310,33 @@ const search = async () => {
 
 //기존상품유지후 추가업로드
 const rebaseUplode = async () => {
-	try {
-		await store.rebaseUpload({ grStNoList: checkedItems.value }, () => {
-			search();
-		});
-	} finally {
-		/*isLoading.value = false; // 로딩 종료*/
+	if (checkedItems.value.length === 0) {
+		window.$emitter.emit('warning', '가맹점을 한개 이상 선택해주세요.');
+		return;
 	}
+
+	await store.rebaseUpload({ grStNoList: checkedItems.value }, () => {
+		search();
+	});
 };
 
 //기존상품삭제후 신규업로드
 const usageUpload = async () => {
-	try {
-		await store.usageUpload({ grStNoList: checkedItems.value }, () => {
-			search();
-		});
-	} finally {
-		i; /*sLoading.value = false; // 로딩 종료*/
+	if (checkedItems.value.length === 0) {
+		window.$emitter.emit('warning', '가맹점을 한개 이상 선택해주세요.');
+		return;
 	}
+	await store.usageUpload({ grStNoList: checkedItems.value }, () => {
+		search();
+	});
 };
 
 const updateStCode = async (grStNo: number, stCode: string) => {
 	try {
+		if (isBlank(stCode)) {
+			window.$emitter.emit('warning', '가맹점 코드를 입력해주세요.');
+			return;
+		}
 		await store.updateStCodeAPI({ grStNo: grStNo, stCode: stCode }, () => {
 			toast.success(
 				'<div class="d-flex space-between flex-start">' +
@@ -347,7 +368,7 @@ const deleteCode = async () => {
 			search();
 		});
 	} else {
-		alert('삭제할 가맹점을 최소 1개 이상 선택해주세요.');
+		window.$emitter.emit('warning', '삭제할 가맹점을 최소 1개 이상 선택해주세요.');
 	}
 };
 
