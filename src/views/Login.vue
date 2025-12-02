@@ -1,26 +1,27 @@
 <script setup>
+import { onMounted, ref } from 'vue';
 import { useAppOptionStore } from '@/stores/app-option';
 import {useAuthStore} from "@/stores/auth/useAuthStore";
 import {useRouter} from "vue-router";
 import { isBlank } from '@/utils/ValidateUtils';
+
 const store = useAuthStore();
 const appOption = useAppOptionStore();
 const router = useRouter();
-/*onMounted() {
-  appOption.appSidebarHide = true;
-  appOption.appHeaderHide = true;
-  appOption.appTopMenu = false;
-  appOption.appContentClass = 'p-0';
-},
-beforeRouteLeave (to, from, next) {
-  appOption.appSidebarHide = false;
-  appOption.appHeaderHide = false;
-  appOption.appTopMenu = true;
-  appOption.appSidebarHide = true;
-  appOption.appContentClass = '';
-  next();
-},*/
 
+// 🔥 체크박스 v-model용
+const rememberMe = ref(false);
+
+// 🔥 페이지 진입 시 localStorage에서 ID 불러오기
+onMounted(() => {
+  const savedId = localStorage.getItem("savedId");
+  if (savedId) {
+    store.form.id = savedId;
+    rememberMe.value = true;  // 체크박스 자동 체크
+  }
+});
+
+// 🔥 폼 검사 & 로그인 실행
 const checkForm = async () => {
   if (isBlank(store.form.id)) {
     window.$emitter.emit('warning', 'ID를 입력하세요.');
@@ -30,11 +31,19 @@ const checkForm = async () => {
     return;
   }
 
+  // ✔ ID 저장 체크 시 localStorage 저장
+  if (rememberMe.value) {
+    localStorage.setItem("savedId", store.form.id);
+  } else {
+    localStorage.removeItem("savedId");
+  }
+
   await store.callLoginAPI(() => {
     router.replace('/restaurant');
   });
 };
 </script>
+
 <template>
 	<!-- BEGIN login -->
 	<div class="login login-v1">
@@ -76,11 +85,11 @@ const checkForm = async () => {
 							<label for="password" class="d-flex align-items-center py-0">Password</label>
 						</div>
 						<div class="form-check mb-20px">
-							<input class="form-check-input" type="checkbox" id="rememberMe"/>
-							<label class="form-check-label" for="rememberMe">
-								ID 저장
-							</label>
-						</div>
+              <input class="form-check-input" type="checkbox" id="rememberMe" v-model="rememberMe" />
+              <label class="form-check-label" for="rememberMe">
+                ID 저장
+              </label>
+            </div>
 						<div class="login-buttons">
 							<button type="submit" class="btn h-45px btn-success d-block w-100 btn-lg"
                       @click.prevent="checkForm"
