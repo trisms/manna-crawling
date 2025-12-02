@@ -66,10 +66,16 @@
 
 											<!-- 📌 연락처 / 주소 -->
 											<tr>
-												<td nowrap="" class="" colspan="2">
-													<div class="d-flex align-items-center">
+												<td class="">
+													<div class="d-flex">
 														<div class="bg-indigo-100 w-15px h-15px rounded me-2"></div>
 														<div><b>가맹점주소</b> : {{ store.form.stAddr }}</div>
+													</div>
+												</td>
+												<td nowrap="" class="">
+													<div class="d-flex align-items-center">
+														<div class="bg-indigo-100 w-15px h-15px rounded me-2"></div>
+														<div><b>최소주문금액</b> : {{ store.form.minPrice }}</div>
 													</div>
 												</td>
 											</tr>
@@ -161,6 +167,7 @@
 										<th class="pt-0 pb-2">포장가격</th>
 										<th class="pt-0 pb-2">성인인증</th>
 										<th class="pt-0 pb-2">상품설명</th>
+										<th class="pt-0 pb-2">추가상품그룹</th>
 										<th class="pt-0 pb-2">추가상품</th>
 										<th class="pt-0 pb-2">시스템이미지</th>
 										<th class="pt-0 pb-2">이미지 업로드</th>
@@ -201,6 +208,7 @@
 										<td class="align-middle">{{ formatPrice(item.ordPrice) }} 원</td>
 										<td class="align-middle">{{ adultYn(item.adultYn) }}</td>
 										<td class="align-middle text-ellipsis">{{ item.goodsMemo }}</td>
+										<td class="align-middle">{{ item.goodsMappListCnt }} 개</td>
 										<td class="align-middle">{{ item.goodsMappCnt }} 개</td>
 										<td class="align-middle">
 											<button type="button" class="btn btn-sm btn-white" @click="selectSystemImg(item.grStGoodsNo)">
