@@ -344,6 +344,9 @@ function dataURLtoFile(dataUrl: string, filename: string): File {
 	margin-top: 8px;
 	font-size: 14px;
 	font-weight: 600;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .pagination-box {
