@@ -83,6 +83,7 @@
                                 <input
                                     type="number"
                                     @click.stop
+                                    step="1000"
                                     class="form-control bg-light border-0 height-20 pt-0 pb-0"
                                     v-model="store.form.minPrice"
                                     placeholder="금액을 입력해주세요"
