@@ -18,6 +18,7 @@ export const useRestaurantStore = defineStore('useRestaurantStore', {
 		selectGoodsTypeCd: String,
 		goodsTypeCdList: [{ dtCode: '', dtName: '상품분류' }],
 		goodsDetailCdList: [{ dtCode: '', dtName: '상품구분' }],
+		grpGoodsList: [],
 		systemImgList: [],
 		systemImgCnt: 0,
 		systemImgCodeParam: {
@@ -162,6 +163,20 @@ export const useRestaurantStore = defineStore('useRestaurantStore', {
 				},
 			});
 		},
+		async callChageProductPrice(grStNo:number , params: any, callback: Function) {
+			window.$emitter.emit('confirm', {
+				message: '변경할 금액 : '+ params.minPrice +' <br><br>최소주문금액을 변경하시겠습니까?',
+				callback: async () => {
+					if (params) {
+						const res = await useCallAPI(() => restaurantAPI.changeProductPrice(grStNo, params));
+						if (res) {
+							window.$emitter.emit('success', '변경에 성공하였습니다');
+							callback();
+						}
+					}
+				},
+			});
+		},
 
 		async callSystemImgList() {
 			let res = null;
@@ -190,6 +205,12 @@ export const useRestaurantStore = defineStore('useRestaurantStore', {
 			} else {
 				this.systemImgList = [];
 				this.systemImgCnt = 0;
+			}
+		},
+		async callGrpGoodsList(grStNo:any, grStGoodsNo:any, callback: Function) {
+			const res = await useCallAPI(() => restaurantAPI.grpGoodsList(grStNo,grStGoodsNo));
+			if (res) {
+				this.grpGoodsList = res.data.data;
 			}
 		},
 		async callSystemImgCateList(type: string) {

@@ -20,16 +20,16 @@
 										<tbody>
 											<!-- 📌 기본정보 -->
 											<tr>
-												<td nowrap="" class="">
+												<td nowrap="" class="w-50" >
 													<div class="d-flex align-items-center">
 														<div class="bg-indigo-200 w-15px h-15px rounded me-2"></div>
-														<div><b>가맹점코드</b> : {{ store.form.stCode }}</div>
+														<div><b>가맹점코드</b> : {{ store.form.stCode ?  store.form.stCode : '-'  }}</div>
 													</div>
 												</td>
 												<td nowrap="" class="">
 													<div class="d-flex align-items-center">
 														<div class="bg-indigo-100 w-15px h-15px rounded me-2"></div>
-														<div><b>주문앱</b> : {{ getAppName(store.form.appType) }}</div>
+														<div><b>주문앱</b> : {{ getAppName(store.form.appType) ? getAppName(store.form.appType) : '-' }}</div>
 													</div>
 												</td>
 											</tr>
@@ -37,13 +37,13 @@
 												<td nowrap="" class="">
 													<div class="d-flex align-items-center">
 														<div class="bg-indigo-100 w-15px h-15px rounded me-2"></div>
-														<div><b>수집일</b> : {{ store.form.putDate }}</div>
+														<div><b>수집일</b> : {{ store.form.putDate ? store.form.putDate : '-' }}</div>
 													</div>
 												</td>
 												<td nowrap="" class="">
 													<div class="d-flex align-items-center">
 														<div class="bg-indigo-200 w-15px h-15px rounded me-2"></div>
-														<div><b>DB등록일</b> : {{ store.form.modDate }}</div>
+														<div><b>DB등록일</b> : {{ store.form.modDate ? store.form.modDate : '-' }}</div>
 													</div>
 												</td>
 											</tr>
@@ -53,29 +53,46 @@
 												<td nowrap="" class="">
 													<div class="d-flex align-items-center">
 														<div class="bg-indigo-200 w-15px h-15px rounded me-2"></div>
-														<div><b>대표자</b> : {{ store.form.stOwner }}</div>
+														<div><b>대표자</b> : {{ store.form.stOwner ? store.form.stOwner : '-' }}</div>
 													</div>
 												</td>
 												<td nowrap="" class="">
 													<div class="d-flex align-items-center">
 														<div class="bg-indigo-100 w-15px h-15px rounded me-2"></div>
-														<div><b>전화번호</b> : {{ store.form.stTel }}</div>
+														<div><b>전화번호</b> : {{ store.form.stTel ? store.form.stTel : '-' }}</div>
 													</div>
 												</td>
 											</tr>
 
 											<!-- 📌 연락처 / 주소 -->
-											<tr>
-												<td class="">
+											<tr >
+												<td colspan="2">
 													<div class="d-flex">
 														<div class="bg-indigo-100 w-15px h-15px rounded me-2"></div>
 														<div><b>가맹점주소</b> : {{ store.form.stAddr }}</div>
 													</div>
 												</td>
-												<td nowrap="" class="">
+                      </tr>
+                      <tr>
+												<td nowrap="" colspan="2">
 													<div class="d-flex align-items-center">
 														<div class="bg-indigo-100 w-15px h-15px rounded me-2"></div>
-														<div><b>최소주문금액</b> : {{ store.form.minPrice }}</div>
+														<div>
+                              <div class="input-group">
+                                <b class="m-auto">최소주문금액 : </b>
+                                <input
+                                    type="number"
+                                    @click.stop
+                                    class="form-control bg-light border-0 height-20 pt-0 pb-0"
+                                    v-model="store.form.minPrice"
+                                    placeholder="금액을 입력해주세요"
+                                    style="width: 140px;margin-left: 5px;"
+                                />
+                                <button type="button" @click.stop="changeProductPrice()" class="btn btn-sm btn-white pt-0 pb-0 fs-6 fs-6">
+                                  <i class="fa fa-fw fa-plus"></i> 수정
+                                </button>
+                              </div>
+                            </div>
 													</div>
 												</td>
 											</tr>
@@ -208,7 +225,7 @@
 										<td class="align-middle">{{ formatPrice(item.ordPrice) }} 원</td>
 										<td class="align-middle">{{ adultYn(item.adultYn) }}</td>
 										<td class="align-middle text-ellipsis">{{ item.goodsMemo }}</td>
-										<td class="align-middle">{{ item.goodsMappListCnt }} 개</td>
+                    <td class="align-middle"> <a href="javascript:;" @click="openModal(store.form.grStNo ,item.grStGoodsNo)">{{ item.goodsMappListCnt }} 개</a></td>
 										<td class="align-middle">{{ item.goodsMappCnt }} 개</td>
 										<td class="align-middle">
 											<button type="button" class="btn btn-sm btn-white" @click="selectSystemImg(item.grStGoodsNo)">
@@ -238,6 +255,10 @@
 		@close="showSystemImgModal = false"
 		@select="onSelectSystemImage"
 	/>
+  <AddProductModal
+      :visible="modalVisible"
+      @close="modalVisible = false"
+  />
 	<div v-if="showImageModal" class="image-modal-backdrop" @click="closeImageModal">
 		<div class="image-modal-content" @click.stop>
 			<img :src="modalImageSrc || noImg" alt="이미지 확대" />
@@ -256,6 +277,7 @@ import { useRouter } from 'vue-router';
 import SystemImgModal from '@/views/restaurant/SystemImgModal.vue';
 import axios, { type AxiosResponse } from 'axios';
 import { isBlank } from '@/utils/ValidateUtils';
+import AddProductModal from "@/views/restaurant/components/addProductModal.vue";
 
 const store = useRestaurantStore();
 const selectGrStGrpNo = ref(1);
@@ -266,9 +288,12 @@ onBeforeMount(() => {
 });
 const router = useRouter();
 const isAppMemoExpanded = ref(false);
+
 const isWorkTimeExpanded = ref(false);
 
 const showSystemImgModal = ref(false);
+
+const modalVisible = ref(false);
 const currentTargetItem = ref<any>(null);
 
 // 모든 체크박스 상태
@@ -358,6 +383,9 @@ const deleteImage = async () => {
 	} else {
 		alert('삭제할 이미지를 최소 1개 이상 선택해주세요.');
 	}
+};
+const changeProductPrice = async () => {
+    await store.callChageProductPrice( store.form.grStNo,{ minPrice: store.form.minPrice },() => {});
 };
 const fileInputs = ref<HTMLInputElement[]>([]);
 
@@ -475,6 +503,11 @@ async function selectSystemImg(grStGoodsNo: any) {
 	showSystemImgModal.value = true;
 }
 
+const openModal = async (grStNo: any , grStGoodsNo: any) => {
+ await store.callGrpGoodsList(grStNo,grStGoodsNo,()=>{});
+  modalVisible.value = true;
+};
+
 async function onSelectSystemImage(img: any) {
 	if (isBlank(img.imgTFile)) {
 		window.$emitter.emit('warning', '시스템 이미지가 없습니다.');
@@ -506,6 +539,9 @@ async function dataURLtoFile(dataUrl: string, filename: string): Promise<File> {
 function convertExt(fileName): string {
 	return fileName.substring(fileName.lastIndexOf('.'), fileName.length);
 }
+
+
+
 </script>
 <style scoped>
 .borde-radius-0 {
