@@ -110,7 +110,7 @@
 			<!-- 테이블 -->
 			<div class="card border-0">
 				<div class="table-responsive mb-3">
-					<table class="table table-hover table-panel text-nowrap align-middle mb-0" style="min-width: 1700px; overflow-x: auto">
+					<table class="table table-hover table-panel text-nowrap align-middle mb-0" style="min-width: 1400px; overflow-x: auto">
 						<thead>
 							<tr>
 								<th>
@@ -119,7 +119,7 @@
 										<label class="form-check-label" for="allCheck"></label>
 									</div>
 								</th>
-								<th>음식점 코드</th>
+								<th>일련번호</th>
 								<th>음식점 앱 등록상호</th>
 								<th>음식점 사업자번호</th>
 								<th>사업자 상호</th>
@@ -128,8 +128,8 @@
 								<th>상품수</th>
 								<th>수집일</th>
 								<th>DB등록상태</th>
-								<th>DB 등록일</th>
-								<th style="min-width: 250px; max-width: 250px">가맹점코드</th>
+								<th width="120px">DB 등록일</th>
+								<th width="120px">가맹점코드</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -164,17 +164,17 @@
 								<td>{{ item.stAddr }}</td>
 								<td>{{ item.goodsCnt }} 개</td>
 								<td>{{ item.putDate }}</td>
-								<td>{{ convertDataStatus(item.dataStatus) }}</td>
+                <td> <span :class="dbResultFont(item.dataStatus)"> {{ convertDataStatus(item.dataStatus) }}</span></td>
 								<td>{{ item.modDate }}</td>
-								<td style="min-width: 250px; max-width: 250px">
-									<div class="input-group">
+								<td style="min-width: 150px; max-width: 150px">
+									<div class="input-group" style="width: 150px">
 										<input
 											type="text"
 											@click.stop
 											class="form-control bg-light border-0"
 											v-model="item.stCode"
 											placeholder="가맹점코드를 입력해주세요."
-											style="width: 120px"
+											style="width: 60px"
 										/>
 										<button type="button" @click.stop="updateStCode(item.grStNo, item.stCode)" class="btn btn-sm btn-white">
 											<i class="fa fa-fw fa-plus"></i> 수정
@@ -376,6 +376,7 @@ function goToDetail(grStNo: string | number) {
 	router.push({ name: 'RestaurantMenu', params: { id: grStNo } });
 }
 
+
 const convertDataStatus = (val) => {
 	switch (val) {
 		case '1':
@@ -386,6 +387,18 @@ const convertDataStatus = (val) => {
 			return '진행중';
 		case '4':
 			return '등록실패';
+	}
+};
+const dbResultFont = (val) => {
+	switch (val) {
+		case '1':
+			return '';
+		case '2':
+			return 'text-bold';
+		case '3':
+			return 'text-info';
+		case '4':
+			return 'text-danger';
 	}
 };
 </script>
@@ -406,5 +419,8 @@ const convertDataStatus = (val) => {
 	align-items: center;
 	justify-content: center;
 	z-index: 9999;
+}
+.text-bold {
+  font-weight: bold
 }
 </style>
