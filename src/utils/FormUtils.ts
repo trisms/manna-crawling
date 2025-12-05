@@ -154,6 +154,10 @@ export const useCallUpdateAPI = async (
 					if (validateAPIResult(res)) {
 						window.$emitter.emit('success', '수정이 완료되었습니다.');
 						callback(res);
+					} else {
+						if (res.response) {
+							window.$emitter.emit('success', res.response.data.message);
+						}
 					}
 				} catch (e) {
 					console.error('useCallUpdateAPI Error: ', e);

@@ -8,6 +8,9 @@ export const restaurantAPI = {
 	async grpList(grStNo: number | string, params: any) {
 		return await getApiCall().get(getV1(`/store/${grStNo}/grp`), params);
 	},
+	async grpGoodsList(grStNo: number | string, grStGoodsNo: number | string) {
+		return await getApiCall().get(getV1(`/store/${grStNo}/goods-mapp/${grStGoodsNo}`));
+	},
 	async regionList() {
 		return await getApiCall().get(getV1(`/store/region/list`));
 	},
@@ -20,6 +23,9 @@ export const restaurantAPI = {
 	},
 	async update(districtNo: number, equipNo: number, params: any) {
 		return await getApiCall().put(getV1(`/equip/${districtNo}/loc/${equipNo}`), params);
+	},
+	async changeProductPrice(grStNo : number ,params: any) {
+		return await getApiCall().patch(getV1(`/store/${grStNo}/min-price`), params);
 	},
 	/*async rebaseUpload(grStNoList: any) {
 		return await getJigBaeApiCall().post(`https://api-d.jigbae.co.kr:8443/broad/v1/upload-data?type=1`, grStNoList);
