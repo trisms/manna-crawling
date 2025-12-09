@@ -22,9 +22,11 @@
                   <thead class="thead-sticky">
                   <tr >
                     <th class="w-10px p-0"> <div class="border-bottom px-10px pb-1">상품그룹</div></th>
-                    <th class="p-0"><div class="border-bottom px-10px pb-1">추가상품명</div></th>
-                    <th class="w-80px p-0"><div class="border-bottom px-10px pb-1" >가격</div></th>
-                    <th class="w-80px  p-0"><div class="border-bottom px-10px pb-1" >성인인증구분</div></th>
+                    <th class=" p-0"><div class="border-bottom px-10px pb-1">추가상품명</div></th>
+                    <th class="w-50px p-0"><div class="border-bottom px-10px pb-1">최소선택수</div></th>
+                    <th class="w-50px p-0"><div class="border-bottom px-10px pb-1">최대선택수</div></th>
+                    <th class="w-120px p-0"><div class="border-bottom px-10px pb-1" >가격</div></th>
+                    <th class="w-100px  p-0"><div class="border-bottom px-10px pb-1" >성인인증구분</div></th>
                   </tr>
                   </thead>
                 </table>
@@ -44,6 +46,8 @@
                               	<span class="file-icon"><i class="fas fa-lg fa-fw me-10px fa-circle-dot fs-6 text-info"></i></span>
                               <div class="d-flex justify-content-between w-100">
                                 <span class="file-text" style="flex:3">{{subItem.goodsName}} </span>
+                                <span class="file-text" style="flex:0.5">{{subItem.selMin? subItem.selMin : '-' }} 개</span>
+                                <span class="file-text" style="flex:0.5">{{subItem.selMax? subItem.selMax : '-'}} 개</span>
                                 <span class="file-text"> {{subItem.sellPrice}} 원</span>
                                 <span class="file-text" style="flex: 0.5"> {{adultYn(subItem.adultYn)}} </span>
                               </div>
@@ -138,7 +142,7 @@ const adultYn = (appType: string | number) => {
 }
 .modal-window {
   background: #fff;
-  width: 600px;
+  width: 900px;
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
@@ -176,5 +180,8 @@ const adultYn = (appType: string | number) => {
 }
 .text-right {
   text-align: right;
+}
+.w-120px {
+  width: 120px;
 }
 </style>
