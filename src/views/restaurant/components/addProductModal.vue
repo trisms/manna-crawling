@@ -36,7 +36,9 @@
                       <a href="javascript:;" class="file-link">
                         <span class="file-info">
 																<span class="file-icon"><i class="fas fa-lg fa-fw  fa-cart-plus text-warning fa-lg"></i></span>
-																<span class="file-text">{{item.grpName}}</span>
+																<span class="file-text" style="flex:1.7">{{item.grpName}}</span>
+																<span class="file-text" style="flex:0.3">{{item.selMin}} 개</span>
+																<span class="file-text">{{item.selMax}} 개</span>
 															</span>
                       </a>
                       <div class="file-tree bg-light" v-for="(subItem, index) in item.mappGoodsList" v-bind:key="subItem.goodsName">
@@ -46,8 +48,8 @@
                               	<span class="file-icon"><i class="fas fa-lg fa-fw me-10px fa-circle-dot fs-6 text-info"></i></span>
                               <div class="d-flex justify-content-between w-100">
                                 <span class="file-text" style="flex:3">{{subItem.goodsName}} </span>
-                                <span class="file-text" style="flex:0.5">{{subItem.selMin? subItem.selMin : '-' }} 개</span>
-                                <span class="file-text" style="flex:0.5">{{subItem.selMax? subItem.selMax : '-'}} 개</span>
+                                <span class="file-text" style="flex:0.5"></span>
+                                <span class="file-text" style="flex:0.5"></span>
                                 <span class="file-text"> {{subItem.sellPrice}} 원</span>
                                 <span class="file-text" style="flex: 0.5"> {{adultYn(subItem.adultYn)}} </span>
                               </div>
