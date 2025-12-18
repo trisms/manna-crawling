@@ -15,7 +15,7 @@
                 </div>
 
                 <div class="mb-1 fs-12px">
-                  <div class="text-gray-600 flex-1">상품명 : [1인]한돈 순살 돼지갈비찜 혼밥</div>
+                  <div class="text-gray-600 flex-1">상품명 : {{store.selectGoodsName}}</div>
                 </div>
                 <hr class="mb-10px bg-gray-600">
                 <table class="table  table-borderless table-sm m-0 text-nowrap ">
@@ -114,7 +114,7 @@ defineProps({
   addList: {
     type: Array,
     default: () => []
-  }
+  },
 });
 import {useRestaurantStore} from "@/stores/restaurant/useRestaurantStore";
 
