@@ -226,7 +226,7 @@
 										<td class="align-middle">{{ formatPrice(item.ordPrice) }} 원</td>
 										<td class="align-middle">{{ adultYn(item.adultYn) }}</td>
 										<td class="align-middle text-ellipsis">{{ item.goodsMemo }}</td>
-                    <td class="align-middle"> <a href="javascript:;" @click="openModal(store.form.grStNo ,item.grStGoodsNo)">{{ item.goodsMappListCnt }} 개</a></td>
+                    <td class="align-middle"> <a href="javascript:;" @click="openModal(store.form.grStNo ,item.grStGoodsNo, item.goodsName)">{{ item.goodsMappListCnt }} 개</a></td>
 										<td class="align-middle">{{ item.goodsMappCnt }} 개</td>
 										<td class="align-middle">
 											<button type="button" class="btn btn-sm btn-white" @click="selectSystemImg(item.grStGoodsNo)">
@@ -289,6 +289,7 @@ onBeforeMount(() => {
 });
 const router = useRouter();
 const isAppMemoExpanded = ref(false);
+const selectGoodsName = ref(null);
 
 const isWorkTimeExpanded = ref(false);
 
@@ -504,7 +505,8 @@ async function selectSystemImg(grStGoodsNo: any) {
 	showSystemImgModal.value = true;
 }
 
-const openModal = async (grStNo: any , grStGoodsNo: any) => {
+const openModal = async (grStNo: any , grStGoodsNo: any, goodsName: string) => {
+  store.selectGoodsName = goodsName;
  await store.callGrpGoodsList(grStNo,grStGoodsNo,()=>{});
   modalVisible.value = true;
 };

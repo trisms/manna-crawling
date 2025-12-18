@@ -16,6 +16,7 @@ export const useRestaurantStore = defineStore('useRestaurantStore', {
 		selectSyCode: 'NM',
 		selectGrStGoodsNo: 0 as number,
 		selectGoodsTypeCd: String,
+		selectGoodsName: String,
 		goodsTypeCdList: [{ dtCode: '', dtName: '상품분류' }],
 		goodsDetailCdList: [{ dtCode: '', dtName: '상품구분' }],
 		grpGoodsList: [],
