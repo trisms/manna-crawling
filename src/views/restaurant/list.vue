@@ -141,7 +141,7 @@
 						</thead>
 						<tbody>
 							<tr v-for="item in paginatedData" :key="item.grStNo" @click="goToDetail(item.grStNo)" style="cursor: pointer">
-								<td class="w-10px align-middle" @click.stop="toggleItem(item.grStNo)">
+								<td class="w-10px align-middle" @click.stop="toggleItem(item.grStNo,item.stCode)">
 									<div class="form-check">
 										<input
 											type="checkbox"
@@ -239,24 +239,36 @@ const isLoading = useAppLoadingStore();
 const allChecked = ref(false);
 // 모든 체크박스 상태
 const checkedItems = ref<string[]>([]); // grStNo를 기준으로 체크 상태 관리
-// allCheck 클릭 시 토글
+const checkStcodeItems = ref<string[]>([]); // grStNo를 기준으로 체크 상태 관리
+// allCheck 클릭 시 토글 stcode가 없으면 -1
 function toggleAll() {
 	if (allChecked.value) {
 		// 전체 체크
 		checkedItems.value = store.items.map((item) => item.grStNo);
+    checkStcodeItems.value = store.items.map((item) => item.stCode ? item.stCode : '-1');
 	} else {
 		// 전체 해제
 		checkedItems.value = [];
+    checkStcodeItems.value = [];
 	}
 }
-// 개별 체크박스 클릭 시 checkedItems 업데이트
-function toggleItem(grStNo: string) {
+// 개별 체크박스 클릭 시 checkedItems 업데이트 stcode가 없으면 -1
+function toggleItem(grStNo: string, stCode: string) {
 	const index = checkedItems.value.indexOf(grStNo);
 	if (index > -1) {
 		checkedItems.value.splice(index, 1);
+    checkStcodeItems.value.splice(index, 1);
 	} else {
 		checkedItems.value.push(grStNo);
+    if(stCode){
+      checkStcodeItems.value.push(stCode);
+    }else{
+      checkStcodeItems.value.push('-1');
+    }
+
+
 	}
+
 
 	// allChecked 상태 자동 반영
 	allChecked.value = checkedItems.value.length === store.items.length;
@@ -318,10 +330,16 @@ const search = async () => {
 
 //기존상품유지후 추가업로드
 const rebaseUplode = async () => {
+
 	if (checkedItems.value.length === 0) {
 		window.$emitter.emit('warning', '가맹점을 한개 이상 선택해주세요.');
 		return;
 	}
+
+  if(checkStcodeItems.value.includes('-1')){
+    window.$emitter.emit('warning', '가맹점 코드가 없는 음식점이 존재합니다.');
+    return;
+  }
 
 	await store.rebaseUpload({ grStNoList: checkedItems.value }, () => {
 		search();
@@ -334,6 +352,11 @@ const usageUpload = async () => {
 		window.$emitter.emit('warning', '가맹점을 한개 이상 선택해주세요.');
 		return;
 	}
+
+  if(checkStcodeItems.value.includes('-1')){
+    window.$emitter.emit('warning', '가맹점 코드가 없는 음식점이 존재합니다.');
+    return;
+  }
 	await store.usageUpload({ grStNoList: checkedItems.value }, () => {
 		search();
 	});
