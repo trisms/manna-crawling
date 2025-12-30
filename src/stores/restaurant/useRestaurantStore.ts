@@ -13,6 +13,7 @@ export const useRestaurantStore = defineStore('useRestaurantStore', {
 		sigunList: [],
 
 		frSubTypeCdList: [{}],
+		selectOnlyGoods:0,
 		selectSyCode: 'NM',
 		selectGrStGoodsNo: 0 as number,
 		selectGoodsTypeCd: String,
@@ -115,10 +116,12 @@ export const useRestaurantStore = defineStore('useRestaurantStore', {
 			await useCallDeleteMsgAPI(() => restaurantAPI.deleteImage(grStGoodsNoList), message, callback);
 		},
 		async rebaseUpload(grStNoList: any, callback: Function) {
-			await useCallUploadAPI(() => restaurantAPI.rebaseUpload(grStNoList), callback);
+			const selectOnlyGoods = this.selectOnlyGoods ? 1 : 2
+			await useCallUploadAPI(() => restaurantAPI.rebaseUpload(grStNoList ,selectOnlyGoods), callback);
 		},
 		async usageUpload(grStNoList: any, callback: Function) {
-			await useCallUploadAPI(() => restaurantAPI.usageUpload(grStNoList), callback);
+			const selectOnlyGoods = this.selectOnlyGoods ? 1 : 2
+			await useCallUploadAPI(() => restaurantAPI.usageUpload(grStNoList, selectOnlyGoods), callback);
 		},
 
 		async updateStCodeAPI(params: any, callback): Promise<void> | null {

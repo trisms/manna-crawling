@@ -93,6 +93,13 @@
 				</div>
 				<div class="card border-0">
 					<div class="d-md-flex fw-bold ms-auto">
+
+            <div class="   d-flex  p-1 pe-3 ps-2 me-2 rounded-3 border" style="align-items: flex-end;">
+              <div class="form-check form-switch ">
+                <input class="form-check-input" type="checkbox" id="onlyGoods" 	v-model="store.selectOnlyGoods">
+                <label class="form-check-label" for="onlyGoods">상품정보만 등록</label>
+              </div>
+            </div>
 						<div class="mt-md-0 mt-2 btn btn-secondary btn-sm d-flex me-2 pe-3 rounded-3" @click="rebaseUplode()">
 							<div class="text-white text-decoration-none rounded">
 								<i class="fa fa-upload fa-fw me-1 text-white"></i> 기존상품삭제후 신규업로드
@@ -278,6 +285,7 @@ const filteredSigunList = computed(() => {
 
 	return store.sigunList.filter((item) => String(item.sigunCode).startsWith(String(sido)));
 });
+
 
 watch(
 	() => store.searchParams.sidoCode,
