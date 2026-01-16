@@ -97,6 +97,29 @@
 													</div>
 												</td>
 											</tr>
+                      <tr>
+												<td nowrap="" colspan="2">
+													<div class="d-flex align-items-center">
+														<div class="bg-indigo-100 w-15px h-15px rounded me-2"></div>
+														<div>
+                              <div class="input-group">
+                                <b class="m-auto">앱스키마 : </b>
+                                <input
+                                    type="text"
+                                    @click.stop
+                                    class="form-control bg-light border-0 height-20 pt-0 pb-0"
+                                    v-model="store.form.appScheme"
+                                    placeholder="앱스키마를 입력해주세요"
+                                    style="width: 140px;margin-left: 5px;"
+                                />
+                                <button type="button" @click.stop="changeAppScheme()" class="btn btn-sm btn-white pt-0 pb-0 fs-6 fs-6">
+                                  <i class="fa fa-fw fa-plus"></i> 수정
+                                </button>
+                              </div>
+                            </div>
+													</div>
+												</td>
+											</tr>
 										</tbody>
 									</table>
 								</div>
@@ -388,6 +411,9 @@ const deleteImage = async () => {
 };
 const changeProductPrice = async () => {
     await store.callChageProductPrice( store.form.grStNo,{ minPrice: store.form.minPrice },() => {});
+};
+const changeAppScheme = async () => {
+    await store.callChageAppScheme( store.form.grStNo,{ appScheme: store.form.appScheme },() => {});
 };
 const fileInputs = ref<HTMLInputElement[]>([]);
 
