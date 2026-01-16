@@ -181,6 +181,20 @@ export const useRestaurantStore = defineStore('useRestaurantStore', {
 				},
 			});
 		},
+		async callChageAppScheme(grStNo:number , params: any, callback: Function) {
+			window.$emitter.emit('confirm', {
+				message: '앱스키마 : '+ params.appScheme +' <br><br>해당스키마를 변경하시겠습니까?',
+				callback: async () => {
+					if (params) {
+						const res = await useCallAPI(() => restaurantAPI.changeAppScheme(grStNo, params));
+						if (res) {
+							window.$emitter.emit('success', '변경에 성공하였습니다');
+							callback();
+						}
+					}
+				},
+			});
+		},
 
 		async callSystemImgList() {
 			let res = null;

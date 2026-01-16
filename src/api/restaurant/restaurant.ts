@@ -27,6 +27,9 @@ export const restaurantAPI = {
 	async changeProductPrice(grStNo : number ,params: any) {
 		return await getApiCall().patch(getV1(`/store/${grStNo}/min-price`), params);
 	},
+	async changeAppScheme(grStNo : number ,params: any) {
+		return await getApiCall().patch(getV1(`/store/${grStNo}/app-scheme`), params);
+	},
 	/*async rebaseUpload(grStNoList: any) {
 		return await getJigBaeApiCall().post(`https://api-d.jigbae.co.kr:8443/broad/v1/upload-data?type=1`, grStNoList);
 	},*/
