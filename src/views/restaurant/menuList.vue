@@ -110,7 +110,7 @@
                                     class="form-control bg-light border-0 height-20 pt-0 pb-0"
                                     v-model="store.form.appScheme"
                                     placeholder="앱스키마를 입력해주세요"
-                                    style="width: 140px;margin-left: 5px;"
+                                    style="width: 161px;margin-left: 5px;"
                                 />
                                 <button type="button" @click.stop="changeAppScheme()" class="btn btn-sm btn-white pt-0 pb-0 fs-6 fs-6">
                                   <i class="fa fa-fw fa-plus"></i> 수정
