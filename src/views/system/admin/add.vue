@@ -10,7 +10,6 @@
             <VueDatePicker v-model="store.searchParams.endDate" format="yyyy-MM-dd" :auto-apply="true"   :enable-time-picker="false"placeholder="DB생성기간 (종료일)" />
           </a>
         </div>
-
         <SelectLabel
             size="col-lg-1"
             icon="far fa-lg fa-map "
@@ -31,7 +30,8 @@
               :options="[
                 { label: '주문앱', value: '' },
                 { label: '배민', value: '1' },
-                { label: '쿠팡', value: '2' }
+                { label: '쿠팡', value: '2' },
+                { label: '요기요', value: '3' }
               ]"
           />
           <SelectLabel
@@ -228,6 +228,7 @@ const itemsPerPage = 10
 const getAppName = (appType: string | number) => {
   if (appType === '1' || appType === 1) return '배민';
   if (appType === '2' || appType === 2) return '쿠팡';
+  if (appType === '3' || appType === 3) return '요기요';
   return '';
 };
 
