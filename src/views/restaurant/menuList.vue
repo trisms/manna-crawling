@@ -372,6 +372,7 @@ const itemsPerPage = 10;
 const getAppName = (appType: string | number) => {
 	if (appType === '1' || appType === 1) return '배민';
 	if (appType === '2' || appType === 2) return '쿠팡';
+	if (appType === '3' || appType === 3) return '요기요';
 	return '';
 };
 
