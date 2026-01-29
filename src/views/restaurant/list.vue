@@ -244,7 +244,7 @@ const checkedItems = ref<string[]>([]); // grStNo를 기준으로 체크 상태 
 const checkStcodeItems = ref<string[]>([]); // grStNo를 기준으로 체크 상태 관리
 // allCheck 클릭 시 토글 stcode가 없으면 -1
 function toggleAll() {
-	if (allChecked.value) {
+	/*if (allChecked.value) {
 		// 전체 체크
 		checkedItems.value = store.items.map((item) => item.grStNo);
     checkStcodeItems.value = store.items.map((item) => item.stCode ? item.stCode : '-1');
@@ -252,8 +252,18 @@ function toggleAll() {
 		// 전체 해제
 		checkedItems.value = [];
     checkStcodeItems.value = [];
-	}
+	}*/
+  const pageItems = paginatedData.value; // computed라 .value 필요
+
+  if (allChecked.value) {
+    checkedItems.value = pageItems.map((item) => item.grStNo);
+    checkStcodeItems.value = pageItems.map((item) => (item.stCode ? item.stCode : '-1'));
+  } else {
+    checkedItems.value = [];
+    checkStcodeItems.value = [];
+  }
 }
+
 // 개별 체크박스 클릭 시 checkedItems 업데이트 stcode가 없으면 -1
 function toggleItem(grStNo: string, stCode: string) {
 	const index = checkedItems.value.indexOf(grStNo);
@@ -268,12 +278,12 @@ function toggleItem(grStNo: string, stCode: string) {
       checkStcodeItems.value.push('-1');
     }
 
-
 	}
 
 
 	// allChecked 상태 자동 반영
-	allChecked.value = checkedItems.value.length === store.items.length;
+  allChecked.value = checkedItems.value.length === paginatedData.value.length;
+/*	allChecked.value = checkedItems.value.length === store.items.length;*/
 }
 
 const currentPage = ref(1);
@@ -300,7 +310,11 @@ const filteredSigunList = computed(() => {
 
 	return store.sigunList.filter((item) => String(item.sigunCode).startsWith(String(sido)));
 });
-
+watch(currentPage, () => {
+  allChecked.value = false;
+  checkedItems.value = [];
+  checkStcodeItems.value = [];
+});
 
 watch(
 	() => store.searchParams.sidoCode,
@@ -337,7 +351,7 @@ const rebaseUplode = async () => {
 	if (checkedItems.value.length === 0) {
 		window.$emitter.emit('warning', '가맹점을 한개 이상 선택해주세요.');
 		return;
-	}
+	}ㅅ
 
   if(checkStcodeItems.value.includes('-1')){
     window.$emitter.emit('warning', '가맹점 코드가 없는 음식점이 존재합니다.');
@@ -367,10 +381,10 @@ const usageUpload = async () => {
 
 const updateStCode = async (grStNo: number, stCode: string) => {
 	try {
-		if (isBlank(stCode)) {
+/*		if (isBlank(stCode)) {
 			window.$emitter.emit('warning', '가맹점 코드를 입력해주세요.');
 			return;
-		}
+		}*/
 		await store.updateStCodeAPI({ grStNo: grStNo, stCode: stCode }, () => {
 			toast.success(
 				'<div class="d-flex space-between flex-start">' +

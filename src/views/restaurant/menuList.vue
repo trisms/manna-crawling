@@ -348,6 +348,12 @@ function toggleAll() {
 	}
 }
 
+
+/*watch(currentPage, () => {
+  allChecked.value = false;
+  checkedItems.value = [];
+});*/
+
 function toggleItem(grStGoodsNo: string) {
 	const index = checkedItems.value.indexOf(grStGoodsNo);
 	if (index > -1) {
@@ -390,8 +396,11 @@ function formatPrice(value: number | string) {
 const selectGrpList = (grStGrpNo: number | string) => {
 	currentPage.value = 1;
 	selectGrStGrpNo.value = grStGrpNo;
+  allChecked.value = false;
+  checkedItems.value = [];
 	store.callGrpListAPI(store.form.grStNo, grStGrpNo, () => {});
 };
+
 const deleteImage = async () => {
 	if (checkedItems.value.length > 0) {
 		await store.deleteImageAPI({ grStGoodsNoList: checkedItems.value }, () => {
