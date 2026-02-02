@@ -82,10 +82,14 @@ export default ({ mode }) => {
 				},
 			},
 		},
-		esbuild: {
+		/*esbuild: {
 			drop: process.env.VITE_ENV === 'development' ? [] : ['console', 'debugger'],
-		},
-		server: {
+		},*/
+		esbuild: {
+			drop: import.meta.env.MODE === 'development'
+				? []
+				: ['console', 'debugger'],
+		},		server: {
 			port: 9001,
 			host: true,
 			allowedHosts: allowedHosts,
