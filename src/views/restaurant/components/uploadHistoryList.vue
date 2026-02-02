@@ -72,7 +72,7 @@
                 <div class="list-head">
                   <div class="row-flex">
                     <span class="col icon-col"></span>
-                    <span class="col col-5">His NO</span>
+                    <span class="col col-5">NO</span>
                     <span class="col col-1">가맹점 NO</span>
                     <span class="col col-2">주문앱 타입</span>
                     <span class="col col-3">음식점 상호</span>
@@ -89,14 +89,14 @@
                 <div class="table-body">
                   <div
                       class="row-item"
-                      v-for="(item) in store.uploadHistoryList"
+                      v-for="(item ,index) in store.uploadHistoryList"
                       :key="item.hisNo"
                   >
                     <div class="row-flex">
                       <span class="col icon-col">
 <!--                        <i class="fas fa-lg fa-fw fa-list text-warning"></i>-->
                       </span>
-                      <span class="col col-5">{{ item.hisNo ?? item.hisNo ?? '' }}</span>
+                      <span class="col col-5">{{ index +1 ?? index +1 ?? '' }}</span>
                       <span class="col col-1">{{ item.grStNo ?? '' }}</span>
                       <span class="col col-2">{{ appType(item.appType)}}</span>
                       <span class="col col-3">{{ item.stName ?? '' }}</span>
@@ -155,10 +155,13 @@ function formatDate(v: string) {
   return String(v).split('T')[0];
 }
 
+
 const dataStatus = (dataStatus: string | number) => {
   if (dataStatus === '') return '전체';
   if (dataStatus === '1') return '미등록';
   if (dataStatus === '2') return '등록';
+  if (dataStatus === '3') return '진행중';
+  if (dataStatus === '4') return '등록실패';
   return '';
 };
 const appType = (appType: string | number) => {
