@@ -70,7 +70,7 @@
                 <div class="list-head">
                   <div class="row-flex">
                     <span class="col icon-col"></span>
-                    <span class="col col-5">히스토리 NO</span>
+                    <span class="col col-5">His NO</span>
                     <span class="col col-1">가맹점 NO</span>
                     <span class="col col-2">주문앱 타입</span>
                     <span class="col col-3">음식점 상호</span>
@@ -270,9 +270,9 @@ const uploadGoodsType = (uploadGoodsType: string | number) => {
 .col-2{  flex: 0 0 110px; }
 .col-3{  flex: 1 1 220px; min-width: 180px; }
 .col-4{  flex: 0 0 140px; }
-.col-5{  flex: 0 0 120px; }
+.col-5{  flex: 0 0 70px; }
 .col-6{  flex: 0 0 110px; }
-.col-7{  flex: 0 0 110px; }
+.col-7{  flex: 0 0 150px; }
 .col-8{  flex: 0 0 110px; }
 .col-9{  flex: 0 0 140px; }
 .col-10{ flex: 0 0 120px; }
