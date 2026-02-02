@@ -33,11 +33,11 @@ export const restaurantAPI = {
 	/*async rebaseUpload(grStNoList: any) {
 		return await getJigBaeApiCall().post(`https://api-d.jigbae.co.kr:8443/broad/v1/upload-data?type=1`, grStNoList);
 	},*/
-	async rebaseUpload(grStNoList: any, onlyGoods:any) {
-		return await getJigBaeApiCall().post(getBoardV1(`/upload-data?type=1&onlyGoods=${onlyGoods}`), grStNoList );
+	async rebaseUpload(grStNoList: any, onlyGoods:any, userId:any) {
+		return await getJigBaeApiCall().post(getBoardV1(`/upload-data?type=1&onlyGoods=${onlyGoods}&userId=${userId}`), grStNoList );
 	},
-	async usageUpload(grStNoList: any, onlyGoods:any) {
-		return await getJigBaeApiCall().post(getBoardV1(`/upload-data?type=2&onlyGoods=${onlyGoods}`), grStNoList);
+	async usageUpload(grStNoList: any, onlyGoods:any, userId:any) {
+		return await getJigBaeApiCall().post(getBoardV1(`/upload-data?type=2&onlyGoods=${onlyGoods}&userId=${userId}`), grStNoList);
 	},
 	async callUploadHistory(params: any) {
 		return await getApiCall().get(getV1(`/store/history/list`), params);
