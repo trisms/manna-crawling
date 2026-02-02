@@ -119,11 +119,13 @@ export const useRestaurantStore = defineStore('useRestaurantStore', {
 		},
 		async rebaseUpload(grStNoList: any, callback: Function) {
 			const selectOnlyGoods = this.selectOnlyGoods ? 1 : 2
-			await useCallUploadAPI(() => restaurantAPI.rebaseUpload(grStNoList ,selectOnlyGoods), callback);
+			const userId = sessionStorage.getItem('userId');
+			await useCallUploadAPI(() => restaurantAPI.rebaseUpload(grStNoList ,selectOnlyGoods,userId), callback);
 		},
 		async usageUpload(grStNoList: any, callback: Function) {
 			const selectOnlyGoods = this.selectOnlyGoods ? 1 : 2
-			await useCallUploadAPI(() => restaurantAPI.usageUpload(grStNoList, selectOnlyGoods), callback);
+			const userId = sessionStorage.getItem('userId');
+			await useCallUploadAPI(() => restaurantAPI.usageUpload(grStNoList, selectOnlyGoods,userId), callback);
 		},
 		async callUploadHistory() {
 			const searchParams = { ...this.searchParamsHistory };
