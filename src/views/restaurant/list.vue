@@ -216,7 +216,6 @@ import '@vuepic/vue-datepicker/dist/main.css';
 import { useRouter } from 'vue-router';
 import { useAppLoadingStore } from '@/stores/useAppLoadingStore';
 import { isBlank } from '@/utils/ValidateUtils';
-import {log} from "winston";
 const date = ref<Date | null>(null);
 const store = useRestaurantStore();
 const list = ref([]);
