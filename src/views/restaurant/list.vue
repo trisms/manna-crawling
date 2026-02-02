@@ -109,6 +109,9 @@
 						<div class="mt-md-0 mt-2 btn btn-secondary btn-sm d-flex me-2 pe-3 rounded-3" @click="usageUpload()">
 							<div class="text-white text-decoration-none"><i class="fa fa-upload fa-fw me-1"></i> 기존상품유지후 추가업로드</div>
 						</div>
+						<div class="mt-md-0 mt-2 btn btn-secondary btn-sm d-flex me-2 pe-3 rounded-3" @click="openModal()">
+							<div class="text-white text-decoration-none"><i class="fa fa-list fa-fw me-1"></i> 업로드 내역</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -201,6 +204,10 @@
       </div>-->
 		</panel-body>
 	</panel>
+  <UploadHistoryList
+      :visible="modalVisible"
+      @close="modalVisible = false"
+  />
 </template>
 
 <script setup lang="ts">
@@ -216,6 +223,7 @@ import '@vuepic/vue-datepicker/dist/main.css';
 import { useRouter } from 'vue-router';
 import { useAppLoadingStore } from '@/stores/useAppLoadingStore';
 import { isBlank } from '@/utils/ValidateUtils';
+import UploadHistoryList from "@/views/restaurant/components/uploadHistoryList.vue";
 const date = ref<Date | null>(null);
 const store = useRestaurantStore();
 const list = ref([]);
@@ -237,8 +245,12 @@ const options = {
 	theme: 'auto',
 	// and so on ...
 };
+
+const modalVisible = ref(false); // uploadHistory
+
 const isLoading = useAppLoadingStore();
 const allChecked = ref(false);
+
 // 모든 체크박스 상태
 const checkedItems = ref<string[]>([]); // grStNo를 기준으로 체크 상태 관리
 const checkStcodeItems = ref<string[]>([]); // grStNo를 기준으로 체크 상태 관리
@@ -285,6 +297,14 @@ function toggleItem(grStNo: string, stCode: string) {
   allChecked.value = checkedItems.value.length === paginatedData.value.length;
 /*	allChecked.value = checkedItems.value.length === store.items.length;*/
 }
+
+//업로드 히스토리
+const openModal = async () => {
+  await store.callUploadHistory();
+  modalVisible.value = true;
+};
+
+
 
 const currentPage = ref(1);
 const itemsPerPage = 15;
@@ -432,6 +452,7 @@ const deleteCode = async () => {
 function goToDetail(grStNo: string | number) {
 	router.push({ name: 'RestaurantMenu', params: { id: grStNo } });
 }
+
 
 
 const convertDataStatus = (val) => {

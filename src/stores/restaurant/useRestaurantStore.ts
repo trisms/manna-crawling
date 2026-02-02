@@ -3,6 +3,7 @@ import { useCallAPI, useCallDeleteMsgAPI, useCallUpdateDirectAPI, useCallUploadA
 import { restaurantAPI } from '@/api/restaurant/restaurant';
 import { isBlank, isNotBlank } from '@/utils/ValidateUtils';
 import { SearchParams } from '@/dto/restaurant/SearchParams';
+import {SearchHistoryParams} from "@/dto/restaurant/SearchHistoryParams";
 
 export const useRestaurantStore = defineStore('useRestaurantStore', {
 	state: () => ({
@@ -11,7 +12,7 @@ export const useRestaurantStore = defineStore('useRestaurantStore', {
 		selectSido: String,
 		sidoList: [],
 		sigunList: [],
-
+		uploadHistoryList: [],
 		frSubTypeCdList: [{}],
 		selectOnlyGoods:0,
 		selectSyCode: 'NM',
@@ -59,6 +60,7 @@ export const useRestaurantStore = defineStore('useRestaurantStore', {
 		addForm: {},
 		grpList: [],
 		searchParams: new SearchParams() as SearchParams,
+		searchParamsHistory: new SearchHistoryParams() as SearchHistoryParams,
 		/*userInfo: {
 			userNo: 0,
 			loginId: '',
@@ -122,6 +124,19 @@ export const useRestaurantStore = defineStore('useRestaurantStore', {
 		async usageUpload(grStNoList: any, callback: Function) {
 			const selectOnlyGoods = this.selectOnlyGoods ? 1 : 2
 			await useCallUploadAPI(() => restaurantAPI.usageUpload(grStNoList, selectOnlyGoods), callback);
+		},
+		async callUploadHistory() {
+			const searchParams = { ...this.searchParamsHistory };
+			// delete searchParams.userNo;
+
+			if (isBlank(searchParams.keyword)) {
+				delete searchParams.searchType;
+			}
+
+			const res = await useCallAPI(() => restaurantAPI.callUploadHistory(searchParams));
+			if (res) {
+				this.uploadHistoryList = res.data.data;
+			}
 		},
 
 		async updateStCodeAPI(params: any, callback): Promise<void> | null {
