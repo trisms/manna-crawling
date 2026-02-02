@@ -216,6 +216,7 @@ import '@vuepic/vue-datepicker/dist/main.css';
 import { useRouter } from 'vue-router';
 import { useAppLoadingStore } from '@/stores/useAppLoadingStore';
 import { isBlank } from '@/utils/ValidateUtils';
+import {log} from "winston";
 const date = ref<Date | null>(null);
 const store = useRestaurantStore();
 const list = ref([]);
@@ -316,6 +317,17 @@ watch(currentPage, () => {
   checkStcodeItems.value = [];
 });
 
+
+watch(
+    () => store.items?.length,
+    () => {
+      currentPage.value = 1;
+      allChecked.value = false;
+      checkedItems.value = [];
+      checkStcodeItems.value = [];
+    }
+);
+
 watch(
 	() => store.searchParams.sidoCode,
 	() => {
@@ -336,14 +348,12 @@ watch(
 	},
 );
 
-// ✅ 검색 적용
-function applySearch() {
-	currentPage.value = 1;
-}
 
 const search = async () => {
-	await store.callListAPI(() => {});
+	await store.callListAPI(() => {
+  });
 };
+
 
 //기존상품유지후 추가업로드
 const rebaseUplode = async () => {
@@ -351,7 +361,7 @@ const rebaseUplode = async () => {
 	if (checkedItems.value.length === 0) {
 		window.$emitter.emit('warning', '가맹점을 한개 이상 선택해주세요.');
 		return;
-	}ㅅ
+	}
 
   if(checkStcodeItems.value.includes('-1')){
     window.$emitter.emit('warning', '가맹점 코드가 없는 음식점이 존재합니다.');
