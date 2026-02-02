@@ -39,6 +39,9 @@ export const restaurantAPI = {
 	async usageUpload(grStNoList: any, onlyGoods:any) {
 		return await getJigBaeApiCall().post(getBoardV1(`/upload-data?type=2&onlyGoods=${onlyGoods}`), grStNoList);
 	},
+	async callUploadHistory(params: any) {
+		return await getApiCall().get(getV1(`/store/history/list`), params);
+	},
 	async updateStCode(params: any) {
 		return await getApiCall().patch(getV1(`/store/stcode`), params);
 	},
