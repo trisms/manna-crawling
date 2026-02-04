@@ -41,7 +41,8 @@ const checkForm = async () => {
 
 
   await store.callLoginAPI(() => {
-    sessionStorage.setItem('userId', store.form.id)
+    localStorage.removeItem("userId");
+    localStorage.setItem('userId', store.form.id)
     router.replace('/restaurant');
   });
 };
