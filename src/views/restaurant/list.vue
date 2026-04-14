@@ -185,7 +185,7 @@
 											@click.stop
 											class="form-control bg-light border-0"
 											v-model="item.stCode"
-											placeholder="가맹점코드를 입력해주세요."
+											placeholder="가맹점코드"
 											style="width: 60px"
 										/>
 										<button type="button" @click.stop="updateStCode(item.grStNo, item.stCode)" class="btn btn-sm btn-white">
@@ -307,7 +307,7 @@ const openModal = async () => {
 
 
 const currentPage = ref(1);
-const itemsPerPage = 15;
+const itemsPerPage = 13;
 const getAppName = (appType: string | number) => {
 	if (appType === '1' || appType === 1) return '배민';
 	if (appType === '2' || appType === 2) return '쿠팡';

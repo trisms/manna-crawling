@@ -1,0 +1,61 @@
+@charset "UTF-8";
+@font-face {
+	font-family: 'GmarketSansTTFBold';
+	src: url('../../css/fonts/GmarketSansTTFBold.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'GmarketSansTTFMedium';
+	src: url('../css/fonts/GmarketSansTTFMedium.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'GmarketSansTTFLight';
+	src: url('../../css/fonts/GmarketSansTTFLight.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'BMDOHYEON_ttf';
+	src: url('../../css/fonts/BMDOHYEON_ttf.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'BMEuljiro10yearslater';
+	src: url('../../css/fonts/BMEuljiro10yearslater.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'BMEuljirooraeorae';
+	src: url('../../css/fonts/BMEuljirooraeorae.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'BMEULJIROTTF';
+	src: url('../../css/fonts/BMEULJIROTTF.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'BMHANNA_11yrs_ttf';
+	src: url('../../css/fonts/BMHANNA_11yrs_ttf.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'BMHANNAAir_ttf';
+	src: url('../../css/fonts/BMHANNAAir_ttf.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'BMHANNAPro';
+	src: url('../../css/fonts/BMHANNAPro.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'BMJUA_ttf';
+	src: url('../../css/fonts/BMJUA_ttf.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'BMKIRANGHAERANG';
+	src: url('../../css/fonts/BMKIRANGHAERANG-TTF.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'BMYEONSUNG_ttf';
+	src: url('../../css/fonts/BMYEONSUNG_ttf.ttf') format('truetype');
+}
+
+@font-face {
+	font-family: 'LABDigital';
+	src: url('../css/fonts/LABDigital.ttf') format('truetype');
+}
+* {
+	font-family: GmarketSansTTFMedium, serif;
+}
