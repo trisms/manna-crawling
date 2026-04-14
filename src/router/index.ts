@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import { useRestaurantStore } from '@/stores/restaurant/useRestaurantStore';
 import { useAppOptionStore } from '@/stores/app-option';
 import { useAdminStore } from '@/stores/systems/useAdminStore';
+import {useAccommodationStore} from "@/stores/accommodation/useAccommodationStore";
 
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
@@ -47,6 +48,32 @@ const router = createRouter({
 					},
 				},
 				{
+					name: 'AccommodationList',
+					path: '/accommodation/',
+					component: () => import('@/views/accommodation/list.vue'),
+					beforeEnter: async (to, from, next) => {
+						const store = useAccommodationStore();
+						await store.callListAPI(() => {});
+						await store.callRegionList();
+						next();
+					},
+				},
+				{
+					name: 'AccommodationDetail',
+					path: '/accommodation/:id',
+					component: () => import('@/views/accommodation/components/detail.vue'),
+					beforeEnter: async (to, from, next) => {
+						const store = useAccommodationStore();
+						await store.callDetailAPI(parseInt(to.params.id as string));
+						next();
+					},
+					meta: {
+						title: '숙박업소 상세',
+						nav: ['숙박업소 관리', '숙박업소 목록', '상세정보'],
+						depth: 2,
+					},
+				},
+				{
 					path: '/system/',
 					component: () => import('@/views/system/admin/list.vue'),
 					beforeEnter: async (to, from, next) => {
@@ -59,23 +86,6 @@ const router = createRouter({
 					path: '/system/add',
 					component: () => import('@/views/system/admin/add.vue'),
 				},
-				/* {
-          path: '/system/:adminId',
-          component: () => import('@/views/system/admin/detail.vue'),
-          beforeEnter: async (to, from, next) => {
-            const store = useAdminStore();
-            await store.callDetailAPI(to.params.adminId);
-            next();
-          },
-          meta: {
-            title: '관리자 정보',
-            nav: ['시스템설정', '계정 관리', '정보'],
-            depth: 2,
-          },
-        },*/
-
-				/*        { path: '/restaurant/list', component: () => import('@/views/restaurant/list.vue') },
-        { path: '/restaurant/menu', component: () => import('@/views/restaurant/menuList.vue') },*/
 			],
 		},
 		{ path: '/main', component: () => import('@/views/Home.vue') },
@@ -96,7 +106,7 @@ router.beforeEach((to, from, next) => {
 		return next();
 	} else {
 		if (accessToken) {
-			if (to.path.includes('/accommodation') || to.path.includes('/hairdressers')) {
+			if (/*to.path.includes('/accommodation') || */ to.path.includes('/hairdressers')) {
 				window.Swal.fire({
 					icon: 'error',
 					text: '해당페이지는 사용이 불가능합니다.',

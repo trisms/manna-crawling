@@ -8,7 +8,7 @@
       <i :class="icon" class="text-opacity-50"></i>
 
       <!-- 선택된 텍스트 -->
-      <span class="flex-grow-1">
+      <span class="flex-grow-1 font-size-11">
         {{ selectedLabel }}
       </span>
 
@@ -85,5 +85,8 @@ const selectedLabel = computed(() => {
   padding-left: 5px;
   padding-right: 5px;
   height: 34px;
+}
+.font-size-11 {
+  font-size: 11px;
 }
 </style>

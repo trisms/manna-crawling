@@ -16,7 +16,7 @@ import VueAwesomePaginate from 'vue-awesome-paginate';
 
 import App from './App.vue';
 import router from './router';
-
+import '@/assets/css/custom.css';
 import Swal from 'sweetalert2';
 import Panel from '@/components/bootstrap/Panel.vue';
 import PanelBody from '@/components/bootstrap/PanelBody.vue';

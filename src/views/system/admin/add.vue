@@ -144,7 +144,7 @@
               <td>{{ item.modDate }}</td>
               <td >
                 <div class="input-group">
-                  <input type="text" @click.stop class="form-control  bg-light  border-0 w-80px"  v-model="item.stCode" placeholder="가맹점코드를 입력해주세요" />
+                  <input type="text" @click.stop class="form-control  bg-light  border-0 w-80px"  v-model="item.stCode" placeholder="가맹점코드" />
                   <button type="button" @click.stop="updateStCode(item.grStNo,item.stCode )" class="btn btn-sm btn-white  " ><i class="fa fa-fw fa-plus "></i> 수정</button>
                 </div>
               </td>
