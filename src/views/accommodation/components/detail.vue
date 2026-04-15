@@ -173,117 +173,82 @@
         <section class="yd-section">
           <h2 class="yd-section__title">객실 정보</h2>
 
-          <div v-if="roomList.length" class="yd-room-list">
-            <article
-                v-for="roomItem in roomList"
-                :key="roomItem.roomId"
-                class="yd-room-card"
-            >
-              <div
-                  class="yd-room-card__gallery"
-                  @mouseenter="stopRoomSlide(roomItem.roomId)"
-                  @mouseleave="startRoomSlide(roomItem.roomId)"
+          <div v-if="roomList.length" class="yd-room-tabs-wrap">
+            <div class="yd-room-tabs">
+              <button
+                  v-for="roomItem in roomList"
+                  :key="roomItem.roomId"
+                  type="button"
+                  class="yd-room-tab"
+                  :class="{ active: activeRoomId === roomItem.roomId }"
+                  @click="selectRoomTab(roomItem.roomId)"
               >
-                <img
-                    :src="currentRoomImage(roomItem)"
-                    alt="객실 이미지"
-                    class="yd-room-card__img"
-                    @click="openImageModal(currentRoomImage(roomItem))"
-                    @error="handleImageError"
-                />
+                <span class="yd-room-tab__name">{{ roomItem.roomName || '객실명 없음' }}</span>
+                <span class="yd-room-tab__count">
+                  {{ roomItem.roomInfo?.length || 0 }}개 상품
+                </span>
+              </button>
+            </div>
 
-                <button
-                    v-if="sortedRoomImages(roomItem).length > 1"
-                    type="button"
-                    class="yd-room-nav yd-room-nav--prev"
-                    @click.stop="prevRoomImage(roomItem.roomId)"
-                >
-                  <i class="fa fa-chevron-left"></i>
-                </button>
-
-                <button
-                    v-if="sortedRoomImages(roomItem).length > 1"
-                    type="button"
-                    class="yd-room-nav yd-room-nav--next"
-                    @click.stop="nextRoomImageAndReset(roomItem.roomId)"
-                >
-                  <i class="fa fa-chevron-right"></i>
-                </button>
-
-                <div
-                    v-if="sortedRoomImages(roomItem).length > 1"
-                    class="yd-room-dots"
-                >
-                  <button
-                      v-for="(img, imgIndex) in sortedRoomImages(roomItem)"
-                      :key="img.roomImgId"
-                      type="button"
-                      class="yd-room-dot"
-                      :class="{ active: getRoomImageIndex(roomItem.roomId) === imgIndex }"
-                      @click.stop="moveRoomImage(roomItem.roomId, imgIndex)"
-                  ></button>
+            <div v-if="activeRoom" class="yd-room-tab-panel">
+              <div class="yd-room-tab-panel__top">
+                <div class="yd-room-tab-panel__summary">
+                  <h3 class="yd-room-tab-panel__title">{{ activeRoom.roomName || '-' }}</h3>
+                  <p class="yd-room-tab-panel__desc">
+                    등록 이미지 {{ sortedRoomImages(activeRoom).length }}장 ·
+                    객실 상품 {{ activeRoom.roomInfo?.length || 0 }}개
+                  </p>
                 </div>
+
+                <button
+                    type="button"
+                    class="yd-room-upload-btn"
+                    :disabled="!(selectedRoomImageMap[activeRoom.roomId]?.length)"
+                >
+                  선택 이미지 업로드
+                </button>
               </div>
 
-              <div class="yd-room-card__body">
-                <div class="yd-room-card__header">
-                  <div>
-                    <h3 class="yd-room-card__title">{{ roomItem.roomName || '-' }}</h3>
-                    <p class="yd-room-card__desc">
-                      객실 상품 {{ roomItem.roomInfo?.length || 0 }}개
-                    </p>
-                  </div>
-                </div>
+              <!-- 객실 상품 먼저 -->
+              <div class="yd-room-products-wrap">
+                <div class="yd-room-products-wrap__title">객실 상품</div>
 
-                <div v-if="roomItem.roomInfo?.length" class="yd-room-products">
+                <div v-if="activeRoom.roomInfo?.length" class="yd-room-products-table">
                   <div
-                      v-for="detail in roomItem.roomInfo"
+                      v-for="detail in activeRoom.roomInfo"
                       :key="detail.roomInfoId"
-                      class="yd-room-product"
+                      class="yd-room-product-row"
                   >
-                    <div class="yd-room-product__top">
-                      <div>
-                        <div class="yd-room-product__name">
-                          {{ detail.roomType || '객실 상품' }}
-                        </div>
-                        <div class="yd-room-product__meta">
-                          기준 {{ detail.baseCnt ?? 0 }}인 / 최대 {{ detail.maxCnt ?? 0 }}인
-                        </div>
-                        <div class="yd-room-product__meta">
-                          이용시간 {{ detail.availUseTime || '-' }}
-                        </div>
-                        <div class="yd-room-product__meta">
-                          입실 {{ detail.checkInTime || '-' }} · 퇴실 {{ detail.checkOutTime || '-' }}
-                        </div>
+                    <div class="yd-room-product-row__main">
+                      <div class="yd-room-product-row__name">
+                        {{ getRoomTypeName(detail.roomType) }}
                       </div>
+                      <div class="yd-room-product-row__meta">
+                        기준 {{ detail.baseCnt ?? 0 }}인 / 최대 {{ detail.maxCnt ?? 0 }}인
+                      </div>
+                      <div class="yd-room-product-row__meta">
+                        이용시간 {{ detail.availUseTime || '-' }}시간
+                      </div>
+                      <div class="yd-room-product-row__meta">
+                        입실 {{ formatRoomTime(detail.checkInTime) }} · 퇴실 {{ formatRoomTime(detail.checkOutTime) }}
+                      </div>
+                    </div>
 
-                      <div class="yd-room-product__side">
-                        <div
-                            class="yd-status-badge"
-                            :class="{ sold: isSoldOut(detail.isSoldOut) }"
-                        >
-                          {{ isSoldOut(detail.isSoldOut) ? '판매종료' : '예약가능' }}
-                        </div>
+                    <div class="yd-room-product-row__status">
+                      <span
+                          class="yd-status-badge"
+                          :class="{ sold: isSoldOut(detail.isSoldOut) }"
+                      >
+                        {{ isSoldOut(detail.isSoldOut) ? '판매종료' : '예약가능' }}
+                      </span>
+                    </div>
 
-                        <div class="yd-room-price">
-                          <div
-                              v-if="hasDiscount(detail)"
-                              class="yd-room-price__origin"
-                          >
-                            {{ formatPrice(detail.roomPrice) }}
-                          </div>
-                          <div class="yd-room-price__sale">
-                            {{ displayRoomPrice(detail) }}
-                          </div>
-                        </div>
-
-                        <button
-                            type="button"
-                            class="yd-room-product__btn"
-                            :disabled="isSoldOut(detail.isSoldOut)"
-                        >
-                          {{ isSoldOut(detail.isSoldOut) ? '마감' : '예약가능' }}
-                        </button>
+                    <div class="yd-room-product-row__price">
+                      <div v-if="hasDiscount(detail)" class="yd-room-price__origin">
+                        {{ formatPrice(detail.roomPrice) }}
+                      </div>
+                      <div class="yd-room-price__sale">
+                        {{ displayRoomPrice(detail) }}
                       </div>
                     </div>
                   </div>
@@ -293,7 +258,68 @@
                   등록된 객실 상세 정보가 없습니다.
                 </div>
               </div>
-            </article>
+
+              <!-- 이미지 카드 5열 -->
+              <div class="yd-room-image-check-section">
+                <div class="yd-room-image-check-section__head">
+                  <div class="yd-room-image-check-section__title">객실 이미지</div>
+                  <div class="yd-room-image-check-section__info">
+                    선택 {{ selectedCount(activeRoom.roomId) }} / {{ sortedRoomImages(activeRoom).length }}
+                  </div>
+                </div>
+
+                <div
+                    v-if="sortedRoomImages(activeRoom).length"
+                    class="yd-room-image-card-grid"
+                >
+                  <button
+                      v-for="(img, index) in sortedRoomImages(activeRoom)"
+                      :key="img.roomImgId || index"
+                      type="button"
+                      class="yd-room-image-card"
+                      :class="{ selected: isRoomImageSelected(activeRoom.roomId, img) }"
+                      @click="toggleRoomImageSelection(activeRoom.roomId, img)"
+                  >
+                    <div class="yd-room-image-card__thumb-wrap">
+                      <img
+                          :src="img.imgPath"
+                          alt="객실 이미지"
+                          class="yd-room-image-card__thumb"
+                          @error="handleImageError"
+                      />
+
+                      <span class="yd-room-image-card__badge">
+                        {{ index + 1 }}
+                      </span>
+
+                      <span class="yd-room-image-card__check">
+                        <i class="fa fa-check"></i>
+                      </span>
+
+                      <span
+                          class="yd-room-image-card__zoom"
+                          @click.stop="openImageModal(img.imgPath)"
+                      >
+                        <i class="fa fa-search-plus"></i>
+                      </span>
+                    </div>
+
+                    <div class="yd-room-image-card__meta">
+                      <div class="yd-room-image-card__title">
+                        이미지 {{ index + 1 }}
+                      </div>
+<!--                      <div class="yd-room-image-card__sub">
+                        정렬순서 {{ img.viewOrder ?? index + 1 }}
+                      </div>-->
+                    </div>
+                  </button>
+                </div>
+
+                <div v-else class="yd-empty-panel">
+                  등록된 객실 이미지가 없습니다.
+                </div>
+              </div>
+            </div>
           </div>
 
           <div v-else class="yd-empty-panel">
@@ -320,7 +346,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useAccommodationStore } from '@/stores/accommodation/useAccommodationStore';
 
@@ -333,8 +359,8 @@ const loading = ref(false);
 const imageModalVisible = ref(false);
 const modalImage = ref(NO_IMAGE_URL);
 
-const roomImageIndexes = ref<Record<number | string, number>>({});
-const roomSlideTimers = ref<Record<number | string, number>>({});
+const activeRoomId = ref<number | string | null>(null);
+const selectedRoomImageMap = ref<Record<number | string, Array<number | string>>>({});
 
 const accomId = computed(() => Number(route.query.accomId || route.params.id || 0));
 
@@ -363,6 +389,12 @@ const roomList = computed(() => {
   if (Array.isArray((room.value as any)?.roomList)) return (room.value as any).roomList;
   if ((room.value as any)?.roomId !== undefined) return [room.value];
   return [];
+});
+
+const activeRoom = computed(() => {
+  if (!roomList.value.length) return null;
+  const found = roomList.value.find((item: any) => item.roomId === activeRoomId.value);
+  return found || roomList.value[0];
 });
 
 const roomImagePool = computed(() => {
@@ -448,103 +480,32 @@ function sortedRoomImages(roomItem: any) {
   );
 }
 
-function getRoomImageIndex(roomId: number | string) {
-  return roomImageIndexes.value[roomId] ?? 0;
-}
-
-function currentRoomImage(roomItem: any) {
-  const images = sortedRoomImages(roomItem);
-  if (!images.length) return NO_IMAGE_URL;
-
-  const index = getRoomImageIndex(roomItem.roomId);
-  return images[index]?.imgPath || NO_IMAGE_URL;
-}
-
-function moveRoomImage(roomId: number | string, index: number) {
-  roomImageIndexes.value[roomId] = index;
-  restartRoomSlide(roomId);
-}
-
-function prevRoomImage(roomId: number | string) {
-  const roomItem = roomList.value.find((item: any) => item.roomId === roomId);
-  const images = sortedRoomImages(roomItem);
-  if (!images.length) return;
-
-  const current = getRoomImageIndex(roomId);
-  roomImageIndexes.value[roomId] = (current - 1 + images.length) % images.length;
-  restartRoomSlide(roomId);
-}
-
-function nextRoomImage(roomId: number | string) {
-  const roomItem = roomList.value.find((item: any) => item.roomId === roomId);
-  const images = sortedRoomImages(roomItem);
-  if (!images.length) return;
-
-  const current = getRoomImageIndex(roomId);
-  roomImageIndexes.value[roomId] = (current + 1) % images.length;
-}
-
-function nextRoomImageAndReset(roomId: number | string) {
-  nextRoomImage(roomId);
-  restartRoomSlide(roomId);
-}
-
-function stopRoomSlide(roomId: number | string) {
-  if (roomSlideTimers.value[roomId]) {
-    clearInterval(roomSlideTimers.value[roomId]);
-    delete roomSlideTimers.value[roomId];
+function getRoomTypeName(roomType: string | number) {
+  switch (String(roomType)) {
+    case '1':
+      return '숙박';
+    case '2':
+      return '대실';
+    default:
+      return '객실 상품';
   }
 }
 
-function clearAllRoomSlides() {
-  Object.keys(roomSlideTimers.value).forEach((roomId) => {
-    stopRoomSlide(roomId);
-  });
-}
+function formatRoomTime(value: string | number) {
+  if (value === null || value === undefined || value === '') return '-';
 
-function startRoomSlide(roomId: number | string) {
-  stopRoomSlide(roomId);
+  const str = String(value).replace(/[^0-9]/g, '');
 
-  const roomItem = roomList.value.find((item: any) => item.roomId === roomId);
-  const images = sortedRoomImages(roomItem);
-  if (images.length <= 1) return;
-
-  roomSlideTimers.value[roomId] = window.setInterval(() => {
-    nextRoomImage(roomId);
-  }, 3200);
-}
-
-function restartRoomSlide(roomId: number | string) {
-  startRoomSlide(roomId);
-}
-
-watch(
-    roomList,
-    (newRooms) => {
-      clearAllRoomSlides();
-
-      newRooms.forEach((roomItem: any) => {
-        roomImageIndexes.value[roomItem.roomId] = 0;
-        startRoomSlide(roomItem.roomId);
-      });
-    },
-    { deep: true, immediate: true }
-);
-
-onMounted(async () => {
-  if (!accomId.value) return;
-
-  loading.value = true;
-  try {
-    await store.callDetailAPI(accomId.value);
-  } finally {
-    loading.value = false;
+  if (str.length === 4) {
+    return `${str.slice(0, 2)}:${str.slice(2, 4)}`;
   }
-});
 
-onBeforeUnmount(() => {
-  clearAllRoomSlides();
-});
+  if (str.length === 3) {
+    return `0${str.slice(0, 1)}:${str.slice(1, 3)}`;
+  }
+
+  return String(value);
+}
 
 function isSoldOut(value: string) {
   const v = String(value || '').toUpperCase();
@@ -582,6 +543,44 @@ function getAccomTypeName(type: string | number) {
   }
 }
 
+function selectRoomTab(roomId: number | string) {
+  activeRoomId.value = roomId;
+
+  if (!selectedRoomImageMap.value[roomId]) {
+    selectedRoomImageMap.value[roomId] = [];
+  }
+}
+
+function getRoomImageValue(img: any) {
+  return img?.roomImgId || img?.imgPath;
+}
+
+function isRoomImageSelected(roomId: number | string, img: any) {
+  const selected = selectedRoomImageMap.value[roomId] || [];
+  const value = getRoomImageValue(img);
+  return selected.includes(value);
+}
+
+function toggleRoomImageSelection(roomId: number | string, img: any) {
+  if (!selectedRoomImageMap.value[roomId]) {
+    selectedRoomImageMap.value[roomId] = [];
+  }
+
+  const value = getRoomImageValue(img);
+  const selected = selectedRoomImageMap.value[roomId];
+  const index = selected.indexOf(value);
+
+  if (index > -1) {
+    selected.splice(index, 1);
+  } else {
+    selected.push(value);
+  }
+}
+
+function selectedCount(roomId: number | string) {
+  return selectedRoomImageMap.value[roomId]?.length || 0;
+}
+
 function openImageModal(src: string) {
   modalImage.value = src || NO_IMAGE_URL;
   imageModalVisible.value = true;
@@ -600,6 +599,40 @@ function handleModalImageError(e: Event) {
   const target = e.target as HTMLImageElement;
   target.src = NO_IMAGE_URL;
 }
+
+watch(
+    roomList,
+    (newRooms) => {
+      newRooms.forEach((roomItem: any, index: number) => {
+        if (!selectedRoomImageMap.value[roomItem.roomId]) {
+          selectedRoomImageMap.value[roomItem.roomId] = [];
+        }
+
+        if (index === 0 && activeRoomId.value === null) {
+          activeRoomId.value = roomItem.roomId;
+        }
+      });
+
+      if (
+          activeRoomId.value !== null &&
+          !newRooms.some((item: any) => item.roomId === activeRoomId.value)
+      ) {
+        activeRoomId.value = newRooms[0]?.roomId ?? null;
+      }
+    },
+    { deep: true, immediate: true }
+);
+
+onMounted(async () => {
+  if (!accomId.value) return;
+
+  loading.value = true;
+  try {
+    await store.callDetailAPI(accomId.value);
+  } finally {
+    loading.value = false;
+  }
+});
 </script>
 
 <style scoped>
@@ -662,6 +695,7 @@ function handleModalImageError(e: Event) {
 .yd-gallery__main img {
   width: 100%;
   height: 100%;
+  min-height: 360px;
   object-fit: cover;
   display: block;
 }
@@ -686,7 +720,7 @@ function handleModalImageError(e: Event) {
 
 .yd-gallery__thumb img {
   width: 100%;
-  height: 100%;
+  height: 176px;
   object-fit: cover;
   display: block;
 }
@@ -698,7 +732,7 @@ function handleModalImageError(e: Event) {
 
 .yd-gallery__empty {
   width: 100%;
-  height: 100%;
+  height: 176px;
   background: #e5e7eb;
 }
 
@@ -769,40 +803,41 @@ function handleModalImageError(e: Event) {
 
 .yd-info-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 24px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
 .yd-info-card {
-  min-height: 142px;
+  min-height: 110px;
   background: #fff;
-  border: 1px solid #dfdfdf;
-  border-radius: 14px;
-  padding: 18px 20px;
+  border: 1px solid #e4e7eb;
+  border-radius: 10px;
+  padding: 14px 16px;
 }
 
 .yd-info-card__title {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   color: #24272c;
-  font-size: 16px;
-  font-weight: 800;
-  margin-bottom: 14px;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 10px;
 }
 
-.yd-info-card__content--review {
-  color: #41464f;
-  font-size: 14px;
-  line-height: 1.7;
-  word-break: break-word;
+.yd-info-card__content--review,
+.yd-preview-list__item,
+.yd-facility-item,
+.yd-location__line {
+  font-size: 13px;
+  line-height: 1.55;
 }
 
 .yd-facility-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px 14px;
+  gap: 10px 12px;
 }
 
 .yd-facility-item {
@@ -810,8 +845,6 @@ function handleModalImageError(e: Event) {
   align-items: flex-start;
   gap: 8px;
   color: #343942;
-  font-size: 14px;
-  line-height: 1.5;
 }
 
 .yd-facility-item i {
@@ -821,7 +854,7 @@ function handleModalImageError(e: Event) {
 .yd-location {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .yd-location__line {
@@ -829,8 +862,6 @@ function handleModalImageError(e: Event) {
   align-items: flex-start;
   gap: 8px;
   color: #343942;
-  font-size: 14px;
-  line-height: 1.55;
 }
 
 .yd-location__line i {
@@ -838,196 +869,14 @@ function handleModalImageError(e: Event) {
 }
 
 .yd-section {
-  margin-bottom: 26px;
+  margin-bottom: 24px;
 }
 
 .yd-section__title {
-  margin: 0 0 12px;
+  margin: 0 0 10px;
   color: #181a1f;
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 800;
-}
-
-.yd-room-list {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.yd-room-card {
-  background: #fff;
-  border: 1px solid #dfdfdf;
-  border-radius: 16px;
-  overflow: hidden;
-  display: grid;
-  grid-template-columns: 360px minmax(0, 1fr);
-}
-
-.yd-room-card__gallery {
-  position: relative;
-  min-height: 270px;
-  background: #eceff3;
-}
-
-.yd-room-card__img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  cursor: pointer;
-}
-
-.yd-room-nav {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 36px;
-  height: 36px;
-  border: none;
-  border-radius: 999px;
-  background: rgba(16, 18, 22, 0.48);
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.yd-room-nav--prev {
-  left: 12px;
-}
-
-.yd-room-nav--next {
-  right: 12px;
-}
-
-.yd-room-dots {
-  position: absolute;
-  left: 50%;
-  bottom: 12px;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 6px;
-}
-
-.yd-room-dot {
-  width: 7px;
-  height: 7px;
-  border: none;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.45);
-}
-
-.yd-room-dot.active {
-  background: #fff;
-}
-
-.yd-room-card__body {
-  padding: 18px 20px;
-}
-
-.yd-room-card__header {
-  margin-bottom: 12px;
-}
-
-.yd-room-card__title {
-  margin: 0;
-  color: #181a1f;
-  font-size: 22px;
-  font-weight: 800;
-}
-
-.yd-room-card__desc {
-  margin: 6px 0 0;
-  color: #7d838d;
-  font-size: 13px;
-}
-
-.yd-room-products {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.yd-room-product {
-  border: 1px solid #e7e7e7;
-  border-radius: 14px;
-  padding: 14px 16px;
-  background: #fff;
-}
-
-.yd-room-product__top {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.yd-room-product__name {
-  font-size: 17px;
-  font-weight: 800;
-  color: #1f2329;
-}
-
-.yd-room-product__meta {
-  margin-top: 6px;
-  color: #6c737d;
-  font-size: 13px;
-}
-
-.yd-room-product__side {
-  min-width: 140px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 8px;
-}
-
-.yd-status-badge {
-  min-width: 76px;
-  height: 30px;
-  border-radius: 999px;
-  background: #edf8f1;
-  color: #16803c;
-  font-size: 12px;
-  font-weight: 800;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.yd-status-badge.sold {
-  background: #fceeee;
-  color: #c62828;
-}
-
-.yd-room-price__origin {
-  color: #9ea4ad;
-  font-size: 12px;
-  text-decoration: line-through;
-  text-align: right;
-}
-
-.yd-room-price__sale {
-  color: #1b1d22;
-  font-size: 26px;
-  font-weight: 800;
-  line-height: 1.1;
-  text-align: right;
-}
-
-.yd-room-product__btn {
-  min-width: 96px;
-  height: 40px;
-  border: none;
-  border-radius: 12px;
-  background: #1976ff;
-  color: #fff;
-  font-size: 14px;
-  font-weight: 800;
-}
-
-.yd-room-product__btn:disabled {
-  background: #d0d4da;
-  color: #6d7480;
 }
 
 .yd-empty-panel,
@@ -1039,7 +888,7 @@ function handleModalImageError(e: Event) {
 .yd-empty-panel {
   background: #fff;
   border: 1px dashed #d9dde3;
-  border-radius: 14px;
+  border-radius: 12px;
   padding: 20px;
   text-align: center;
 }
@@ -1139,15 +988,329 @@ function handleModalImageError(e: Event) {
   text-align: center;
 }
 
+.yd-preview-list-wrap {
+  margin-top: 2px;
+}
+
+.yd-preview-list {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.yd-preview-list__item {
+  color: #41464f;
+  margin-bottom: 4px;
+  word-break: break-word;
+}
+
+.yd-preview-list__item:last-child {
+  margin-bottom: 0;
+}
+
+/* 객실 탭 */
+.yd-room-tabs-wrap {
+  background: #fff;
+  border: 1px solid #e4e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.yd-room-tabs {
+  display: flex;
+  overflow-x: auto;
+  border-bottom: 1px solid #eceff3;
+  background: #fafbfc;
+}
+
+.yd-room-tab {
+  min-width: 180px;
+  padding: 14px 16px;
+  border: none;
+  border-right: 1px solid #eceff3;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.yd-room-tab:hover {
+  background: #f4f6f8;
+}
+
+.yd-room-tab.active {
+  background: #fff;
+}
+
+.yd-room-tab__name {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1f2329;
+}
+
+.yd-room-tab__count {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #7b818a;
+}
+
+.yd-room-tab-panel {
+  padding: 18px;
+}
+
+.yd-room-tab-panel__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.yd-room-tab-panel__title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  color: #1a1d22;
+}
+
+.yd-room-tab-panel__desc {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: #7b818a;
+}
+
+.yd-room-upload-btn {
+  height: 36px;
+  padding: 0 14px;
+  border: 1px solid #d7dce2;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  color: #2a2f37;
+}
+
+.yd-room-upload-btn:disabled {
+  background: #f3f4f6;
+  color: #9aa1ab;
+  cursor: not-allowed;
+}
+
+.yd-room-products-wrap {
+  margin-bottom: 20px;
+}
+
+.yd-room-products-wrap__title {
+  margin-bottom: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #252932;
+}
+
+.yd-room-products-table {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.yd-room-product-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 110px 140px;
+  gap: 16px;
+  align-items: center;
+  border: 1px solid #e7eaee;
+  border-radius: 10px;
+  padding: 14px 16px;
+  background: #fff;
+}
+
+.yd-room-product-row__name {
+  font-size: 15px;
+  font-weight: 800;
+  color: #1f2329;
+}
+
+.yd-room-product-row__meta {
+  margin-top: 5px;
+  color: #6c737d;
+  font-size: 13px;
+}
+
+.yd-room-product-row__status {
+  display: flex;
+  justify-content: center;
+}
+
+.yd-room-product-row__price {
+  text-align: right;
+}
+
+.yd-status-badge {
+  min-width: 76px;
+  height: 30px;
+  border-radius: 999px;
+  background: #edf8f1;
+  color: #16803c;
+  font-size: 12px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.yd-status-badge.sold {
+  background: #fceeee;
+  color: #c62828;
+}
+
+.yd-room-price__origin {
+  color: #9ea4ad;
+  font-size: 12px;
+  text-decoration: line-through;
+}
+
+.yd-room-price__sale {
+  color: #1b1d22;
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+/* 이미지 카드 5열 */
+.yd-room-image-check-section__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.yd-room-image-check-section__title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #252932;
+}
+
+.yd-room-image-check-section__info {
+  font-size: 12px;
+  color: #7b818a;
+}
+
+.yd-room-image-card-grid {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.yd-room-image-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #fff;
+  padding: 0;
+  overflow: hidden;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.yd-room-image-card:hover {
+  border-color: #cfd6de;
+  transform: translateY(-1px);
+}
+
+.yd-room-image-card.selected {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.12);
+}
+
+.yd-room-image-card__thumb-wrap {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  background: #f3f4f6;
+}
+
+.yd-room-image-card__thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.yd-room-image-card__badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: rgba(17, 24, 39, 0.76);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.yd-room-image-card__check {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  color: transparent;
+  border: 1px solid #d6dbe2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.yd-room-image-card.selected .yd-room-image-card__check {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
+}
+
+.yd-room-image-card__zoom {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: rgba(17, 24, 39, 0.72);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.yd-room-image-card__meta {
+  padding: 10px 11px 12px;
+}
+
+.yd-room-image-card__title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1f2329;
+}
+
+.yd-room-image-card__sub {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #7b818a;
+}
+
 @media (max-width: 1280px) {
   .yd-gallery {
     grid-template-columns: 1fr;
-    height: auto;
   }
 
   .yd-gallery__main {
     border-radius: 14px;
-    min-height: 320px;
   }
 
   .yd-gallery__side {
@@ -1158,8 +1321,18 @@ function handleModalImageError(e: Event) {
     grid-template-columns: 1fr;
   }
 
-  .yd-room-card {
-    grid-template-columns: 1fr;
+  .yd-room-image-card-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1024px) {
+  .yd-room-image-card-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .yd-room-product-row {
+    grid-template-columns: minmax(0, 1fr) 100px 120px;
   }
 }
 
@@ -1174,12 +1347,17 @@ function handleModalImageError(e: Event) {
     flex-wrap: wrap;
   }
 
-  .yd-gallery__main {
+  .yd-gallery__main img {
     min-height: 220px;
   }
 
   .yd-gallery__side {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .yd-gallery__thumb img,
+  .yd-gallery__empty {
+    height: 120px;
   }
 
   .yd-summary {
@@ -1199,59 +1377,46 @@ function handleModalImageError(e: Event) {
     font-size: 30px;
   }
 
-  .yd-section__title {
-    font-size: 22px;
+  .yd-room-tab {
+    min-width: 150px;
+    padding: 12px 14px;
   }
 
-  .yd-room-card__gallery {
-    min-height: 220px;
-  }
-
-  .yd-room-card__title {
-    font-size: 20px;
-  }
-
-  .yd-room-product__top {
+  .yd-room-tab-panel__top {
     flex-direction: column;
+    align-items: stretch;
   }
 
-  .yd-room-product__side {
-    align-items: flex-start;
-    min-width: 0;
+  .yd-room-upload-btn {
+    width: 100%;
   }
 
-  .yd-room-price__origin,
-  .yd-room-price__sale {
+  .yd-room-product-row {
+    grid-template-columns: 1fr;
     text-align: left;
   }
 
-  .yd-room-product__btn {
-    width: 100%;
+  .yd-room-product-row__status {
+    justify-content: flex-start;
+  }
+
+  .yd-room-product-row__price {
+    text-align: left;
+  }
+
+  .yd-room-image-check-section__head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .yd-room-image-card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
   }
 
   .yd-stay-info-grid {
     grid-template-columns: 1fr;
   }
-}
-
-.yd-preview-list-wrap {
-  margin-top: 2px;
-}
-
-.yd-preview-list {
-  margin: 0;
-  padding-left: 18px;
-}
-
-.yd-preview-list__item {
-  color: #41464f;
-  font-size: 14px;
-  line-height: 1.7;
-  margin-bottom: 4px;
-  word-break: break-word;
-}
-
-.yd-preview-list__item:last-child {
-  margin-bottom: 0;
 }
 </style>
