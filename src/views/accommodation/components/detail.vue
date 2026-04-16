@@ -1294,7 +1294,7 @@ onMounted(async () => {
 }
 
 .yd-room-image-scroll {
-  max-height: 430px;
+  max-height: 190px;
   overflow-y: auto;
   overflow-x: hidden;
   padding-right: 4px;
