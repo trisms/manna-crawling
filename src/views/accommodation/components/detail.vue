@@ -26,29 +26,179 @@
             <img :src="mainImage" alt="대표 이미지" @error="handleImageError" />
           </button>
 
-          <div class="yd-gallery__side">
-            <button
-                v-for="(img, index) in sideImageSlots"
-                :key="`side-${index}`"
-                type="button"
-                class="yd-gallery__thumb"
-                :class="{ 'yd-gallery__thumb--empty': !img }"
-                @click="img && openImageModal(img)"
-            >
-              <template v-if="img">
-                <img :src="img" alt="썸네일 이미지" @error="handleImageError" />
-                <span
-                    v-if="index === 3 && extraImageCount > 0"
-                    class="yd-gallery__more"
+          <section class="yd-section">
+            <div v-if="roomList.length" class="yd-room-tabs-wrap">
+              <div class="yd-room-tabs-nav">
+                <button
+                    type="button"
+                    class="yd-room-tabs-arrow left"
+                    @click="scrollRoomTabs('left')"
+                    aria-label="객실 탭 왼쪽으로 이동"
                 >
-                  <i class="fa fa-image"></i>
-                  {{ extraImageCount }}+
-                </span>
-              </template>
+                  <i class="fa fa-chevron-left"></i>
+                </button>
 
-              <div v-else class="yd-gallery__empty"></div>
-            </button>
-          </div>
+                <div class="yd-room-tabs" ref="roomTabsRef">
+                  <button
+                      v-for="roomItem in roomList"
+                      :key="roomItem.roomId"
+                      type="button"
+                      class="yd-room-tab"
+                      :class="{ active: activeRoomId === roomItem.roomId }"
+                      @click="selectRoomTab(roomItem.roomId)"
+                  >
+                    <span class="yd-room-tab__name">{{ roomItem.roomName || '객실명 없음' }}</span>
+                    <span class="yd-room-tab__count">
+          {{ roomItem.roomInfo?.length || 0 }}개 상품
+        </span>
+                  </button>
+                </div>
+
+                <button
+                    type="button"
+                    class="yd-room-tabs-arrow right"
+                    @click="scrollRoomTabs('right')"
+                    aria-label="객실 탭 오른쪽으로 이동"
+                >
+                  <i class="fa fa-chevron-right"></i>
+                </button>
+              </div>
+
+              <div v-if="activeRoom" class="yd-room-tab-panel">
+                <div class="yd-room-tab-panel__top">
+                  <div class="yd-room-tab-panel__summary">
+                    <h3 class="yd-room-tab-panel__title">{{ activeRoom.roomName || '-' }}</h3>
+                    <p class="yd-room-tab-panel__desc">
+                      등록 이미지 {{ sortedRoomImages(activeRoom).length }}장 ·
+                      객실 상품 {{ activeRoom.roomInfo?.length || 0 }}개
+                    </p>
+                  </div>
+
+                  <button
+                      type="button"
+                      class="yd-room-upload-btn"
+                      :disabled="!(selectedRoomImageMap[activeRoom.roomId]?.length)"
+                  >
+                    선택 이미지 업로드
+                  </button>
+                </div>
+
+                <!-- 객실 상품 먼저 -->
+                <!--              <div class="yd-room-products-wrap">
+                                <div class="yd-room-products-wrap__title">객실 상품</div>
+
+                                <div v-if="activeRoom.roomInfo?.length" class="yd-room-products-table">
+                                  <div
+                                      v-for="detail in activeRoom.roomInfo"
+                                      :key="detail.roomInfoId"
+                                      class="yd-room-product-row"
+                                  >
+                                    <div class="yd-room-product-row__main">
+                                      <div class="yd-room-product-row__name">
+                                        {{ getRoomTypeName(detail.roomType) }}
+                                      </div>
+                                      <div class="yd-room-product-row__meta">
+                                        기준 {{ detail.baseCnt ?? 0 }}인 / 최대 {{ detail.maxCnt ?? 0 }}인
+                                      </div>
+                                      <div class="yd-room-product-row__meta">
+                                        이용시간 {{ detail.availUseTime || '-' }}시간
+                                      </div>
+                                      <div class="yd-room-product-row__meta">
+                                        입실 {{ formatRoomTime(detail.checkInTime) }} · 퇴실 {{ formatRoomTime(detail.checkOutTime) }}
+                                      </div>
+                                    </div>
+
+                                    <div class="yd-room-product-row__status">
+                                      <span
+                                          class="yd-status-badge"
+                                          :class="{ sold: isSoldOut(detail.isSoldOut) }"
+                                      >
+                                        {{ isSoldOut(detail.isSoldOut) ? '판매종료' : '예약가능' }}
+                                      </span>
+                                    </div>
+
+                                    <div class="yd-room-product-row__price">
+                                      <div v-if="hasDiscount(detail)" class="yd-room-price__origin">
+                                        {{ formatPrice(detail.roomPrice) }}
+                                      </div>
+                                      <div class="yd-room-price__sale">
+                                        {{ displayRoomPrice(detail) }}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div v-else class="yd-empty-panel">
+                                  등록된 객실 상세 정보가 없습니다.
+                                </div>
+                              </div>-->
+
+                <!-- 이미지 카드 5열 -->
+                <div class="yd-room-image-check-section">
+                  <div class="yd-room-image-check-section__head">
+                    <div class="yd-room-image-check-section__title">객실 이미지</div>
+                    <div class="yd-room-image-check-section__info">
+                      선택 {{ selectedCount(activeRoom.roomId) }} / {{ sortedRoomImages(activeRoom).length }}
+                    </div>
+                  </div>
+
+                  <div
+                      v-if="sortedRoomImages(activeRoom).length"
+                      class="yd-room-image-scroll"
+                  >
+                    <div class="yd-room-image-card-grid">
+                      <button
+                          v-for="(img, index) in sortedRoomImages(activeRoom)"
+                          :key="img.roomImgId || index"
+                          type="button"
+                          class="yd-room-image-card"
+                          :class="{ selected: isRoomImageSelected(activeRoom.roomId, img) }"
+                          @click="toggleRoomImageSelection(activeRoom.roomId, img)"
+                      >
+                        <div class="yd-room-image-card__thumb-wrap">
+                          <img
+                              :src="img.imgPath"
+                              alt="객실 이미지"
+                              class="yd-room-image-card__thumb"
+                              @error="handleImageError"
+                          />
+
+                          <span class="yd-room-image-card__badge">
+          {{ index + 1 }}
+        </span>
+
+                          <span class="yd-room-image-card__check">
+          <i class="fa fa-check"></i>
+        </span>
+
+                          <span
+                              class="yd-room-image-card__zoom"
+                              @click.stop="openImageModal(img.imgPath)"
+                          >
+          <i class="fa fa-search-plus"></i>
+        </span>
+                        </div>
+
+                        <div class="yd-room-image-card__meta">
+                          <div class="yd-room-image-card__title">
+                            이미지 {{ index + 1 }}
+                          </div>
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div v-else class="yd-empty-panel">
+                    등록된 객실 이미지가 없습니다.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div v-else class="yd-empty-panel">
+              등록된 객실 정보가 없습니다.
+            </div>
+          </section>
         </section>
 
         <section class="yd-summary">
@@ -58,12 +208,12 @@
           </div>
 
           <div class="yd-summary__right">
-            <button type="button" class="yd-like-btn">
+<!--            <button type="button" class="yd-like-btn">
               <i class="fa fa-heart-o"></i>
-            </button>
-            <div class="yd-summary__price">
+            </button>-->
+<!--            <div class="yd-summary__price">
               {{ lowestPrice }}
-            </div>
+            </div>-->
           </div>
         </section>
 
@@ -85,7 +235,7 @@
               </ul>
             </div>
 
-            <div v-else class="yd-info-card__content yd-info-card__content--review">
+            <div v-else class="yd-info-card__content yd-info-card__content&#45;&#45;review">
               등록된 숙소 소개 정보가 없습니다.
             </div>
           </article>
@@ -145,21 +295,23 @@
                   {{ item.title || '-' }}
                 </div>
 
-                <div
-                    v-if="parseAccomContents(item.contents).length"
-                    class="yd-stay-info-grid"
-                >
+                <div class="yd-stay-info-group__content">
                   <div
-                      v-for="(content, idx) in parseAccomContents(item.contents)"
-                      :key="`${item.accomInfoId}-${idx}`"
-                      class="yd-stay-info-item"
+                      v-if="parseAccomContents(item.contents).length"
+                      class="yd-stay-info-grid"
                   >
-                    {{ content }}
+                    <div
+                        v-for="(content, idx) in parseAccomContents(item.contents)"
+                        :key="`${item.accomInfoId}-${idx}`"
+                        class="yd-stay-info-item"
+                    >
+                      {{ content }}
+                    </div>
                   </div>
-                </div>
 
-                <div v-else class="yd-stay-info-text">
-                  {{ item.contents || '-' }}
+                  <div v-else class="yd-stay-info-text">
+                    {{ item.contents || '-' }}
+                  </div>
                 </div>
               </div>
             </template>
@@ -167,163 +319,6 @@
             <div v-else class="yd-stay-info-empty">
               등록된 숙소 소개 정보가 없습니다.
             </div>
-          </div>
-        </section>
-
-        <section class="yd-section">
-          <h2 class="yd-section__title">객실 정보</h2>
-
-          <div v-if="roomList.length" class="yd-room-tabs-wrap">
-            <div class="yd-room-tabs">
-              <button
-                  v-for="roomItem in roomList"
-                  :key="roomItem.roomId"
-                  type="button"
-                  class="yd-room-tab"
-                  :class="{ active: activeRoomId === roomItem.roomId }"
-                  @click="selectRoomTab(roomItem.roomId)"
-              >
-                <span class="yd-room-tab__name">{{ roomItem.roomName || '객실명 없음' }}</span>
-                <span class="yd-room-tab__count">
-                  {{ roomItem.roomInfo?.length || 0 }}개 상품
-                </span>
-              </button>
-            </div>
-
-            <div v-if="activeRoom" class="yd-room-tab-panel">
-              <div class="yd-room-tab-panel__top">
-                <div class="yd-room-tab-panel__summary">
-                  <h3 class="yd-room-tab-panel__title">{{ activeRoom.roomName || '-' }}</h3>
-                  <p class="yd-room-tab-panel__desc">
-                    등록 이미지 {{ sortedRoomImages(activeRoom).length }}장 ·
-                    객실 상품 {{ activeRoom.roomInfo?.length || 0 }}개
-                  </p>
-                </div>
-
-                <button
-                    type="button"
-                    class="yd-room-upload-btn"
-                    :disabled="!(selectedRoomImageMap[activeRoom.roomId]?.length)"
-                >
-                  선택 이미지 업로드
-                </button>
-              </div>
-
-              <!-- 객실 상품 먼저 -->
-              <div class="yd-room-products-wrap">
-                <div class="yd-room-products-wrap__title">객실 상품</div>
-
-                <div v-if="activeRoom.roomInfo?.length" class="yd-room-products-table">
-                  <div
-                      v-for="detail in activeRoom.roomInfo"
-                      :key="detail.roomInfoId"
-                      class="yd-room-product-row"
-                  >
-                    <div class="yd-room-product-row__main">
-                      <div class="yd-room-product-row__name">
-                        {{ getRoomTypeName(detail.roomType) }}
-                      </div>
-                      <div class="yd-room-product-row__meta">
-                        기준 {{ detail.baseCnt ?? 0 }}인 / 최대 {{ detail.maxCnt ?? 0 }}인
-                      </div>
-                      <div class="yd-room-product-row__meta">
-                        이용시간 {{ detail.availUseTime || '-' }}시간
-                      </div>
-                      <div class="yd-room-product-row__meta">
-                        입실 {{ formatRoomTime(detail.checkInTime) }} · 퇴실 {{ formatRoomTime(detail.checkOutTime) }}
-                      </div>
-                    </div>
-
-                    <div class="yd-room-product-row__status">
-                      <span
-                          class="yd-status-badge"
-                          :class="{ sold: isSoldOut(detail.isSoldOut) }"
-                      >
-                        {{ isSoldOut(detail.isSoldOut) ? '판매종료' : '예약가능' }}
-                      </span>
-                    </div>
-
-                    <div class="yd-room-product-row__price">
-                      <div v-if="hasDiscount(detail)" class="yd-room-price__origin">
-                        {{ formatPrice(detail.roomPrice) }}
-                      </div>
-                      <div class="yd-room-price__sale">
-                        {{ displayRoomPrice(detail) }}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div v-else class="yd-empty-panel">
-                  등록된 객실 상세 정보가 없습니다.
-                </div>
-              </div>
-
-              <!-- 이미지 카드 5열 -->
-              <div class="yd-room-image-check-section">
-                <div class="yd-room-image-check-section__head">
-                  <div class="yd-room-image-check-section__title">객실 이미지</div>
-                  <div class="yd-room-image-check-section__info">
-                    선택 {{ selectedCount(activeRoom.roomId) }} / {{ sortedRoomImages(activeRoom).length }}
-                  </div>
-                </div>
-
-                <div
-                    v-if="sortedRoomImages(activeRoom).length"
-                    class="yd-room-image-card-grid"
-                >
-                  <button
-                      v-for="(img, index) in sortedRoomImages(activeRoom)"
-                      :key="img.roomImgId || index"
-                      type="button"
-                      class="yd-room-image-card"
-                      :class="{ selected: isRoomImageSelected(activeRoom.roomId, img) }"
-                      @click="toggleRoomImageSelection(activeRoom.roomId, img)"
-                  >
-                    <div class="yd-room-image-card__thumb-wrap">
-                      <img
-                          :src="img.imgPath"
-                          alt="객실 이미지"
-                          class="yd-room-image-card__thumb"
-                          @error="handleImageError"
-                      />
-
-                      <span class="yd-room-image-card__badge">
-                        {{ index + 1 }}
-                      </span>
-
-                      <span class="yd-room-image-card__check">
-                        <i class="fa fa-check"></i>
-                      </span>
-
-                      <span
-                          class="yd-room-image-card__zoom"
-                          @click.stop="openImageModal(img.imgPath)"
-                      >
-                        <i class="fa fa-search-plus"></i>
-                      </span>
-                    </div>
-
-                    <div class="yd-room-image-card__meta">
-                      <div class="yd-room-image-card__title">
-                        이미지 {{ index + 1 }}
-                      </div>
-<!--                      <div class="yd-room-image-card__sub">
-                        정렬순서 {{ img.viewOrder ?? index + 1 }}
-                      </div>-->
-                    </div>
-                  </button>
-                </div>
-
-                <div v-else class="yd-empty-panel">
-                  등록된 객실 이미지가 없습니다.
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div v-else class="yd-empty-panel">
-            등록된 객실 정보가 없습니다.
           </div>
         </section>
       </template>
@@ -366,7 +361,19 @@ const accomId = computed(() => Number(route.query.accomId || route.params.id || 
 
 const info = computed(() => store.form.info || {});
 const room = computed(() => store.form.room || []);
+const roomTabsRef = ref<HTMLElement | null>(null);
 
+function scrollRoomTabs(direction: 'left' | 'right') {
+  const el = roomTabsRef.value;
+  if (!el) return;
+
+  const move = 260;
+
+  el.scrollBy({
+    left: direction === 'left' ? -move : move,
+    behavior: 'smooth',
+  });
+}
 const accomInfoList = computed(() => {
   return Array.isArray(info.value?.accomInfo) ? info.value.accomInfo : [];
 });
@@ -674,9 +681,10 @@ onMounted(async () => {
 
 .yd-gallery {
   display: grid;
-  grid-template-columns: 1.15fr 1fr;
-  gap: 8px;
+  grid-template-columns: minmax(0, 1.35fr) minmax(283px, 955px);
+  gap: 12px;
   margin-bottom: 18px;
+  align-items: stretch;
 }
 
 .yd-gallery__main,
@@ -689,7 +697,8 @@ onMounted(async () => {
 }
 
 .yd-gallery__main {
-  border-radius: 14px 0 0 14px;
+  border-radius: 14px;
+  min-height: 360px;
 }
 
 .yd-gallery__main img {
@@ -752,6 +761,35 @@ onMounted(async () => {
   align-items: center;
   gap: 6px;
   justify-content: center;
+}
+
+.yd-gallery__intro-card {
+  background: #fff;
+  border: 1px solid #e4e7eb;
+  border-radius: 14px;
+  padding: 18px 18px 16px;
+  display: flex;
+  flex-direction: column;
+  min-height: 360px;
+  overflow: hidden;
+}
+
+.yd-gallery__intro-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #24272c;
+  font-size: 15px;
+  font-weight: 800;
+  margin-bottom: 12px;
+  flex: 0 0 auto;
+}
+
+.yd-gallery__intro-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 4px;
 }
 
 .yd-summary {
@@ -868,10 +906,6 @@ onMounted(async () => {
   margin-top: 3px;
 }
 
-.yd-section {
-  margin-bottom: 24px;
-}
-
 .yd-section__title {
   margin: 0 0 10px;
   color: #181a1f;
@@ -938,6 +972,13 @@ onMounted(async () => {
   padding: 18px 20px;
 }
 
+.yd-stay-info-group {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
 .yd-stay-info-group + .yd-stay-info-group {
   margin-top: 18px;
   padding-top: 18px;
@@ -948,12 +989,17 @@ onMounted(async () => {
   font-size: 15px;
   font-weight: 800;
   color: #1f2329;
-  margin-bottom: 10px;
+  padding-top: 2px;
+  word-break: keep-all;
+}
+
+.yd-stay-info-group__content {
+  min-width: 0;
 }
 
 .yd-stay-info-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(1, minmax(0, 1fr));
   gap: 8px 14px;
 }
 
@@ -1007,6 +1053,16 @@ onMounted(async () => {
   margin-bottom: 0;
 }
 
+.yd-preview-list--intro {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.yd-preview-list--intro .yd-preview-list__item {
+  margin-bottom: 8px;
+  line-height: 1.6;
+}
+
 /* 객실 탭 */
 .yd-room-tabs-wrap {
   background: #fff;
@@ -1015,14 +1071,55 @@ onMounted(async () => {
   overflow: hidden;
 }
 
-.yd-room-tabs {
+.yd-room-tabs-nav {
   display: flex;
-  overflow-x: auto;
+  align-items: stretch;
   border-bottom: 1px solid #eceff3;
   background: #fafbfc;
 }
 
+.yd-room-tabs {
+  flex: 1;
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  background: #fafbfc;
+}
+
+.yd-room-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.yd-room-tabs-arrow {
+  width: 44px;
+  min-width: 44px;
+  border: none;
+  background: #fafbfc;
+  color: #4b5563;
+  cursor: pointer;
+  border-right: 1px solid #eceff3;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.yd-room-tabs-arrow.right {
+  border-right: none;
+  border-left: 1px solid #eceff3;
+}
+
+.yd-room-tabs-arrow:hover {
+  background: #f1f5f9;
+  color: #111827;
+}
+
+.yd-room-tabs-arrow i {
+  font-size: 14px;
+}
+
 .yd-room-tab {
+  flex: 0 0 auto;
   min-width: 180px;
   padding: 14px 16px;
   border: none;
@@ -1177,7 +1274,7 @@ onMounted(async () => {
   line-height: 1.1;
 }
 
-/* 이미지 카드 5열 */
+/* 객실 이미지 */
 .yd-room-image-check-section__head {
   display: flex;
   justify-content: space-between;
@@ -1196,10 +1293,18 @@ onMounted(async () => {
   color: #7b818a;
 }
 
+.yd-room-image-scroll {
+  max-height: 430px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 4px;
+}
+
 .yd-room-image-card-grid {
   display: grid;
-  grid-template-columns: repeat(8, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 12px;
+  align-content: start;
 }
 
 .yd-room-image-card {
@@ -1309,12 +1414,17 @@ onMounted(async () => {
     grid-template-columns: 1fr;
   }
 
-  .yd-gallery__main {
-    border-radius: 14px;
+  .yd-gallery__main,
+  .yd-gallery__intro-card {
+    min-height: auto;
   }
 
   .yd-gallery__side {
     grid-template-columns: repeat(4, 1fr);
+  }
+
+  .yd-gallery__intro-scroll {
+    max-height: 260px;
   }
 
   .yd-info-grid {
@@ -1329,6 +1439,10 @@ onMounted(async () => {
 @media (max-width: 1024px) {
   .yd-room-image-card-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .yd-room-image-scroll {
+    max-height: 420px;
   }
 
   .yd-room-product-row {
@@ -1358,6 +1472,14 @@ onMounted(async () => {
   .yd-gallery__thumb img,
   .yd-gallery__empty {
     height: 120px;
+  }
+
+  .yd-gallery__intro-card {
+    padding: 14px;
+  }
+
+  .yd-gallery__intro-scroll {
+    max-height: 220px;
   }
 
   .yd-summary {
@@ -1413,6 +1535,15 @@ onMounted(async () => {
   .yd-room-image-card-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
+  }
+
+  .yd-room-image-scroll {
+    max-height: 360px;
+  }
+
+  .yd-stay-info-group {
+    grid-template-columns: 1fr;
+    gap: 8px;
   }
 
   .yd-stay-info-grid {
