@@ -136,9 +136,22 @@
                 <!-- 이미지 카드 5열 -->
                 <div class="yd-room-image-check-section">
                   <div class="yd-room-image-check-section__head">
-                    <div class="yd-room-image-check-section__title">객실 이미지</div>
-                    <div class="yd-room-image-check-section__info">
-                      선택 {{ selectedCount(activeRoom.roomId) }} / {{ sortedRoomImages(activeRoom).length }}
+                    <div class="yd-room-image-check-section__title-wrap">
+                      <div class="yd-room-image-check-section__title">객실 이미지</div>
+                      <div class="yd-room-image-check-section__info">
+                        선택 {{ selectedCount(activeRoom.roomId) }} / {{ sortedRoomImages(activeRoom).length }}
+                      </div>
+                    </div>
+
+                    <div class="yd-room-image-check-section__actions">
+                      <button
+                          type="button"
+                          class="yd-room-image-action-btn"
+                          @click="toggleSelectAllRoomImages(activeRoom)"
+                          :disabled="!sortedRoomImages(activeRoom).length"
+                      >
+                        {{ isAllRoomImagesSelected(activeRoom) ? '전체해제' : '전체선택' }}
+                      </button>
                     </div>
                   </div>
 
@@ -640,6 +653,38 @@ onMounted(async () => {
     loading.value = false;
   }
 });
+
+function isAllRoomImagesSelected(roomItem: any) {
+  if (!roomItem) return false;
+
+  const images = sortedRoomImages(roomItem);
+  if (!images.length) return false;
+
+  const selected = selectedRoomImageMap.value[roomItem.roomId] || [];
+  const allValues = images.map((img: any) => getRoomImageValue(img));
+
+  return allValues.every((value) => selected.includes(value));
+}
+
+function toggleSelectAllRoomImages(roomItem: any) {
+  if (!roomItem) return;
+
+  const roomId = roomItem.roomId;
+  const images = sortedRoomImages(roomItem);
+
+  if (!images.length) {
+    selectedRoomImageMap.value[roomId] = [];
+    return;
+  }
+
+  const allValues = images.map((img: any) => getRoomImageValue(img));
+
+  if (isAllRoomImagesSelected(roomItem)) {
+    selectedRoomImageMap.value[roomId] = [];
+  } else {
+    selectedRoomImageMap.value[roomId] = [...allValues];
+  }
+}
 </script>
 
 <style scoped>
@@ -1549,5 +1594,42 @@ onMounted(async () => {
   .yd-stay-info-grid {
     grid-template-columns: 1fr;
   }
+}
+
+.yd-room-image-check-section__title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.yd-room-image-check-section__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.yd-room-image-action-btn {
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid #d7dce2;
+  border-radius: 8px;
+  background: #fff;
+  color: #2a2f37;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.yd-room-image-action-btn:hover {
+  background: #f8fafc;
+  border-color: #c7d0db;
+}
+
+.yd-room-image-action-btn:disabled {
+  background: #f3f4f6;
+  color: #9aa1ab;
+  cursor: not-allowed;
 }
 </style>
