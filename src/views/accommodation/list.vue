@@ -293,10 +293,32 @@ const options = {
   theme: 'auto',
   // and so on ...
 };
+
+const getDefaultDateRange = () => {
+  const endDate = new Date();
+  const startDate = new Date();
+  startDate.setMonth(startDate.getMonth() - 1);
+
+  return { startDate, endDate };
+};
+
+const formatDateParam = (date: Date | null) => {
+  if (!date) return '';
+  const yyyy = date.getFullYear();
+  const MM = String(date.getMonth() + 1).padStart(2, '0');
+  const dd = String(date.getDate()).padStart(2, '0');
+  return `${yyyy}-${MM}-${dd}`;
+};
+
+const defaultDateRange = getDefaultDateRange();
 const dateRange = ref({
-  startDate: null as Date | null,
-  endDate: null as Date | null,
+  startDate: defaultDateRange.startDate,
+  endDate: defaultDateRange.endDate,
 });
+const syncingDateRange = ref(false);
+
+store.searchParams.startDate = formatDateParam(dateRange.value.startDate);
+store.searchParams.endDate = formatDateParam(dateRange.value.endDate);
 
 const filteredSigunList = computed(() => {
   const sido = store.searchParams.sidoCode;
@@ -339,16 +361,10 @@ watch(
 );
 
 watch(
-    () => dateRange.value.startDate,
+    [() => dateRange.value.startDate, () => dateRange.value.endDate],
     () => {
+      if (syncingDateRange.value) return;
       store.searchParams.startDate = formatDateParam(dateRange.value.startDate);
-      search();
-    }
-);
-
-watch(
-    () => dateRange.value.endDate,
-    () => {
       store.searchParams.endDate = formatDateParam(dateRange.value.endDate);
       search();
     }
@@ -363,15 +379,6 @@ onMounted(async () => {
     loading.value = false;
   }
 });
-
-const formatDateParam = (date: Date | null) => {
-  if (!date) return '';
-  const yyyy = date.getFullYear();
-  const MM = String(date.getMonth() + 1).padStart(2, '0');
-  const dd = String(date.getDate()).padStart(2, '0');
-  return `${yyyy}-${MM}-${dd}`;
-};
-
 
 const rowNumber = (index: number) => {
   return (Number(store.currentPage) - 1) * Number(store.searchParams.size) + index + 1;
@@ -442,8 +449,13 @@ const updateStCode = async (accomId: number, accomCode: string) => {
 };
 const resetSearch = async () => {
   store.resetSearchParams();
-  dateRange.value.startDate = null;
-  dateRange.value.endDate = null;
+  const resetDateRange = getDefaultDateRange();
+  syncingDateRange.value = true;
+  dateRange.value.startDate = resetDateRange.startDate;
+  dateRange.value.endDate = resetDateRange.endDate;
+  syncingDateRange.value = false;
+  store.searchParams.startDate = formatDateParam(resetDateRange.startDate);
+  store.searchParams.endDate = formatDateParam(resetDateRange.endDate);
 
   loading.value = true;
   try {
@@ -584,16 +596,6 @@ const appTypeClass = (appType: string | number) => {
 .search-line-wrap :deep(.dp__main) {
   width: 100%;
 }
-
-
-
-
-
-
-
-
-
-
 
 
 
