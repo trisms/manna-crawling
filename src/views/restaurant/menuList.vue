@@ -107,7 +107,7 @@
                                 <input
                                     type="text"
                                     @click.stop
-                                    class="form-control bg-light border-0 height-20 pt-0 pb-0"
+                                    class="form-control w-500px bg-light border-0 height-20 pt-0 pb-0"
                                     v-model="store.form.appScheme"
                                     placeholder="앱스키마를 입력해주세요"
                                     style="width: 161px;margin-left: 5px;"
