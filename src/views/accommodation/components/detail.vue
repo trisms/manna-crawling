@@ -139,6 +139,148 @@
                   </button>
                 </div>
 
+
+                <!-- 객실 상품 정보 -->
+                <div
+                    v-if="activeRoom.roomInfo?.length"
+                    class="yd-room-products-wrap"
+                >
+                  <div class="yd-room-products-wrap__title">
+                    객실 상품
+                  </div>
+
+                  <div class="yd-room-products-table">
+                    <div
+                        v-for="roomInfo in activeRoom.roomInfo"
+                        :key="roomInfo.roomInfoId"
+                        class="yd-room-product-row"
+                    >
+                      <!-- 상품 상세 -->
+                      <div class="yd-room-product-row__content">
+                        <div class="yd-room-product-row__top">
+                            <span
+                                class="yd-room-type-badge"
+                                :class="{
+                                  stay: String(roomInfo.roomType) === '1',
+                                  rent: String(roomInfo.roomType) === '2'
+                                }"
+                            >
+                              {{ getRoomTypeName(roomInfo.roomType) }}
+                            </span>
+
+                          <span
+                              class="yd-status-badge"
+                              :class="{ sold: isRoomSoldOut(roomInfo.isSoldOut) }"
+                          >
+                          {{ isRoomSoldOut(roomInfo.isSoldOut) ? '매진' : '예약가능' }}
+                        </span>
+                        </div>
+
+                        <div class="yd-room-product-info-grid">
+                          <!-- 인원 -->
+                          <div class="yd-room-product-info">
+                            <div class="yd-room-product-info__label">
+                              <i class="fa fa-user"></i>
+                              인원
+                            </div>
+
+                            <div class="yd-room-product-info__value">
+                              기준 {{ formatNumber(roomInfo.baseCnt) }}명
+                              <span class="yd-room-product-info__divider">·</span>
+                              최대 {{ formatNumber(roomInfo.maxCnt) }}명
+                            </div>
+                          </div>
+
+                          <!-- 이용시간 -->
+                          <div class="yd-room-product-info">
+                            <div class="yd-room-product-info__label">
+                              <i class="fa fa-clock-o"></i>
+                              이용시간
+                            </div>
+
+                            <div class="yd-room-product-info__value">
+                              <template v-if="String(roomInfo.roomType) === '2'">
+                                {{ formatUseTime(roomInfo.availUseTime) }}
+                              </template>
+
+                              <template v-else>
+                                {{ formatCheckTime(roomInfo.checkInTime) }}
+                                ~
+                                {{ formatCheckTime(roomInfo.checkOutTime) }}
+                              </template>
+                            </div>
+                          </div>
+
+                          <!-- 체크인 -->
+                          <div class="yd-room-product-info">
+                            <div class="yd-room-product-info__label">
+                              <i class="fa fa-sign-in"></i>
+                              체크인
+                            </div>
+
+                            <div class="yd-room-product-info__value">
+                              {{ formatCheckTime(roomInfo.checkInTime) }}
+                            </div>
+                          </div>
+
+                          <!-- 체크아웃 -->
+                          <div class="yd-room-product-info">
+                            <div class="yd-room-product-info__label">
+                              <i class="fa fa-sign-out"></i>
+                              체크아웃
+                            </div>
+
+                            <div class="yd-room-product-info__value">
+                              {{ formatCheckTime(roomInfo.checkOutTime) }}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- 가격 -->
+                      <div class="yd-room-product-row__price">
+                        <div
+                            v-if="
+              roomInfo.roomPrice &&
+              roomInfo.roomDisPrice &&
+              Number(roomInfo.roomPrice) !== Number(roomInfo.roomDisPrice)
+            "
+                            class="yd-room-price__origin"
+                        >
+                          {{ formatPrice(roomInfo.roomPrice) }}
+                        </div>
+
+                        <div class="yd-room-price__sale">
+                          {{
+                            formatPrice(
+                                roomInfo.roomDisPrice ??
+                                roomInfo.roomPrice
+                            )
+                          }}
+                        </div>
+
+                        <div
+                            v-if="
+              roomInfo.roomPrice &&
+              roomInfo.roomDisPrice &&
+              Number(roomInfo.roomPrice) > Number(roomInfo.roomDisPrice)
+            "
+                            class="yd-room-price__discount"
+                        >
+                          {{ getDiscountRate(roomInfo.roomPrice, roomInfo.roomDisPrice) }}% 할인
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                    v-else
+                    class="yd-room-products-empty"
+                >
+                  등록된 객실 상품 정보가 없습니다.
+                </div>
+
                 <div class="yd-room-image-check-section">
                   <div class="yd-room-image-check-section__head">
                     <div class="yd-room-image-check-section__title-wrap">
@@ -225,6 +367,18 @@
             <h1 class="yd-summary__title">
               {{ info.accomName || '-' }}
             </h1>
+          </div>
+
+          <div class="yd-summary__actions">
+            <button
+                v-if="hasBizInfo"
+                type="button"
+                class="yd-seller-info-btn"
+                @click="openSellerModal"
+            >
+              <i class="fa fa-briefcase"></i>
+              <span>판매자 정보</span>
+            </button>
           </div>
         </section>
 
@@ -400,6 +554,113 @@
     </panel-body>
   </panel>
 
+
+  <!-- 판매자 정보 모달 -->
+  <div
+      v-if="sellerModalVisible"
+      class="yd-seller-modal"
+      @click="closeSellerModal"
+  >
+    <div
+        class="yd-seller-modal__dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="sellerModalTitle"
+        @click.stop
+    >
+      <div class="yd-seller-modal__header">
+        <div>
+          <div class="yd-seller-modal__eyebrow">SELLER INFORMATION</div>
+          <h3 id="sellerModalTitle" class="yd-seller-modal__title">
+            판매자 정보
+          </h3>
+        </div>
+
+        <button
+            type="button"
+            class="yd-seller-modal__close"
+            aria-label="판매자 정보 닫기"
+            @click="closeSellerModal"
+        >
+          <i class="fa fa-times"></i>
+        </button>
+      </div>
+
+      <div class="yd-seller-modal__notice">
+        <i class="fa fa-info-circle"></i>
+        <span>해당 숙소를 운영하는 판매자의 사업자 정보입니다.</span>
+      </div>
+
+      <div class="yd-seller-info-list">
+        <div class="yd-seller-info-row">
+          <div class="yd-seller-info-row__label">대표자명</div>
+          <div class="yd-seller-info-row__value">
+            {{ bizInfo.bizOwner || '-' }}
+          </div>
+        </div>
+
+        <div class="yd-seller-info-row">
+          <div class="yd-seller-info-row__label">상호명</div>
+          <div class="yd-seller-info-row__value yd-seller-info-row__value--strong">
+            {{ bizInfo.bizName || '-' }}
+          </div>
+        </div>
+
+        <div class="yd-seller-info-row">
+          <div class="yd-seller-info-row__label">사업자등록번호</div>
+          <div class="yd-seller-info-row__value">
+            {{ formatBizNumber(bizInfo.bizNum) }}
+          </div>
+        </div>
+
+        <div class="yd-seller-info-row">
+          <div class="yd-seller-info-row__label">사업장 주소</div>
+          <div class="yd-seller-info-row__value">
+            {{ bizInfo.bizAddr || '-' }}
+          </div>
+        </div>
+
+        <div class="yd-seller-info-row">
+          <div class="yd-seller-info-row__label">이메일</div>
+          <div class="yd-seller-info-row__value">
+            <a
+                v-if="bizInfo.bizEmail"
+                :href="`mailto:${bizInfo.bizEmail}`"
+                class="yd-seller-info-link"
+            >
+              {{ bizInfo.bizEmail }}
+            </a>
+            <span v-else>-</span>
+          </div>
+        </div>
+
+        <div class="yd-seller-info-row">
+          <div class="yd-seller-info-row__label">연락처</div>
+          <div class="yd-seller-info-row__value">
+            <a
+                v-if="bizInfo.accomTel"
+                :href="`tel:${bizInfo.accomTel}`"
+                class="yd-seller-info-link"
+            >
+              {{ formatPhoneNumber(bizInfo.accomTel) }}
+            </a>
+            <span v-else>-</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="yd-seller-modal__footer">
+        <button
+            type="button"
+            class="yd-seller-modal__confirm"
+            @click="closeSellerModal"
+        >
+          확인
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- 이미지 확대 모달 -->
   <div
       v-if="imageModalVisible"
@@ -450,10 +711,62 @@ interface RoomImage {
   viewOrder?: number;
 }
 
+interface RoomInfo {
+  roomInfoId: Id;
+
+  /**
+   * 1: 숙박
+   * 2: 대실
+   */
+  roomType?: string | number;
+
+  /**
+   * 정상 객실 가격
+   */
+  roomPrice?: number;
+
+  /**
+   * 할인 객실 가격
+   */
+  roomDisPrice?: number;
+
+  /**
+   * 기준 인원
+   */
+  baseCnt?: number;
+
+  /**
+   * 최대 인원
+   */
+  maxCnt?: number;
+
+  /**
+   * 이용 가능 시간
+   * 대실일 경우 시간 단위
+   */
+  availUseTime?: number;
+
+  /**
+   * 체크인 HHmm
+   */
+  checkInTime?: string;
+
+  /**
+   * 체크아웃 HHmm
+   */
+  checkOutTime?: string;
+
+  /**
+   * 0: 판매중
+   * 1: 매진
+   */
+  isSoldOut?: string | number;
+}
+
 interface RoomItem {
   roomId: Id;
   roomName?: string;
-  roomInfo?: unknown[];
+  roomInfo?: RoomInfo[];
   roomImgs?: RoomImage[];
 }
 
@@ -466,6 +779,15 @@ interface AccomInfoItem {
 interface Facility {
   sfId: Id;
   sfName: string;
+}
+
+interface BizInfo {
+  bizOwner?: string;
+  bizName?: string;
+  bizAddr?: string;
+  bizNum?: string;
+  bizEmail?: string;
+  accomTel?: string;
 }
 
 const route = useRoute();
@@ -483,6 +805,9 @@ const selectedRoomImages = ref<Record<string, Id[]>>({});
 const imageModalVisible = ref(false);
 const modalImage = ref(NO_IMAGE_URL);
 
+/* 판매자 정보 모달 */
+const sellerModalVisible = ref(false);
+
 /* DOM */
 const roomTabsRef = ref<HTMLElement | null>(null);
 const mainThumbsRef = ref<HTMLElement | null>(null);
@@ -495,6 +820,23 @@ const accomId = computed(() =>
 
 const info = computed<any>(() => store.form.info || {});
 const rawRoom = computed<any>(() => store.form.room || []);
+
+const bizInfo = computed<BizInfo>(() =>
+    info.value.bizInfo && typeof info.value.bizInfo === 'object'
+        ? info.value.bizInfo
+        : {}
+);
+
+const hasBizInfo = computed(() =>
+    Boolean(
+        bizInfo.value.bizOwner ||
+        bizInfo.value.bizName ||
+        bizInfo.value.bizAddr ||
+        bizInfo.value.bizNum ||
+        bizInfo.value.bizEmail ||
+        bizInfo.value.accomTel
+    )
+);
 
 /* 숙소 기본 정보 */
 const accomInfos = computed<AccomInfoItem[]>(() =>
@@ -719,6 +1061,15 @@ function handleImageError(event: Event) {
   }
 }
 
+/* 판매자 정보 모달 */
+function openSellerModal() {
+  sellerModalVisible.value = true;
+}
+
+function closeSellerModal() {
+  sellerModalVisible.value = false;
+}
+
 /* 포맷 및 공통 유틸 */
 function getAccomTypeName(type?: string | number) {
   const typeMap: Record<string, string> = {
@@ -733,7 +1084,136 @@ function getAccomTypeName(type?: string | number) {
 
   return typeMap[String(type)] || (type ? String(type) : '-');
 }
+function formatBizNumber(value?: string | number) {
+  if (value === undefined || value === null || value === '') {
+    return '-';
+  }
 
+  const number = String(value).replace(/\D/g, '');
+
+  if (number.length !== 10) {
+    return String(value);
+  }
+
+  return `${number.slice(0, 3)}-${number.slice(3, 5)}-${number.slice(5)}`;
+}
+
+function formatPhoneNumber(value?: string | number) {
+  if (value === undefined || value === null || value === '') {
+    return '-';
+  }
+
+  const number = String(value).replace(/\D/g, '');
+
+  if (number.startsWith('050') && number.length === 12) {
+    return `${number.slice(0, 4)}-${number.slice(4, 8)}-${number.slice(8)}`;
+  }
+
+  if (number.startsWith('02')) {
+    if (number.length === 9) {
+      return `${number.slice(0, 2)}-${number.slice(2, 5)}-${number.slice(5)}`;
+    }
+
+    if (number.length === 10) {
+      return `${number.slice(0, 2)}-${number.slice(2, 6)}-${number.slice(6)}`;
+    }
+  }
+
+  if (number.length === 10) {
+    return `${number.slice(0, 3)}-${number.slice(3, 6)}-${number.slice(6)}`;
+  }
+
+  if (number.length === 11) {
+    return `${number.slice(0, 3)}-${number.slice(3, 7)}-${number.slice(7)}`;
+  }
+
+  return String(value);
+}
+
+function getRoomTypeName(type?: string | number) {
+  const typeMap: Record<string, string> = {
+    '1': '숙박',
+    '2': '대실',
+  };
+
+  return typeMap[String(type)] || '-';
+}
+
+function isRoomSoldOut(value?: string | number) {
+  return String(value) === '1';
+}
+
+function formatNumber(value?: number | string) {
+  const number = Number(value);
+
+  if (!Number.isFinite(number)) {
+    return '-';
+  }
+
+  return number.toLocaleString('ko-KR');
+}
+
+function formatPrice(value?: number | string) {
+  const price = Number(value);
+
+  if (!Number.isFinite(price)) {
+    return '-';
+  }
+
+  return `${price.toLocaleString('ko-KR')}원`;
+}
+
+/**
+ * 1700 -> 17:00
+ * 0930 -> 09:30
+ */
+function formatCheckTime(value?: string | number) {
+  if (value === undefined || value === null || value === '') {
+    return '-';
+  }
+
+  const time = String(value).padStart(4, '0');
+
+  if (!/^\d{4}$/.test(time)) {
+    return String(value);
+  }
+
+  return `${time.substring(0, 2)}:${time.substring(2, 4)}`;
+}
+
+/**
+ * 대실 이용시간
+ */
+function formatUseTime(value?: number | string) {
+  const time = Number(value);
+
+  if (!Number.isFinite(time) || time <= 0) {
+    return '-';
+  }
+
+  return `${time}시간`;
+}
+
+function getDiscountRate(
+    roomPrice?: number | string,
+    roomDisPrice?: number | string
+) {
+  const originPrice = Number(roomPrice);
+  const discountPrice = Number(roomDisPrice);
+
+  if (
+      !Number.isFinite(originPrice) ||
+      !Number.isFinite(discountPrice) ||
+      originPrice <= 0 ||
+      discountPrice >= originPrice
+  ) {
+    return 0;
+  }
+
+  return Math.round(
+      ((originPrice - discountPrice) / originPrice) * 100
+  );
+}
 function formatScore(value?: number) {
   const score = Number(value);
   return Number.isFinite(score) ? score.toFixed(1) : '-';
@@ -987,6 +1467,195 @@ onMounted(loadDetail);
   font-size: 28px;
   font-weight: 800;
   line-height: 1.2;
+}
+
+.yd-summary__actions {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+}
+
+.yd-seller-info-btn {
+  height: 38px;
+  padding: 0 15px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1px solid #d8dde4;
+  border-radius: 9px;
+  background: #fff;
+  color: #343942;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+      background 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease,
+      transform 0.2s ease;
+}
+
+.yd-seller-info-btn i {
+  color: #68717d;
+  font-size: 13px;
+}
+
+.yd-seller-info-btn:hover {
+  background: #f8fafc;
+  border-color: #c6cdd6;
+  color: #181a1f;
+  transform: translateY(-1px);
+}
+
+/* 판매자 정보 모달 */
+.yd-seller-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(16, 18, 22, 0.58);
+  backdrop-filter: blur(2px);
+}
+
+.yd-seller-modal__dialog {
+  width: min(560px, 100%);
+  max-height: calc(100vh - 40px);
+  overflow: auto;
+  background: #fff;
+  border: 1px solid #e1e5ea;
+  border-radius: 16px;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.22);
+}
+
+.yd-seller-modal__header {
+  min-height: 82px;
+  padding: 19px 20px 16px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid #edf0f3;
+}
+
+.yd-seller-modal__eyebrow {
+  margin-bottom: 3px;
+  color: #8a919b;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.yd-seller-modal__title {
+  margin: 0;
+  color: #181b20;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.yd-seller-modal__close {
+  flex: 0 0 34px;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid #e2e6eb;
+  border-radius: 9px;
+  background: #fff;
+  color: #5f6772;
+  cursor: pointer;
+}
+
+.yd-seller-modal__close:hover {
+  background: #f6f7f9;
+  color: #20242a;
+}
+
+.yd-seller-modal__notice {
+  margin: 16px 20px 0;
+  padding: 11px 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  border-radius: 9px;
+  background: #f7f9fc;
+  color: #6c7480;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.yd-seller-modal__notice i {
+  margin-top: 2px;
+  color: #64748b;
+}
+
+.yd-seller-info-list {
+  margin: 16px 20px 20px;
+  border-top: 1px solid #e8ebef;
+}
+
+.yd-seller-info-row {
+  display: grid;
+  grid-template-columns: 130px minmax(0, 1fr);
+  gap: 16px;
+  padding: 13px 4px;
+  border-bottom: 1px solid #eef1f4;
+}
+
+.yd-seller-info-row__label {
+  color: #7c838d;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.yd-seller-info-row__value {
+  min-width: 0;
+  color: #282d34;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.55;
+  word-break: break-word;
+}
+
+.yd-seller-info-row__value--strong {
+  font-weight: 700;
+}
+
+.yd-seller-info-link {
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.yd-seller-info-link:hover {
+  text-decoration: underline;
+}
+
+.yd-seller-modal__footer {
+  padding: 14px 20px 18px;
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid #edf0f3;
+  background: #fafbfc;
+  border-radius: 0 0 16px 16px;
+}
+
+.yd-seller-modal__confirm {
+  min-width: 82px;
+  height: 36px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 8px;
+  background: #2f3540;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.yd-seller-modal__confirm:hover {
+  background: #20242a;
 }
 
 .yd-summary__right {
@@ -1369,86 +2038,6 @@ onMounted(loadDetail);
   cursor: not-allowed;
 }
 
-.yd-room-products-wrap {
-  margin-bottom: 20px;
-}
-
-.yd-room-products-wrap__title {
-  margin-bottom: 10px;
-  font-size: 14px;
-  font-weight: 700;
-  color: #252932;
-}
-
-.yd-room-products-table {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.yd-room-product-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 110px 140px;
-  gap: 16px;
-  align-items: center;
-  border: 1px solid #e7eaee;
-  border-radius: 10px;
-  padding: 14px 16px;
-  background: #fff;
-}
-
-.yd-room-product-row__name {
-  font-size: 15px;
-  font-weight: 800;
-  color: #1f2329;
-}
-
-.yd-room-product-row__meta {
-  margin-top: 5px;
-  color: #6c737d;
-  font-size: 13px;
-}
-
-.yd-room-product-row__status {
-  display: flex;
-  justify-content: center;
-}
-
-.yd-room-product-row__price {
-  text-align: right;
-}
-
-.yd-status-badge {
-  min-width: 76px;
-  height: 30px;
-  border-radius: 999px;
-  background: #edf8f1;
-  color: #16803c;
-  font-size: 12px;
-  font-weight: 800;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.yd-status-badge.sold {
-  background: #fceeee;
-  color: #c62828;
-}
-
-.yd-room-price__origin {
-  color: #9ea4ad;
-  font-size: 12px;
-  text-decoration: line-through;
-}
-
-.yd-room-price__sale {
-  color: #1b1d22;
-  font-size: 24px;
-  font-weight: 800;
-  line-height: 1.1;
-}
-
 /* 객실 이미지 */
 .yd-room-image-check-section__head {
   display: flex;
@@ -1502,6 +2091,203 @@ onMounted(loadDetail);
   border-color: #2563eb;
   box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.12);
 }
+
+/* ============================================
+   객실 상품
+============================================ */
+
+.yd-room-products-wrap {
+  margin-bottom: 22px;
+}
+
+.yd-room-products-wrap__title {
+  margin-bottom: 10px;
+  font-size: 14px;
+  font-weight: 800;
+  color: #252932;
+}
+
+.yd-room-products-table {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.yd-room-product-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 180px;
+  gap: 20px;
+  align-items: stretch;
+
+  padding: 16px 18px;
+
+  border: 1px solid #e4e8ed;
+  border-radius: 12px;
+
+  background: #fff;
+}
+
+.yd-room-product-row__content {
+  min-width: 0;
+}
+
+.yd-room-product-row__top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+/* 숙박 / 대실 */
+.yd-room-type-badge {
+  height: 28px;
+  padding: 0 11px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 6px;
+
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.yd-room-type-badge.stay {
+  background: #edf4ff;
+  color: #2563eb;
+}
+
+.yd-room-type-badge.rent {
+  background: #fff5e8;
+  color: #d97706;
+}
+
+/* 판매 상태 */
+.yd-status-badge {
+  min-width: 68px;
+  height: 28px;
+
+  padding: 0 10px;
+
+  border-radius: 999px;
+
+  background: #edf8f1;
+  color: #16803c;
+
+  font-size: 12px;
+  font-weight: 800;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.yd-status-badge.sold {
+  background: #fceeee;
+  color: #c62828;
+}
+
+/* 객실 정보 */
+.yd-room-product-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 24px;
+}
+
+.yd-room-product-info {
+  display: grid;
+  grid-template-columns: 82px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+}
+
+.yd-room-product-info__label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  color: #858c96;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.yd-room-product-info__label i {
+  width: 13px;
+  text-align: center;
+  color: #a1a7af;
+}
+
+.yd-room-product-info__value {
+  min-width: 0;
+
+  color: #31363d;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.yd-room-product-info__divider {
+  margin: 0 4px;
+  color: #c1c5cb;
+}
+
+/* 가격 */
+.yd-room-product-row__price {
+  padding-left: 20px;
+
+  border-left: 1px solid #edf0f3;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+
+  text-align: right;
+}
+
+.yd-room-price__origin {
+  margin-bottom: 3px;
+
+  color: #9ea4ad;
+  font-size: 12px;
+  font-weight: 500;
+
+  text-decoration: line-through;
+}
+
+.yd-room-price__sale {
+  color: #1b1d22;
+
+  font-size: 23px;
+  font-weight: 800;
+
+  line-height: 1.15;
+}
+
+.yd-room-price__discount {
+  margin-top: 5px;
+
+  color: #e5484d;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.yd-room-products-empty {
+  margin-bottom: 20px;
+
+  padding: 15px;
+
+  border: 1px dashed #d9dde3;
+  border-radius: 10px;
+
+  background: #fafbfc;
+
+  text-align: center;
+
+  color: #7b818a;
+  font-size: 13px;
+}
+
 
 .yd-room-image-card__thumb-wrap {
   position: relative;
@@ -1768,6 +2554,24 @@ onMounted(loadDetail);
 }
 
 @media (max-width: 767px) {
+  .yd-seller-modal {
+    padding: 12px;
+  }
+
+  .yd-seller-modal__dialog {
+    max-height: calc(100vh - 24px);
+  }
+
+  .yd-seller-info-row {
+    grid-template-columns: 1fr;
+    gap: 5px;
+  }
+
+  .yd-summary__actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
   .yd-detail-page {
     padding: 14px;
   }
@@ -2009,6 +2813,26 @@ onMounted(loadDetail);
 
   .yd-review-slider .yd-image-slider__arrow {
     height: 96px;
+  }
+
+  .yd-room-product-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .yd-room-product-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .yd-room-product-row__price {
+    padding-left: 0;
+    padding-top: 14px;
+
+    border-left: none;
+    border-top: 1px solid #edf0f3;
+
+    align-items: flex-start;
+    text-align: left;
   }
 }
 
