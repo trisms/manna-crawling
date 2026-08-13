@@ -57,7 +57,7 @@
 
           <div class="filter-item filter-app">
             <select class="form-select" v-model="store.searchParams.appType">
-              <option value="">주문앱</option>
+              <option value="">플랫폼 타입</option>
               <option value="1">여기어때</option>
               <option value="2">야놀자</option>
             </select>
@@ -149,7 +149,7 @@
             <tr>
               <th>번호</th>
               <th>등록상호</th>
-              <th>주문앱</th>
+              <th>플랫폼 타입</th>
               <th>숙소유형</th>
               <th>주소</th>
               <th>객실 수</th>
