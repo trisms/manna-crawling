@@ -82,6 +82,8 @@
                               </div>
                             </div>
                           </td>
+                        </tr>
+                        <tr>
                           <td nowrap>
                             <div class="d-flex align-items-center">
                               <div class="bg-indigo-200 w-15px h-15px rounded me-2"></div>
@@ -103,6 +105,8 @@
                               </div>
                             </div>
                           </td>
+                        </tr>
+                        <tr>
                           <td colspan="">
                             <div class="d-flex">
                               <div class="bg-indigo-100 w-15px h-15px rounded me-2"></div>
@@ -124,7 +128,8 @@
                               </div>
                             </div>
                           </td>
-
+                        </tr>
+                        <tr>
                           <td nowrap>
                             <div class="d-flex align-items-center">
                               <div class="bg-indigo-100 w-15px h-15px rounded me-2"></div>
@@ -136,8 +141,6 @@
                           </td>
                         </tr>
 
-
-
                         <tr>
                           <td nowrap colspan="2">
                             <div class="d-flex align-items-center">
@@ -145,21 +148,21 @@
                               <div>
                                 <div class="input-group">
                                   <b class="m-auto">숙박 URL : </b> {{ info.orgUrl }}
-<!--                                  <input
-                                      type="text"
-                                      @click.stop
-                                      class="form-control w-500px bg-light border-0 height-20 pt-0 pb-0"
-                                      v-model="info.orgUrl"
-                                      placeholder="숙박 URL를 입력해주세요"
-                                      style="width: 161px; margin-left: 5px;"
-                                  />
-                                  <button
-                                      type="button"
-                                      @click.stop="changeAppScheme()"
-                                      class="btn btn-sm btn-white pt-0 pb-0 fs-6"
-                                  >
-                                    <i class="fa fa-fw fa-plus"></i> 수정
-                                  </button>-->
+                                  <!--                                  <input
+                                                                        type="text"
+                                                                        @click.stop
+                                                                        class="form-control w-500px bg-light border-0 height-20 pt-0 pb-0"
+                                                                        v-model="info.orgUrl"
+                                                                        placeholder="숙박 URL를 입력해주세요"
+                                                                        style="width: 161px; margin-left: 5px;"
+                                                                    />
+                                                                    <button
+                                                                        type="button"
+                                                                        @click.stop="changeAppScheme()"
+                                                                        class="btn btn-sm btn-white pt-0 pb-0 fs-6"
+                                                                    >
+                                                                      <i class="fa fa-fw fa-plus"></i> 수정
+                                                                    </button>-->
                                 </div>
                               </div>
                             </div>
@@ -167,50 +170,50 @@
                         </tr>
 
 
-                        <tr>
-                          <td colspan="2">
-                            <div class="d-flex align-items-start">
-                              <div class="bg-indigo-200 w-15px h-15px rounded me-2 mt-1"></div>
+                        <!--                        <tr>
+                                                  <td colspan="2">
+                                                    <div class="d-flex align-items-start">
+                                                      <div class="bg-indigo-200 w-15px h-15px rounded me-2 mt-1"></div>
 
-                              <div class="w-100">
-                                <div class="mb-1">
-                                  <b>위치 추가정보</b> :
-                                </div>
+                                                      <div class="w-100">
+                                                        <div class="mb-1">
+                                                          <b>위치 추가정보</b> :
+                                                        </div>
 
-                                <div
-                                    v-if="locationMemoLines.length"
-                                    class="location-memo-list"
-                                >
-                                  <template
-                                      v-for="(line, index) in locationMemoLines"
-                                      :key="`location-${index}`"
-                                  >
-                                    <div
-                                        v-if="line.type === 'title'"
-                                        class="location-memo-title"
-                                    >
-                                      {{ line.text }}
-                                    </div>
+                                                        <div
+                                                            v-if="locationMemoLines.length"
+                                                            class="location-memo-list"
+                                                        >
+                                                          <template
+                                                              v-for="(line, index) in locationMemoLines"
+                                                              :key="`location-${index}`"
+                                                          >
+                                                            <div
+                                                                v-if="line.type === 'title'"
+                                                                class="location-memo-title"
+                                                            >
+                                                              {{ line.text }}
+                                                            </div>
 
-                                    <div
-                                        v-else-if="line.type === 'spacer'"
-                                        class="location-memo-spacer"
-                                    ></div>
+                                                            <div
+                                                                v-else-if="line.type === 'spacer'"
+                                                                class="location-memo-spacer"
+                                                            ></div>
 
-                                    <div
-                                        v-else
-                                        class="location-memo-line"
-                                    >
-                                      {{ line.text }}
-                                    </div>
-                                  </template>
-                                </div>
+                                                            <div
+                                                                v-else
+                                                                class="location-memo-line"
+                                                            >
+                                                              {{ line.text }}
+                                                            </div>
+                                                          </template>
+                                                        </div>
 
-                                <span v-else>-</span>
-                              </div>
-                            </div>
-                          </td>
-                        </tr>
+                                                        <span v-else>-</span>
+                                                      </div>
+                                                    </div>
+                                                  </td>
+                                                </tr>-->
                         </tbody>
                       </table>
 
@@ -234,7 +237,8 @@
                               </div>
                             </div>
                           </td>
-
+                        </tr>
+                        <tr>
                           <td nowrap>
                             <div class="d-flex align-items-center">
                               <div class="bg-indigo-100 w-15px h-15px rounded me-2"></div>
@@ -256,7 +260,8 @@
                               </div>
                             </div>
                           </td>
-
+                        </tr>
+                        <tr>
                           <td nowrap>
                             <div class="d-flex align-items-center">
                               <div class="bg-indigo-200 w-15px h-15px rounded me-2"></div>
@@ -293,8 +298,43 @@
                         </tr>
                         </tbody>
                       </table>
+                      <div class="mb-2 mt-4">
+                        <b class="fs-12px">
+                          <i class="fa fa-car me-1"></i>
+                          위치 추가정보
+                        </b>
+                      </div>
+                      <div
+                          v-if="locationMemoLines.length"
+                          class="location-memo-list"
+                      >
+                        <template
+                            v-for="(line, index) in locationMemoLines"
+                            :key="`location-${index}`"
+                        >
+                          <div
+                              v-if="line.type === 'title'"
+                              class="location-memo-title"
+                          >
+                            {{ line.text }}
+                          </div>
+
+                          <div
+                              v-else-if="line.type === 'spacer'"
+                              class="location-memo-spacer"
+                          ></div>
+
+                          <div
+                              v-else
+                              class="location-memo-line"
+                          >
+                            {{ line.text }}
+                          </div>
+                        </template>
+                      </div>
                     </div>
                   </div>
+
                 </section>
 
                 <!-- =====================================================
@@ -318,6 +358,196 @@
                   </div>
 
                   <div class="image-manage-summary">
+                    <!-- 객실 상품 탭 -->
+                    <div class="room-product-tab-wrap">
+                      <div class="room-product-tab-bar">
+                        <div class="room-product-tab-label">
+                          객실 상품 :
+                        </div>
+
+                        <button
+                            type="button"
+                            class="room-product-tab-arrow"
+                            @click="scrollRoomTabs(-1)"
+                        >
+                          <i class="fa fa-chevron-left"></i>
+                        </button>
+
+                        <div ref="roomTabsRef" class="room-product-tab-list">
+                          <button
+                              v-for="roomItem in rooms"
+                              :key="roomItem.roomId"
+                              type="button"
+                              class="room-product-tab-item"
+                              :class="{
+                              active: activeRoom?.roomId === roomItem.roomId
+                            }"
+                              @click="selectRoomAndOpen(roomItem.roomId)"
+                          >
+                          <span class="room-product-tab-item__name">
+                            {{ roomItem.roomName || '객실명 없음' }}
+                          </span>
+
+                            <!--                          <span class="room-product-tab-item__count">
+                                                        {{ roomItem.roomInfo?.length || 0 }}
+                                                      </span>-->
+                          </button>
+                        </div>
+
+                        <button
+                            type="button"
+                            class="room-product-tab-arrow"
+                            @click="scrollRoomTabs(1)"
+                        >
+                          <i class="fa fa-chevron-right"></i>
+                        </button>
+                      </div>
+
+                      <div
+                          v-if="rooms.length === 0"
+                          class="room-product-tab-empty"
+                      >
+                        등록된 객실 정보가 없습니다.
+                      </div>
+
+                      <div
+                          v-else-if="roomDetailExpanded && activeRoom"
+                          class="room-product-tab-detail"
+                      >
+                        <div class="room-product-tab-detail__head">
+                          <div class="room-product-tab-detail__title">
+                            <i class="fa fa-bed me-1"></i>
+                            <b>{{ activeRoom.roomName || '-' }}</b>
+                            <span>
+                            상품 {{ activeRoom.roomInfo?.length || 0 }}개
+                          </span>
+                          </div>
+
+                          <button
+                              type="button"
+                              class="room-product-tab-detail__close"
+                              @click="roomDetailExpanded = false"
+                          >
+                            <i class="fa fa-chevron-up me-1"></i>
+                            접기
+                          </button>
+                        </div>
+
+                        <div class="room-product-tab-detail__body">
+                          <div class="room-product-tab-image-panel">
+                            <button
+                                type="button"
+                                class="room-product-tab-image"
+                                @click="openImageManageModal('ROOM')"
+                            >
+                              <img
+                                  :src="activeRoomImages[0]?.imgPath || NO_IMAGE_URL"
+                                  :alt="activeRoom.roomName || '객실 이미지'"
+                                  @error="handleImageError"
+                              />
+
+                              <span class="room-product-tab-image__count">
+                              <i class="fa fa-images me-1"></i>
+                              {{ activeRoomImages.length }}장
+                            </span>
+                            </button>
+
+                            <div class="room-product-tab-image__bottom">
+                            <span>
+                              이미지 {{ activeRoomImages.length }}장
+                            </span>
+
+                              <button
+                                  type="button"
+                                  class="btn btn-xs btn-white border"
+                                  @click="openImageManageModal('ROOM')"
+                              >
+                                이미지 관리
+                              </button>
+                            </div>
+                          </div>
+
+                          <div class="room-product-tab-table-panel">
+                            <div
+                                v-if="activeRoom.roomInfo?.length"
+                                class="room-product-table-wrap"
+                            >
+                              <table class="table mb-0 room-product-table">
+                                <thead>
+                                <tr>
+                                  <th class="type-col">구분</th>
+                                  <th>기준인원</th>
+                                  <th>최대인원</th>
+                                  <th>이용시간</th>
+                                  <th>체크인</th>
+                                  <th>체크아웃</th>
+                                  <th class="price-col">정상가</th>
+                                  <th class="price-col">판매가</th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                <tr
+                                    v-for="roomInfo in activeRoom.roomInfo"
+                                    :key="roomInfo.roomInfoId"
+                                >
+                                  <td>
+                                  <span
+                                      class="room-type-label"
+                                      :class="{
+                                        stay: String(roomInfo.roomType) === '1',
+                                        rent: String(roomInfo.roomType) === '2'
+                                      }"
+                                  >
+                                    {{ getRoomTypeName(roomInfo.roomType) }}
+                                  </span>
+                                  </td>
+
+                                  <td>{{ formatNumber(roomInfo.baseCnt) }}명</td>
+                                  <td>{{ formatNumber(roomInfo.maxCnt) }}명</td>
+
+                                  <td>
+                                    <template v-if="String(roomInfo.roomType) === '2'">
+                                      {{ formatUseTime(roomInfo.availUseTime) }}
+                                    </template>
+                                    <template v-else>-</template>
+                                  </td>
+
+                                  <td>
+                                    {{ String(roomInfo.roomType) === '1' ? formatCheckTime(roomInfo.checkInTime) : '-' }}
+                                  </td>
+
+                                  <td>
+                                    {{ String(roomInfo.roomType) === '1' ? formatCheckTime(roomInfo.checkOutTime) : '-' }}
+                                  </td>
+
+                                  <td class="room-product-table__origin">
+                                    {{ formatPrice(roomInfo.roomPrice) }}
+                                  </td>
+
+                                  <td class="room-product-table__sale">
+                                    {{
+                                      formatPrice(
+                                          Number(roomInfo.roomDisPrice) > 0
+                                              ? roomInfo.roomDisPrice
+                                              : roomInfo.roomPrice
+                                      )
+                                    }}
+                                  </td>
+                                </tr>
+                                </tbody>
+                              </table>
+                            </div>
+
+                            <div v-else class="admin-empty room-product-empty-state">
+                              등록된 객실 상품 정보가 없습니다.
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+
                     <button
                         type="button"
                         class="image-manage-summary__item"
@@ -385,6 +615,7 @@
                     </button>
                   </div>
 
+
                   <div class="side-info-stack">
                     <section class="side-info-card">
                       <div class="side-info-card__head">
@@ -436,6 +667,7 @@
                           등록된 시설 정보가 없습니다.
                         </div>
                       </div>
+
                     </section>
                   </div>
                 </aside>
@@ -444,188 +676,7 @@
           </div>
         </div>
 
-        <!-- =====================================================
-             객실 선택 + 객실 이미지 + 객실 상품 정보
-        ====================================================== -->
-        <div class="admin-section-card mt-3 room-product-section">
-          <div class="room-product-section__head">
-            <div class="room-product-section__title">
-              <i class="fa fa-bed me-2"></i>
-              <b>객실 상품 정보</b>
-              <span class="section-count">{{ rooms.length }}개 객실</span>
-            </div>
 
-            <div v-if="activeRoom" class="room-product-section__active">
-              현재 선택
-              <strong>{{ activeRoom.roomName || '-' }}</strong>
-            </div>
-          </div>
-
-          <!-- 객실 선택 탭 : 탭 변경 시 이미지와 금액정보가 함께 변경 -->
-          <div v-if="rooms.length" class="room-select-strip">
-            <button
-                type="button"
-                class="room-select-arrow"
-                @click="scrollRoomTabs(-1)"
-            >
-              ‹
-            </button>
-
-            <div ref="roomTabsRef" class="room-select-tabs">
-              <button
-                  v-for="roomItem in rooms"
-                  :key="roomItem.roomId"
-                  type="button"
-                  class="room-select-tab"
-                  :class="{ active: activeRoom?.roomId === roomItem.roomId }"
-                  @click="selectRoom(roomItem.roomId)"
-              >
-                <span class="room-select-tab__name">
-                  {{ roomItem.roomName || '객실명 없음' }}
-                </span>
-                <span class="room-select-tab__meta">
-                  이미지 {{ roomItem.roomImgs?.length || 0 }}
-                  · 상품 {{ roomItem.roomInfo?.length || 0 }}
-                </span>
-              </button>
-            </div>
-
-            <button
-                type="button"
-                class="room-select-arrow"
-                @click="scrollRoomTabs(1)"
-            >
-              ›
-            </button>
-          </div>
-
-          <div v-if="activeRoom" class="room-product-layout">
-            <!-- 선택한 객실 이미지 -->
-            <div class="room-product-image-panel">
-              <button
-                  type="button"
-                  class="room-product-main-image"
-                  @click="openImageManageModal('ROOM')"
-              >
-                <img
-                    :src="activeRoomImages[0]?.imgPath || NO_IMAGE_URL"
-                    :alt="activeRoom.roomName || '객실 이미지'"
-                    @error="handleImageError"
-                />
-
-                <span class="room-product-main-image__count">
-                  <i class="fa fa-images me-1"></i>
-                  {{ activeRoomImages.length }}장
-                </span>
-              </button>
-
-              <div class="room-product-image-info">
-                <div class="room-product-image-info__name">
-                  {{ activeRoom.roomName || '-' }}
-                </div>
-
-                <div class="room-product-image-info__meta">
-                  <span>객실 이미지 {{ activeRoomImages.length }}장</span>
-                  <span
-                      v-if="selectedRoomImageCount > 0"
-                      class="room-product-image-info__selected"
-                  >
-                    선택 {{ selectedRoomImageCount }}장
-                  </span>
-                </div>
-
-                <button
-                    type="button"
-                    class="btn btn-sm btn-white border room-image-manage-btn"
-                    @click="openImageManageModal('ROOM')"
-                >
-                  <i class="fa fa-images me-1"></i>
-                  이미지 관리
-                  <span v-if="selectedRoomImageCount > 0" class="room-image-manage-btn__selected">
-                    {{ selectedRoomImageCount }}
-                  </span>
-                </button>
-              </div>
-            </div>
-
-            <!-- 선택한 객실 상품 정보 -->
-            <div class="room-product-info-panel">
-              <div class="room-product-info-panel__head">
-                <div>
-                  <b>{{ activeRoom.roomName || '-' }}</b>
-                  <span> 상품 정보</span>
-                </div>
-                <span class="room-product-count">{{ activeRoom.roomInfo?.length || 0 }}개</span>
-              </div>
-
-              <div v-if="activeRoom.roomInfo?.length" class="room-product-table-wrap">
-                <table class="table mb-0 room-product-table">
-                  <thead>
-                  <tr>
-                    <th class="type-col">구분</th>
-                    <th>기준인원</th>
-                    <th>최대인원</th>
-                    <th>이용시간</th>
-                    <th>체크인</th>
-                    <th>체크아웃</th>
-                    <th class="price-col ">정상가</th>
-                    <th class="price-col ">판매가</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <tr v-for="roomInfo in activeRoom.roomInfo" :key="roomInfo.roomInfoId">
-                    <td>
-                      <span
-                          class="room-type-label"
-                          :class="{
-                            stay: String(roomInfo.roomType) === '1',
-                            rent: String(roomInfo.roomType) === '2'
-                          }"
-                      >
-                        {{ getRoomTypeName(roomInfo.roomType) }}
-                      </span>
-                    </td>
-                    <td>{{ formatNumber(roomInfo.baseCnt) }}명</td>
-                    <td>{{ formatNumber(roomInfo.maxCnt) }}명</td>
-                    <td>
-                      <template v-if="String(roomInfo.roomType) === '2'">
-                        {{ formatUseTime(roomInfo.availUseTime) }}
-                      </template>
-                      <template v-else>-</template>
-                    </td>
-                    <td>
-                      {{ String(roomInfo.roomType) === '1' ? formatCheckTime(roomInfo.checkInTime) : '-' }}
-                    </td>
-                    <td>
-                      {{ String(roomInfo.roomType) === '1' ? formatCheckTime(roomInfo.checkOutTime) : '-' }}
-                    </td>
-                    <td class="room-product-table__origin">
-                      {{ formatPrice(roomInfo.roomPrice) }}
-                    </td>
-                    <td class="room-product-table__sale">
-                      {{
-                        formatPrice(
-                            Number(roomInfo.roomDisPrice) > 0
-                                ? roomInfo.roomDisPrice
-                                : roomInfo.roomPrice
-                        )
-                      }}
-                    </td>
-                  </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <div v-else class="admin-empty room-product-empty-state">
-                등록된 객실 상품 정보가 없습니다.
-              </div>
-            </div>
-          </div>
-
-          <div v-else class="admin-empty">
-            등록된 객실 정보가 없습니다.
-          </div>
-        </div>
 
 
         <!-- =====================================================
@@ -1100,6 +1151,7 @@ function goToList() {
  * ======================================================= */
 const loading = ref(false);
 const deleting = ref(false);
+const roomDetailExpanded = ref(true);
 
 const selectedMainImage = ref('');
 const activeRoomId = ref<Id | null>(null);
@@ -1417,6 +1469,25 @@ const activeRoomImages = computed<RoomImage[]>(() =>
     sortByOrder(activeRoom.value?.roomImgs || [])
 );
 
+function getRoomSummaryPrice(room: RoomItem) {
+  const prices = (room.roomInfo || [])
+      .map((item) => {
+        const salePrice =
+            Number(item.roomDisPrice) > 0
+                ? Number(item.roomDisPrice)
+                : Number(item.roomPrice);
+
+        return Number.isFinite(salePrice) && salePrice > 0
+            ? salePrice
+            : null;
+      })
+      .filter((price): price is number => price !== null);
+
+  if (!prices.length) return '-';
+
+  return `${Math.min(...prices).toLocaleString('ko-KR')}원~`;
+}
+
 const activeRoomImageList = computed(() =>
     activeRoomImages.value.map((image) => image.imgPath)
 );
@@ -1458,6 +1529,36 @@ const areAllActiveRoomImagesSelected = computed(() => {
   );
 });
 
+/**
+ * 최초 상세 조회 후 객실 데이터가 들어오면
+ * 첫 번째 객실을 자동 선택하고 상품 상세를 펼친다.
+ */
+watch(
+    rooms,
+    (roomList) => {
+      if (!roomList.length) {
+        activeRoomId.value = null;
+        return;
+      }
+
+      const exists = roomList.some(
+          (room) => room.roomId === activeRoomId.value
+      );
+
+      if (!exists) {
+        activeRoomId.value = roomList[0].roomId;
+      }
+
+      ensureRoomSelection(activeRoomId.value!);
+
+      // 최초 진입 시 객실 이미지/상품 정보가 바로 보이도록
+      roomDetailExpanded.value = true;
+    },
+    {
+      immediate: true,
+    }
+);
+
 /* =========================================================
  * 데이터 조회
  * ======================================================= */
@@ -1473,6 +1574,12 @@ async function loadDetail() {
 function selectRoom(roomId: Id) {
   activeRoomId.value = roomId;
   ensureRoomSelection(roomId);
+}
+
+function selectRoomAndOpen(roomId: Id) {
+  activeRoomId.value = roomId;
+  ensureRoomSelection(roomId);
+  roomDetailExpanded.value = true;
 }
 
 function scrollRoomTabs(direction: -1 | 1) {
@@ -5684,7 +5791,7 @@ onBeforeUnmount(() => {
 ========================================================= */
 .refined-top-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.65fr) minmax(320px, 0.75fr);
+  grid-template-columns: minmax(0, 0.4fr) minmax(320px, 0.75fr);
   gap: 12px;
   align-items: stretch;
 }
@@ -5921,7 +6028,7 @@ onBeforeUnmount(() => {
 }
 
 .side-info-card__body {
-  min-height: 58px;
+  min-height: 108px;
   max-height: 118px;
   padding: 8px 9px;
   overflow-y: auto;
@@ -5978,6 +6085,9 @@ onBeforeUnmount(() => {
   padding: 8px 10px;
   border: 1px solid #e7e9ec;
   border-radius: 4px;
+  min-height: 150px;
+  max-height: 150px;
+  overflow: scroll;
   background: #fafafa;
   font-size: 12px;
   line-height: 1.6;
@@ -6004,4 +6114,445 @@ onBeforeUnmount(() => {
   height: 7px;
 }
 
+
+/* =========================================================
+   이미지 관리 영역 안의 객실 상품 요약 / 펼침
+========================================================= */
+.room-compact-wrap {
+  margin: 0 9px 9px;
+}
+
+.room-compact-summary {
+  width: 100%;
+  min-height: 58px;
+  padding: 8px 9px;
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid #e1e5e9;
+  border-radius: 5px;
+  background: #fff;
+  color: #2d353c;
+  text-align: left;
+  transition: background .15s ease, border-color .15s ease;
+}
+
+.room-compact-summary:hover,
+.room-compact-summary.active {
+  border-color: #bbc4ce;
+  background: #fafbfc;
+}
+
+.room-compact-summary__icon {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  background: #f1f3f5;
+  color: #6c757d;
+  font-size: 14px;
+}
+
+.room-compact-summary__body {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.room-compact-summary__title {
+  color: #2d353c;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.room-compact-summary__meta {
+  overflow: hidden;
+  color: #8a939b;
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.room-compact-summary__right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #7b848d;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.room-compact-price {
+  color: #2d353c;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.room-compact-detail {
+  margin-top: 7px;
+  padding: 8px;
+  border: 1px solid #e1e5e9;
+  border-radius: 5px;
+  background: #fafafa;
+}
+
+.compact-room-select-strip {
+  margin-bottom: 8px;
+  padding: 5px;
+  background: #fff;
+}
+
+.room-compact-detail-layout {
+  display: grid;
+  grid-template-columns: 145px minmax(0, 1fr);
+  gap: 8px;
+  align-items: stretch;
+}
+
+.room-compact-image-box,
+.room-compact-product-box {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid #e1e5e9;
+  border-radius: 4px;
+  background: #fff;
+}
+
+.room-compact-image {
+  position: relative;
+  width: 100%;
+  height: 105px;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  background: #f3f4f5;
+}
+
+.room-compact-image img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.room-compact-image > span {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, .62);
+  color: #fff;
+  font-size: 10px;
+}
+
+.room-compact-image-info {
+  padding: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+  font-size: 11px;
+}
+
+.room-compact-image-info b {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.room-compact-product-head {
+  min-height: 32px;
+  padding: 6px 8px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #eceff2;
+  background: #fafafa;
+  font-size: 11px;
+}
+
+.room-compact-product-box .room-product-table {
+  min-width: 690px;
+  font-size: 10px;
+}
+
+.room-compact-product-box .room-product-table thead th,
+.room-compact-product-box .room-product-table tbody td {
+  padding: 5px 6px;
+}
+
+@media (max-width: 1100px) {
+  .room-compact-detail-layout {
+    grid-template-columns: 170px minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 767px) {
+  .room-compact-detail-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .room-compact-image {
+    height: 150px;
+  }
+}
+
+
+/* =========================================================
+   객실 상품 - 가로 탭 스타일
+========================================================= */
+.room-product-tab-wrap {
+  border: 1px solid #e3e6ea;
+  border-radius: 5px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.room-product-tab-bar {
+  min-height: 58px;
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid #eceff2;
+  background: #fff;
+}
+
+.room-product-tab-label {
+  flex: 0 0 auto;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  color: #8b9197;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.room-product-tab-arrow {
+  flex: 0 0 34px;
+  width: 34px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #31363b;
+  font-size: 15px;
+}
+
+.room-product-tab-arrow:hover {
+  background: #f7f8f9;
+}
+
+.room-product-tab-list {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: stretch;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+
+.room-product-tab-list::-webkit-scrollbar {
+  display: none;
+}
+
+.room-product-tab-item {
+  position: relative;
+  flex: 0 0 auto;
+  min-width: 92px;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: 0;
+  background: transparent;
+  color: #999;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.room-product-tab-item:hover {
+  color: #495057;
+  background: #fafafa;
+}
+
+.room-product-tab-item::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: transparent;
+}
+
+.room-product-tab-item.active {
+  color: #212529;
+  font-weight: 700;
+}
+
+.room-product-tab-item.active::after {
+  background: #348fe2;
+}
+
+.room-product-tab-item__count {
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  background: #f0f2f4;
+  color: #7a828a;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.room-product-tab-item.active .room-product-tab-item__count {
+  background: #eaf3fb;
+  color: #348fe2;
+}
+
+.room-product-tab-empty {
+  padding: 14px;
+  color: #9aa0a6;
+  font-size: 11px;
+  text-align: center;
+}
+
+.room-product-tab-detail {
+  background: #fafafa;
+}
+
+.room-product-tab-detail__head {
+  min-height: 38px;
+  padding: 7px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-bottom: 1px solid #e8ebef;
+}
+
+.room-product-tab-detail__title {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #343a40;
+  font-size: 11px;
+}
+
+.room-product-tab-detail__title span {
+  color: #8b9299;
+  font-size: 10px;
+}
+
+.room-product-tab-detail__close {
+  padding: 3px 5px;
+  border: 0;
+  background: transparent;
+  color: #7b838b;
+  font-size: 10px;
+}
+
+.room-product-tab-detail__body {
+  padding: 8px;
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  gap: 8px;
+}
+
+.room-product-tab-image-panel,
+.room-product-tab-table-panel {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid #e1e5e9;
+  border-radius: 4px;
+  background: #fff;
+}
+
+.room-product-tab-image {
+  position: relative;
+  width: 100%;
+  height: 108px;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  background: #f2f3f4;
+}
+
+.room-product-tab-image img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.room-product-tab-image__count {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, .62);
+  color: #fff;
+  font-size: 9px;
+}
+
+.room-product-tab-image__bottom {
+  min-height: 34px;
+  padding: 6px 7px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+  color: #7c848c;
+  font-size: 10px;
+}
+
+.room-product-tab-table-panel .room-product-table {
+  min-width: 680px;
+  font-size: 10px;
+}
+
+.room-product-tab-table-panel .room-product-table thead th,
+.room-product-tab-table-panel .room-product-table tbody td {
+  padding: 5px 6px;
+}
+
+@media (max-width: 1100px) {
+  .room-product-tab-detail__body {
+    grid-template-columns: 170px minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 767px) {
+  .room-product-tab-label {
+    padding: 0 8px;
+  }
+
+  .room-product-tab-item {
+    min-width: 80px;
+    padding: 0 10px;
+  }
+
+  .room-product-tab-detail__body {
+    grid-template-columns: 1fr;
+  }
+
+  .room-product-tab-image {
+    height: 150px;
+  }
+}
+
 </style>
+
+
