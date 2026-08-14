@@ -16,54 +16,90 @@
               <div class="accom-page-head">
                 <h4 class="mb-0">
                   <i class="fa fa-info-circle fa-fw"></i>
-                  <b>숙소 정보</b>
+                  <b>숙소 상세 정보</b>
                   <span class="accom-page-head__name">
-                    - ( {{ info.accomName || '-' }} )
+                    - {{ info.accomName || '-' }}
                   </span>
                 </h4>
 
-                <div class="d-flex align-items-center gap-2">
+                <div class="accom-page-head__actions">
                   <span class="platform-badge">
                     {{ getPlatformTypeName(platformType) }}
                   </span>
-
                   <button
-                      v-if="hasBizInfo"
                       type="button"
                       class="btn btn-sm btn-white border"
-                      @click="openSellerModal"
+                      @click="goToList"
                   >
-                    <i class="fa fa-briefcase me-1"></i>
-                    판매자 정보
+                    <i class="fa fa-list me-1"></i>
+                    목록으로
                   </button>
                 </div>
               </div>
 
-              <div class="accom-top-grid">
-                <!-- 숙소 기본/소개 정보 -->
-                <div class="accom-top-grid__info">
+              <div class="accom-top-grid refined-top-grid">
+                <!-- =====================================================
+                     숙소 상세 / 판매자 정보
+                ====================================================== -->
+                <section class="accom-detail-panel">
+                  <div class="detail-panel-head">
+                    <div class="detail-panel-head__title">
+                      <i class="fa fa-building me-1"></i>
+                      <b>숙소 상세</b>
+                    </div>
+                    <span class="detail-panel-head__sub">기본정보 · 판매자정보</span>
+                  </div>
+
                   <div class="card border-0">
-                    <div class="card-body bg-none accom-summary-body">
-                      <table class="table table-condensed p-0 bg-none mb-0 accom-info-table">
+                    <div class="card-body bg-none">
+                      <!-- 숙소 정보 -->
+                      <div class="mb-2">
+                        <b class="fs-12px">
+                          <i class="fa fa-hotel me-1"></i>
+                          숙소 정보
+                        </b>
+                      </div>
+
+                      <table class="table table-condensed p-0 bg-none mb-0 p-1">
                         <tbody>
                         <tr>
-                          <td class="w-50">
-                            <div class="accom-info-cell">
-                              <div class="info-dot bg-indigo-200"></div>
+                          <td nowrap class="w-50">
+                            <div class="d-flex align-items-center">
+                              <div class="bg-indigo-200 w-15px h-15px rounded me-2"></div>
                               <div>
-                                <b>숙소번호</b>
-                                <span>:</span>
+                                <b>일련번호</b> :
                                 {{ info.accomId ?? accomId ?? '-' }}
                               </div>
                             </div>
                           </td>
 
-                          <td>
-                            <div class="accom-info-cell">
-                              <div class="info-dot bg-indigo-100"></div>
+                          <td nowrap>
+                            <div class="d-flex align-items-center">
+                              <div class="bg-indigo-100 w-15px h-15px rounded me-2"></div>
                               <div>
-                                <b>플랫폼 타입</b>
-                                <span>:</span>
+                                <b>등록상호</b> :
+                                {{ info.accomName || '-' }}
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td nowrap>
+                            <div class="d-flex align-items-center">
+                              <div class="bg-indigo-100 w-15px h-15px rounded me-2"></div>
+                              <div>
+                                <b>숙소구분</b> :
+                                {{ getAccomTypeName(info.accomType) }}
+                              </div>
+                            </div>
+                          </td>
+
+                          <td nowrap>
+                            <div class="d-flex align-items-center">
+                              <div class="bg-indigo-200 w-15px h-15px rounded me-2"></div>
+                              <div>
+                                <b>플랫폼</b> :
                                 {{ getPlatformTypeName(platformType) }}
                               </div>
                             </div>
@@ -71,24 +107,22 @@
                         </tr>
 
                         <tr>
-                          <td>
-                            <div class="accom-info-cell">
-                              <div class="info-dot bg-indigo-100"></div>
+                          <td nowrap>
+                            <div class="d-flex align-items-center">
+                              <div class="bg-indigo-200 w-15px h-15px rounded me-2"></div>
                               <div>
-                                <b>숙소구분</b>
-                                <span>:</span>
-                                {{ getAccomTypeName(info.accomType) }}
+                                <b>수집일</b> :
+                                {{ formatDate(info.putDate) }}
                               </div>
                             </div>
                           </td>
 
-                          <td>
-                            <div class="accom-info-cell">
-                              <div class="info-dot bg-indigo-200"></div>
+                          <td nowrap>
+                            <div class="d-flex align-items-center">
+                              <div class="bg-indigo-100 w-15px h-15px rounded me-2"></div>
                               <div>
-                                <b>수집일</b>
-                                <span>:</span>
-                                {{ formatDate(info.putDate) }}
+                                <b>DB등록일</b> :
+                                {{ formatDateTime(info.createAt) }}
                               </div>
                             </div>
                           </td>
@@ -96,11 +130,10 @@
 
                         <tr>
                           <td colspan="2">
-                            <div class="accom-info-cell">
-                              <div class="info-dot bg-indigo-100"></div>
-                              <div class="accom-info-address">
-                                <b>숙소주소</b>
-                                <span>:</span>
+                            <div class="d-flex">
+                              <div class="bg-indigo-100 w-15px h-15px rounded me-2"></div>
+                              <div>
+                                <b>주소</b> :
                                 {{ info.accomAddr || '-' }}
                               </div>
                             </div>
@@ -109,12 +142,119 @@
 
                         <tr>
                           <td colspan="2">
-                            <div class="accom-info-cell">
-                              <div class="info-dot bg-indigo-200"></div>
-                              <div class="accom-info-address">
-                                <b>위치 추가정보</b>
-                                <span>:</span>
+                            <div class="d-flex">
+                              <div class="bg-indigo-200 w-15px h-15px rounded me-2"></div>
+                              <div>
+                                <b>위치 추가정보</b> :
                                 {{ info.accomAddrMemo || '-' }}
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td nowrap colspan="2">
+                            <div class="d-flex align-items-center">
+                              <div class="bg-indigo-100 w-15px h-15px rounded me-2"></div>
+                              <div>
+                                <div class="input-group">
+                                  <b class="m-auto">앱스키마 : </b>
+                                  <input
+                                      type="text"
+                                      @click.stop
+                                      class="form-control w-500px bg-light border-0 height-20 pt-0 pb-0"
+                                      v-model="info.appScheme"
+                                      placeholder="앱스키마를 입력해주세요"
+                                      style="width: 161px; margin-left: 5px;"
+                                  />
+                                  <button
+                                      type="button"
+                                      @click.stop="changeAppScheme()"
+                                      class="btn btn-sm btn-white pt-0 pb-0 fs-6"
+                                  >
+                                    <i class="fa fa-fw fa-plus"></i> 수정
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                        </tbody>
+                      </table>
+
+                      <!-- 판매자 정보 -->
+                      <div class="mt-3 mb-2">
+                        <b class="fs-12px">
+                          <i class="fa fa-briefcase me-1"></i>
+                          판매자 정보
+                        </b>
+                      </div>
+
+                      <table class="table table-condensed p-0 bg-none mb-0 p-1">
+                        <tbody>
+                        <tr>
+                          <td nowrap class="w-50">
+                            <div class="d-flex align-items-center">
+                              <div class="bg-indigo-200 w-15px h-15px rounded me-2"></div>
+                              <div>
+                                <b>대표자명</b> :
+                                {{ bizInfo.bizOwner || '-' }}
+                              </div>
+                            </div>
+                          </td>
+
+                          <td nowrap>
+                            <div class="d-flex align-items-center">
+                              <div class="bg-indigo-100 w-15px h-15px rounded me-2"></div>
+                              <div>
+                                <b>판매자 상호</b> :
+                                {{ bizInfo.bizName || '-' }}
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td nowrap>
+                            <div class="d-flex align-items-center">
+                              <div class="bg-indigo-100 w-15px h-15px rounded me-2"></div>
+                              <div>
+                                <b>사업자등록번호</b> :
+                                {{ formatBizNumber(bizInfo.bizNum) }}
+                              </div>
+                            </div>
+                          </td>
+
+                          <td nowrap>
+                            <div class="d-flex align-items-center">
+                              <div class="bg-indigo-200 w-15px h-15px rounded me-2"></div>
+                              <div>
+                                <b>연락처</b> :
+                                {{ formatPhoneNumber(sellerPhone) }}
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td colspan="2">
+                            <div class="d-flex">
+                              <div class="bg-indigo-200 w-15px h-15px rounded me-2"></div>
+                              <div>
+                                <b>이메일</b> :
+                                {{ bizInfo.bizEmail || '-' }}
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td colspan="2">
+                            <div class="d-flex">
+                              <div class="bg-indigo-100 w-15px h-15px rounded me-2"></div>
+                              <div>
+                                <b>사업장 주소</b> :
+                                {{ bizInfo.bizAddr || '-' }}
                               </div>
                             </div>
                           </td>
@@ -123,63 +263,20 @@
                       </table>
                     </div>
                   </div>
+                </section>
 
-                  <!-- 숙소 소개 / 부대시설 -->
-                  <div class="card bg-none border-0">
-                    <div class="card-body bg-none accom-mini-info-wrap">
-                      <div class="accom-mini-info">
-                        <div class="accom-mini-info__title">숙소 소개</div>
-
-                        <div class="accom-mini-info__body">
-                          <template v-if="previewContents.length">
-                            <div
-                                v-for="(content, index) in previewContents"
-                                :key="`preview-${index}`"
-                                class="mini-info-line"
-                            >
-                              {{ content }}
-                            </div>
-                          </template>
-
-                          <div v-else class="text-muted">
-                            등록된 숙소 소개 정보가 없습니다.
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="accom-mini-info">
-                        <div class="accom-mini-info__title">서비스 및 부대시설</div>
-
-                        <div class="accom-mini-info__body">
-                          <div v-if="facilities.length" class="facility-inline-list">
-                            <span
-                                v-for="facility in facilities"
-                                :key="facility.sfId"
-                                class="facility-inline-item"
-                            >
-                              <i class="fa fa-check me-1"></i>
-                              {{ facility.sfName }}
-                            </span>
-                          </div>
-
-                          <div v-else class="text-muted">
-                            등록된 시설 정보가 없습니다.
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- 이미지 관리를 숙소 정보 우측에 배치 -->
-                <aside class="accom-image-quick-panel">
-                  <div class="accom-image-quick-panel__head">
+                <!-- =====================================================
+                     이미지 관리 / 소개 / 시설
+                ====================================================== -->
+                <aside class="accom-image-quick-panel refined-side-panel">
+                  <div class="accom-image-quick-panel__head refined-side-panel__head">
                     <div>
                       <b>이미지 관리</b>
                       <span class="section-count">
                         총 {{ mainImages.length + reviewImages.length }}장
                       </span>
                     </div>
+
                     <span
                         v-if="selectedMainImageIds.length + selectedReviewImageIds.length > 0"
                         class="image-selected-total"
@@ -188,14 +285,14 @@
                     </span>
                   </div>
 
-                  <div class="accom-image-quick-list">
+                  <div class="image-manage-summary">
                     <button
                         type="button"
-                        class="image-quick-card"
-                        :class="{ 'has-selected': selectedMainImageIds.length > 0 }"
+                        class="image-manage-summary__item"
+                        :class="{ active: selectedMainImageIds.length > 0 }"
                         @click="openImageManageModal('MAIN')"
                     >
-                      <span class="image-quick-card__thumb">
+                      <span class="image-manage-summary__thumb">
                         <img
                             :src="mainImages[0]?.imgPath || NO_IMAGE_URL"
                             alt="메인 이미지"
@@ -203,33 +300,32 @@
                         />
                       </span>
 
-                      <span class="image-quick-card__content">
-                        <span class="image-quick-card__title">
-                          <i class="fa fa-image"></i>
+                      <span class="image-manage-summary__body">
+                        <span class="image-manage-summary__name">
+                          <i class="fa fa-image me-1"></i>
                           메인 이미지
                         </span>
-                        <span class="image-quick-card__meta">
-                          전체 {{ mainImages.length }}장
+                        <span class="image-manage-summary__meta">
+                          {{ mainImages.length }}장
+                          <template v-if="selectedMainImageIds.length">
+                            · 선택 {{ selectedMainImageIds.length }}
+                          </template>
                         </span>
                       </span>
 
-                      <span
-                          class="image-quick-card__selected"
-                          :class="{ active: selectedMainImageIds.length > 0 }"
-                      >
-                        선택 {{ selectedMainImageIds.length }}
+                      <span class="image-manage-summary__action">
+                        관리
+                        <i class="fa fa-chevron-right ms-1"></i>
                       </span>
-
-                      <i class="fa fa-chevron-right image-quick-card__arrow"></i>
                     </button>
 
                     <button
                         type="button"
-                        class="image-quick-card"
-                        :class="{ 'has-selected': selectedReviewImageIds.length > 0 }"
+                        class="image-manage-summary__item"
+                        :class="{ active: selectedReviewImageIds.length > 0 }"
                         @click="openImageManageModal('REVIEW')"
                     >
-                      <span class="image-quick-card__thumb">
+                      <span class="image-manage-summary__thumb">
                         <img
                             :src="reviewImages[0]?.imgPath || NO_IMAGE_URL"
                             alt="리뷰 이미지"
@@ -237,27 +333,78 @@
                         />
                       </span>
 
-                      <span class="image-quick-card__content">
-                        <span class="image-quick-card__title">
-                          <i class="fa fa-star text-warning"></i>
+                      <span class="image-manage-summary__body">
+                        <span class="image-manage-summary__name">
+                          <i class="fa fa-star text-warning me-1"></i>
                           리뷰 이미지
                         </span>
-                        <span class="image-quick-card__meta">
-                          전체 {{ reviewImages.length }}장
+                        <span class="image-manage-summary__meta">
+                          {{ reviewImages.length }}장
+                          <template v-if="selectedReviewImageIds.length">
+                            · 선택 {{ selectedReviewImageIds.length }}
+                          </template>
                         </span>
                       </span>
 
-                      <span
-                          class="image-quick-card__selected"
-                          :class="{ active: selectedReviewImageIds.length > 0 }"
-                      >
-                        선택 {{ selectedReviewImageIds.length }}
+                      <span class="image-manage-summary__action">
+                        관리
+                        <i class="fa fa-chevron-right ms-1"></i>
                       </span>
-
-                      <i class="fa fa-chevron-right image-quick-card__arrow"></i>
                     </button>
+                  </div>
 
+                  <div class="side-info-stack">
+                    <section class="side-info-card">
+                      <div class="side-info-card__head">
+                        <div>
+                          <i class="fa fa-align-left me-1"></i>
+                          <b>숙소 소개</b>
+                        </div>
+                      </div>
 
+                      <div class="side-info-card__body">
+                        <template v-if="previewContents.length">
+                          <div
+                              v-for="(content, index) in previewContents"
+                              :key="`preview-${index}`"
+                              class="mini-info-line"
+                          >
+                            {{ content }}
+                          </div>
+                        </template>
+
+                        <div v-else class="text-muted">
+                          등록된 숙소 소개 정보가 없습니다.
+                        </div>
+                      </div>
+                    </section>
+
+                    <section class="side-info-card">
+                      <div class="side-info-card__head">
+                        <div>
+                          <i class="fa fa-concierge-bell me-1"></i>
+                          <b>서비스 및 부대시설</b>
+                        </div>
+                        <span class="side-info-card__count">{{ facilities.length }}</span>
+                      </div>
+
+                      <div class="side-info-card__body">
+                        <div v-if="facilities.length" class="facility-inline-list refined-facility-list">
+                          <span
+                              v-for="facility in facilities"
+                              :key="facility.sfId"
+                              class="facility-inline-item"
+                          >
+                            <i class="fa fa-check me-1"></i>
+                            {{ facility.sfName }}
+                          </span>
+                        </div>
+
+                        <div v-else class="text-muted">
+                          등록된 시설 정보가 없습니다.
+                        </div>
+                      </div>
+                    </section>
                   </div>
                 </aside>
               </div>
@@ -369,59 +516,61 @@
               </div>
             </div>
 
-            <!-- 선택한 객실 금액/상품 정보 -->
+            <!-- 선택한 객실 상품 정보 -->
             <div class="room-product-info-panel">
               <div class="room-product-info-panel__head">
                 <div>
                   <b>{{ activeRoom.roomName || '-' }}</b>
-                  <span>의 판매 상품</span>
+                  <span> 상품 정보</span>
                 </div>
-                <span class="room-product-count">
-                  {{ activeRoom.roomInfo?.length || 0 }}개
-                </span>
+                <span class="room-product-count">{{ activeRoom.roomInfo?.length || 0 }}개</span>
               </div>
 
-              <div v-if="activeRoom.roomInfo?.length" class="room-price-card-list">
-                <div
-                    v-for="roomInfo in activeRoom.roomInfo"
-                    :key="roomInfo.roomInfoId"
-                    class="room-price-card"
-                >
-                  <div class="room-price-card__type">
-                    <span
-                        class="room-type-label"
-                        :class="{
-                          stay: String(roomInfo.roomType) === '1',
-                          rent: String(roomInfo.roomType) === '2'
-                        }"
-                    >
-                      {{ getRoomTypeName(roomInfo.roomType) }}
-                    </span>
-                  </div>
-
-                  <div class="room-price-card__spec">
-                    <div class="room-price-spec-item">
-                      <span>인원</span>
-                      <b>{{ formatNumber(roomInfo.baseCnt) }}명 / 최대 {{ formatNumber(roomInfo.maxCnt) }}명</b>
-                    </div>
-
-                    <div class="room-price-spec-item">
-                      <span>{{ String(roomInfo.roomType) === '2' ? '이용시간' : '체크인 · 체크아웃' }}</span>
-                      <b v-if="String(roomInfo.roomType) === '2'">
+              <div v-if="activeRoom.roomInfo?.length" class="room-product-table-wrap">
+                <table class="table mb-0 room-product-table">
+                  <thead>
+                  <tr>
+                    <th class="type-col">구분</th>
+                    <th>기준인원</th>
+                    <th>최대인원</th>
+                    <th>이용시간</th>
+                    <th>체크인</th>
+                    <th>체크아웃</th>
+                    <th class="price-col text-end">정상가</th>
+                    <th class="price-col text-end">판매가</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr v-for="roomInfo in activeRoom.roomInfo" :key="roomInfo.roomInfoId">
+                    <td>
+                      <span
+                          class="room-type-label"
+                          :class="{
+                            stay: String(roomInfo.roomType) === '1',
+                            rent: String(roomInfo.roomType) === '2'
+                          }"
+                      >
+                        {{ getRoomTypeName(roomInfo.roomType) }}
+                      </span>
+                    </td>
+                    <td>{{ formatNumber(roomInfo.baseCnt) }}명</td>
+                    <td>{{ formatNumber(roomInfo.maxCnt) }}명</td>
+                    <td>
+                      <template v-if="String(roomInfo.roomType) === '2'">
                         {{ formatUseTime(roomInfo.availUseTime) }}
-                      </b>
-                      <b v-else>
-                        {{ formatCheckTime(roomInfo.checkInTime) }} ~ {{ formatCheckTime(roomInfo.checkOutTime) }}
-                      </b>
-                    </div>
-                  </div>
-
-                  <div class="room-price-card__price">
-                    <div class="room-price-card__origin">
+                      </template>
+                      <template v-else>-</template>
+                    </td>
+                    <td>
+                      {{ String(roomInfo.roomType) === '1' ? formatCheckTime(roomInfo.checkInTime) : '-' }}
+                    </td>
+                    <td>
+                      {{ String(roomInfo.roomType) === '1' ? formatCheckTime(roomInfo.checkOutTime) : '-' }}
+                    </td>
+                    <td class="text-end room-product-table__origin">
                       {{ formatPrice(roomInfo.roomPrice) }}
-                    </div>
-
-                    <div class="room-price-card__sale">
+                    </td>
+                    <td class="text-end room-product-table__sale">
                       {{
                         formatPrice(
                             Number(roomInfo.roomDisPrice) > 0
@@ -429,16 +578,10 @@
                                 : roomInfo.roomPrice
                         )
                       }}
-                    </div>
-
-                    <span
-                        v-if="getDiscountRate(roomInfo.roomPrice, roomInfo.roomDisPrice) > 0"
-                        class="room-price-card__discount"
-                    >
-                      {{ getDiscountRate(roomInfo.roomPrice, roomInfo.roomDisPrice) }}% 할인
-                    </span>
-                  </div>
-                </div>
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
               </div>
 
               <div v-else class="admin-empty room-product-empty-state">
@@ -498,69 +641,6 @@
       </template>
     </panel-body>
   </panel>
-
-  <!-- =====================================================
-       판매자 정보 모달
-  ====================================================== -->
-  <div
-      v-if="sellerModalVisible"
-      class="simple-modal-backdrop"
-      @click="closeSellerModal"
-  >
-    <div class="simple-modal seller-modal" @click.stop>
-      <div class="simple-modal__head">
-        <h5 class="mb-0">
-          <i class="fa fa-briefcase me-2"></i>
-          판매자 정보
-        </h5>
-
-        <button
-            type="button"
-            class="btn-close"
-            @click="closeSellerModal"
-        ></button>
-      </div>
-
-      <table class="table table-condensed mb-0 seller-info-table">
-        <tbody>
-        <tr>
-          <th>대표자명</th>
-          <td>{{ bizInfo.bizOwner || '-' }}</td>
-        </tr>
-        <tr>
-          <th>상호명</th>
-          <td>{{ bizInfo.bizName || '-' }}</td>
-        </tr>
-        <tr>
-          <th>사업자등록번호</th>
-          <td>{{ formatBizNumber(bizInfo.bizNum) }}</td>
-        </tr>
-        <tr>
-          <th>사업장 주소</th>
-          <td>{{ bizInfo.bizAddr || '-' }}</td>
-        </tr>
-        <tr>
-          <th>이메일</th>
-          <td>{{ bizInfo.bizEmail || '-' }}</td>
-        </tr>
-        <tr>
-          <th>숙소 연락처</th>
-          <td>{{ formatPhoneNumber(sellerPhone) }}</td>
-        </tr>
-        </tbody>
-      </table>
-
-      <div class="simple-modal__footer">
-        <button
-            type="button"
-            class="btn btn-sm btn-gray"
-            @click="closeSellerModal"
-        >
-          확인
-        </button>
-      </div>
-    </div>
-  </div>
 
   <!-- =====================================================
        이미지 관리 모달
@@ -899,7 +979,7 @@
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useAccommodationStore } from '@/stores/accommodation/useAccommodationStore';
 
 type Id = number | string;
@@ -970,9 +1050,14 @@ interface BizInfo {
 }
 
 const route = useRoute();
+const router = useRouter();
 const store = useAccommodationStore();
 
 const NO_IMAGE_URL = new URL('@/assets/img/noimg.gif', import.meta.url).href;
+
+function goToList() {
+  router.back();
+}
 
 /* =========================================================
  * 화면 상태
@@ -986,11 +1071,6 @@ const activeRoomId = ref<Id | null>(null);
 const selectedMainImageIds = ref<Id[]>([]);
 const selectedReviewImageIds = ref<Id[]>([]);
 const selectedRoomImages = ref<Record<string, Id[]>>({});
-
-/* =========================================================
- * 판매자 모달
- * ======================================================= */
-const sellerModalVisible = ref(false);
 
 /* =========================================================
  * 이미지 관리 모달
@@ -1719,17 +1799,6 @@ function handleImageError(event: Event) {
 }
 
 /* =========================================================
- * 판매자 정보
- * ======================================================= */
-function openSellerModal() {
-  sellerModalVisible.value = true;
-}
-
-function closeSellerModal() {
-  sellerModalVisible.value = false;
-}
-
-/* =========================================================
  * 표시명
  * ======================================================= */
 function getAccomTypeName(
@@ -1915,34 +1984,30 @@ function formatUseTime(
   return `${time}시간`;
 }
 
-function getDiscountRate(
-    roomPrice?: number | string,
-    roomDisPrice?: number | string
-) {
-  const originPrice = Number(roomPrice);
-  const discountPrice = Number(roomDisPrice);
-
-  if (
-      !Number.isFinite(originPrice) ||
-      !Number.isFinite(discountPrice) ||
-      originPrice <= 0 ||
-      discountPrice <= 0 || // 이게 중요
-      discountPrice >= originPrice
-  ) {
-    return 0;
-  }
-
-  return Math.round(
-      ((originPrice - discountPrice) / originPrice) * 100
-  );
-}
-
 function formatScore(value?: number) {
   const score = Number(value);
 
   return Number.isFinite(score)
       ? score.toFixed(1)
       : '-';
+}
+
+function formatDateTime(value?: string) {
+  if (!value) return '-';
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return formatDate(value);
+  }
+
+  return new Intl.DateTimeFormat('ko-KR', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).format(date);
 }
 
 function formatDate(value?: string) {
@@ -4653,7 +4718,7 @@ onBeforeUnmount(() => {
 ========================================================= */
 .accom-top-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 390px;
+  grid-template-columns: minmax(0, 1fr) 600px;
   gap: 10px;
   align-items: stretch;
 }
@@ -5241,6 +5306,587 @@ onBeforeUnmount(() => {
   .room-price-card__price {
     grid-column: 2;
     text-align: left;
+  }
+}
+
+
+/* =========================================================
+   음식점 상세와 UI/용어 통일
+========================================================= */
+.accom-page-head__actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.detail-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border: 1px solid #e1e5e9;
+  border-bottom: 0;
+  background: #fff;
+}
+
+.summary-field {
+  min-width: 0;
+  min-height: 38px;
+  display: grid;
+  grid-template-columns: 108px minmax(0, 1fr);
+  align-items: stretch;
+  border-bottom: 1px solid #e1e5e9;
+}
+
+.summary-field:nth-child(odd):not(.summary-field--wide) {
+  border-right: 1px solid #e1e5e9;
+}
+
+.summary-field--wide {
+  grid-column: 1 / -1;
+}
+
+.summary-field__label {
+  padding: 9px 10px;
+  display: flex;
+  align-items: center;
+  background: #f7f8fa;
+  color: #555;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.summary-field__value {
+  min-width: 0;
+  padding: 9px 11px;
+  display: flex;
+  align-items: center;
+  color: #343a40;
+  font-size: 12px;
+  word-break: break-word;
+}
+
+.app-scheme-control {
+  min-width: 0;
+  padding: 5px 7px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.app-scheme-control .form-control {
+  min-width: 0;
+  height: 28px;
+  font-size: 11px;
+}
+
+.seller-inline-section {
+  margin-top: 8px;
+  border: 1px solid #e1e5e9;
+  background: #fff;
+}
+
+.seller-inline-section__head {
+  min-height: 34px;
+  padding: 7px 10px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #e1e5e9;
+  background: #f7f8fa;
+  color: #444;
+  font-size: 12px;
+}
+
+.seller-inline-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.seller-inline-field {
+  min-width: 0;
+  min-height: 36px;
+  padding: 7px 10px;
+  display: grid;
+  grid-template-columns: 100px minmax(0, 1fr);
+  align-items: center;
+  border-bottom: 1px solid #edf0f2;
+}
+
+.seller-inline-field:nth-child(odd):not(.seller-inline-field--wide) {
+  border-right: 1px solid #edf0f2;
+}
+
+.seller-inline-field--wide {
+  grid-column: 1 / -1;
+  border-bottom: 0;
+}
+
+.seller-inline-field span {
+  color: #777;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.seller-inline-field b {
+  min-width: 0;
+  color: #343a40;
+  font-size: 11px;
+  font-weight: 600;
+  word-break: break-word;
+}
+
+/* 객실 상품: 카드 대신 고정 컬럼 표로 정렬 */
+.room-product-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.room-product-table {
+  min-width: 820px;
+  table-layout: fixed;
+  font-size: 11px;
+}
+
+.room-product-table thead th {
+  height: 38px;
+  padding: 7px 8px;
+  vertical-align: middle;
+  border-bottom: 1px solid #dfe3e8;
+  background: #f7f8fa;
+  color: #555;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.room-product-table tbody td {
+  height: 48px;
+  padding: 7px 8px;
+  vertical-align: middle;
+  border-bottom: 1px solid #eceff2;
+  color: #444;
+  text-align: center;
+}
+
+.room-product-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.room-product-table .type-col {
+  width: 68px;
+}
+
+.room-product-table .price-col {
+  width: 110px;
+}
+
+.room-product-table__origin {
+  color: #8b9096 !important;
+}
+
+.room-product-table__sale {
+  color: #20252b !important;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+@media (max-width: 767px) {
+  .detail-summary-grid,
+  .seller-inline-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .summary-field,
+  .summary-field:nth-child(odd):not(.summary-field--wide),
+  .seller-inline-field,
+  .seller-inline-field:nth-child(odd):not(.seller-inline-field--wide) {
+    grid-column: 1;
+    border-right: 0;
+  }
+
+  .accom-page-head__actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+
+/* =========================================================
+   이미지 관리 우측 보조정보
+========================================================= */
+.image-side-info {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.image-side-info__section {
+  min-width: 0;
+  overflow: hidden;
+  /*border: 1px solid #e1e4e8;*/
+  border-radius: 5px;
+  background: #fff;
+}
+
+.image-side-info__title {
+  min-height: 36px;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #eceff2;
+  background: #fafafa;
+  color: #333;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.image-side-info__body {
+  max-height: 110px;
+  padding: 9px 10px;
+  overflow-y: auto;
+  color: #555;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.image-side-info__body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.image-side-info__body::-webkit-scrollbar-thumb {
+  border-radius: 6px;
+  background: #c8cdd3;
+}
+
+.image-side-info__body .facility-inline-list {
+  gap: 5px;
+}
+
+.image-side-info__body .facility-inline-item {
+  padding: 3px 6px;
+  font-size: 11px;
+}
+
+@media (max-width: 1100px) {
+  .image-side-info {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 767px) {
+  .image-side-info {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* =========================================================
+   판매자 정보 - 숙소 기본정보와 동일한 summary 구조
+========================================================= */
+.seller-summary-section {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #e7eaee;
+}
+
+.seller-summary-section__title {
+  margin-bottom: 8px;
+  color: #333;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.seller-summary-grid {
+  margin-top: 0;
+}
+
+
+/* =========================================================
+   상단 숙소 상세 + 이미지 관리 디자인 정리
+========================================================= */
+.refined-top-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(320px, 0.75fr);
+  gap: 12px;
+  align-items: stretch;
+}
+
+.accom-detail-panel,
+.refined-side-panel {
+  min-width: 0;
+  border: 1px solid #dfe3e8;
+  border-radius: 6px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.detail-panel-head,
+.refined-side-panel__head {
+  min-height: 42px;
+  padding: 9px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-bottom: 1px solid #e8ebef;
+  background: #f8f9fa;
+}
+
+.detail-panel-head__title {
+  display: flex;
+  align-items: center;
+  color: #2d353c;
+  font-size: 13px;
+}
+
+.detail-panel-head__sub {
+  color: #929ba4;
+  font-size: 11px;
+}
+
+.detail-panel-body {
+  padding: 10px;
+}
+
+.refined-summary-grid {
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid #e2e5e9;
+  border-radius: 5px;
+  background: #fff;
+}
+
+.refined-summary-grid .summary-field {
+  min-height: 40px;
+  margin: 0;
+  padding: 7px 9px;
+  border: 0;
+  border-right: 1px solid #e8ebef;
+  border-bottom: 1px solid #e8ebef;
+  border-radius: 0;
+  background: #fff;
+}
+
+.refined-summary-grid .summary-field:nth-child(2n) {
+  border-right: 0;
+}
+
+.refined-summary-grid .summary-field--wide {
+  border-right: 0;
+}
+
+.refined-summary-grid .summary-field__label {
+  flex: 0 0 92px;
+  width: 92px;
+  color: #6c757d;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.refined-summary-grid .summary-field__value {
+  min-width: 0;
+  color: #2d353c;
+  font-size: 12px;
+  font-weight: 500;
+  word-break: break-word;
+}
+
+.refined-summary-grid .app-scheme-control {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 6px;
+}
+
+.refined-summary-grid .app-scheme-control .form-control {
+  width: 100% !important;
+}
+
+.detail-divider {
+  height: 1px;
+  margin: 12px 0 10px;
+  background: #e7eaee;
+}
+
+.refined-seller-section {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.refined-seller-section .seller-summary-section__title {
+  margin: 0 0 7px;
+  color: #3a4149;
+  font-size: 12px;
+}
+
+.refined-side-panel {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.image-manage-summary {
+  padding: 9px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 7px;
+  border-bottom: 1px solid #e8ebef;
+}
+
+.image-manage-summary__item {
+  width: 100%;
+  min-width: 0;
+  min-height: 66px;
+  padding: 7px;
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid #e1e5e9;
+  border-radius: 5px;
+  background: #fff;
+  color: #2d353c;
+  text-align: left;
+  transition: border-color .15s ease, background .15s ease;
+}
+
+.image-manage-summary__item:hover {
+  border-color: #b8c1ca;
+  background: #fafbfc;
+}
+
+.image-manage-summary__item.active {
+  border-color: #8fa9c3;
+  background: #f5f9fd;
+}
+
+.image-manage-summary__thumb {
+  width: 54px;
+  height: 48px;
+  overflow: hidden;
+  border: 1px solid #e5e8eb;
+  border-radius: 4px;
+  background: #f5f5f5;
+}
+
+.image-manage-summary__thumb img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.image-manage-summary__body {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.image-manage-summary__name {
+  overflow: hidden;
+  color: #2d353c;
+  font-size: 12px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.image-manage-summary__meta {
+  color: #8a939b;
+  font-size: 11px;
+}
+
+.image-manage-summary__action {
+  color: #6c757d;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.side-info-stack {
+  padding: 9px;
+  display: grid;
+  gap: 8px;
+}
+
+.side-info-card {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid #e2e5e9;
+  border-radius: 5px;
+  background: #fff;
+}
+
+.side-info-card__head {
+  min-height: 34px;
+  padding: 7px 9px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border-bottom: 1px solid #eceff2;
+  background: #fafafa;
+  color: #3f464d;
+  font-size: 11px;
+}
+
+.side-info-card__count {
+  min-width: 22px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  background: #edf0f3;
+  color: #6c757d;
+  font-size: 10px;
+  text-align: center;
+}
+
+.side-info-card__body {
+  min-height: 58px;
+  max-height: 118px;
+  padding: 8px 9px;
+  overflow-y: auto;
+  color: #555;
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.refined-facility-list {
+  gap: 4px;
+}
+
+.refined-facility-list .facility-inline-item {
+  padding: 3px 6px;
+  border: 1px solid #e6e9ec;
+  border-radius: 3px;
+  background: #f8f9fa;
+  color: #555;
+  font-size: 10px;
+}
+
+@media (max-width: 1100px) {
+  .refined-top-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .image-manage-summary {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .side-info-stack {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 767px) {
+  .image-manage-summary,
+  .side-info-stack {
+    grid-template-columns: 1fr;
+  }
+
+  .refined-summary-grid .summary-field__label {
+    flex-basis: 82px;
+    width: 82px;
   }
 }
 

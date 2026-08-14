@@ -118,7 +118,7 @@
       </div>
       <!-- 보조 액션 -->
       <div class="d-flex justify-content-between">
-        <div class="card border-0">
+<!--        <div class="card border-0">
           <div class="d-md-flex fw-bold ms-auto">
             <div class="mt-md-0 mt-2 btn btn-white btn-sm d-flex me-2 pe-3 rounded-3 border" @click="resetSearch">
               <div class="text-decoration-none rounded">
@@ -126,7 +126,7 @@
               </div>
             </div>
           </div>
-        </div>
+        </div>화-->
 
         <div class="card border-0">
           <div class="d-md-flex fw-bold ms-auto">
@@ -147,8 +147,8 @@
           <table class="table table-hover table-panel text-nowrap align-middle mb-0" style="min-width: 1400px; overflow-x: auto">
             <thead>
             <tr>
-              <th>번호</th>
-              <th>등록상호</th>
+              <th>일련번호</th>
+              <th>숙박업소 앱 등록상호</th>
               <th>플랫폼 타입</th>
               <th>숙소유형</th>
               <th>주소</th>
@@ -371,13 +371,13 @@ watch(
 );
 
 onMounted(async () => {
-  loading.value = true;
+/*  loading.value = true;
   try {
     await store.callRegionList();
     await store.callListAPI();
   } finally {
     loading.value = false;
-  }
+  }*/
 });
 
 const rowNumber = (index: number) => {
