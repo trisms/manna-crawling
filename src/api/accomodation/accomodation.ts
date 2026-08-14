@@ -17,4 +17,10 @@ export const accommodationAPI = {
 	async updateAccomAPI(params: any) {
 		return await getApiCall().patch(getV1(`/accomodation/accom-code/${params.accomId}`), { accomCode :params.accomCode });
 	},
+	async deleteCode(accomIdList: any) {
+		return await getApiCall().delete(getV1(`/accomodation/`), accomIdList);
+	},
+	async deleteImage(imgList: any, type : string) {
+		return await getApiCall().delete(getV1(`/accomodation/img?type=`+type), {imgList : imgList});
+	},
 };

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import {useCallAPI, useCallUpdateDirectAPI} from '@/utils/FormUtils';
+import {useCallAPI, useCallDeleteMsgAPI, useCallUpdateDirectAPI} from '@/utils/FormUtils';
 import { accommodationAPI } from '@/api/accomodation/accomodation';
 import { isBlank } from '@/utils/ValidateUtils';
 import {restaurantAPI} from "@/api/restaurant/restaurant";
@@ -75,6 +75,15 @@ export const useAccommodationStore = defineStore('useAccommodationStore', {
 			await useCallUpdateDirectAPI(() => accommodationAPI.updateAccomAPI(params), callback);
 		},
 
+		async deleteCodeAPI(accomIdList: any, callback: Function) {
+			const message = '<h3>DB삭제시 복구가 불가능합니다 </h3>' + accomIdList.accomIdList.length + '개의 데이터를 삭제하시겠습니까?';
+			await useCallDeleteMsgAPI(() => accommodationAPI.deleteCode(accomIdList), message, callback);
+		},
+
+		async deleteImage(imgList: any, type: string , callback: Function) {
+			const message = '<h3>DB삭제시 복구가 불가능합니다 </h3>' + imgList.length + '개의 이미지를 삭제하시겠습니까?';
+			await useCallDeleteMsgAPI(() => accommodationAPI.deleteImage(imgList,type), message, callback);
+		},
 
 		async callRegionList() {
 			const res = await useCallAPI(() => accommodationAPI.regionList());

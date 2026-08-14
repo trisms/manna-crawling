@@ -261,6 +261,8 @@ function createNew() {
     password: "",
     passwordChk: "",
     putDate: "",
+    modDate:"",
+    orgUrl:"",
   });
 }
 
