@@ -344,9 +344,9 @@
                   <div class="accom-image-quick-panel__head refined-side-panel__head">
                     <div>
                       <b>이미지 관리</b>
-                      <span class="section-count">
+                     <!-- <span class="section-count">
                         총 {{ mainImages.length + reviewImages.length }}장
-                      </span>
+                      </span>-->
                     </div>
 
                     <span
