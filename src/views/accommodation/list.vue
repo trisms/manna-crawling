@@ -1,3 +1,4 @@
+
 <template>
   <panel>
     <panel-body>
@@ -118,16 +119,22 @@
       </div>
       <!-- 보조 액션 -->
       <div class="d-flex justify-content-between">
-<!--        <div class="card border-0">
+        <!--        <div class="card border-0">
+                  <div class="d-md-flex fw-bold ms-auto">
+                    <div class="mt-md-0 mt-2 btn btn-white btn-sm d-flex me-2 pe-3 rounded-3 border" @click="resetSearch">
+                      <div class="text-decoration-none rounded">
+                        <i class="fa fa-rotate-right fa-fw me-1"></i> 초기화
+                      </div>
+                    </div>
+                  </div>
+                </div>화-->
+        <div class="card border-0" @click="deleteCode()">
           <div class="d-md-flex fw-bold ms-auto">
-            <div class="mt-md-0 mt-2 btn btn-white btn-sm d-flex me-2 pe-3 rounded-3 border" @click="resetSearch">
-              <div class="text-decoration-none rounded">
-                <i class="fa fa-rotate-right fa-fw me-1"></i> 초기화
-              </div>
+            <div class="mt-md-0 mt-2 btn btn-danger btn-sm d-flex me-2 pe-3 rounded-3">
+              <div class="text-white text-decoration-none rounded"><i class="fa fa-cancel fa-fw me-1 text-white"></i> 삭제</div>
             </div>
           </div>
-        </div>화-->
-
+        </div>
         <div class="card border-0">
           <div class="d-md-flex fw-bold ms-auto">
             <div class="mt-md-0 mt-2 btn btn-success btn-sm d-flex me-2 pe-3 rounded-3" @click="goToCreate">
@@ -147,6 +154,18 @@
           <table class="table table-hover table-panel text-nowrap align-middle mb-0" style="min-width: 1400px; overflow-x: auto">
             <thead>
             <tr>
+              <th class="w-10px">
+                <div class="form-check">
+                  <input
+                      type="checkbox"
+                      class="form-check-input"
+                      id="allCheck"
+                      v-model="allChecked"
+                      @change="toggleAll"
+                  />
+                  <label class="form-check-label" for="allCheck"></label>
+                </div>
+              </th>
               <th>일련번호</th>
               <th>숙박업소 앱 등록상호</th>
               <th>플랫폼 타입</th>
@@ -162,13 +181,13 @@
 
             <tbody>
             <tr v-if="loading">
-              <td colspan="10" class="text-center py-4 text-muted">
+              <td colspan="11" class="text-center py-4 text-muted">
                 조회중입니다.
               </td>
             </tr>
 
             <tr v-else-if="store.items.length === 0">
-              <td colspan="10" class="text-center py-4 text-muted">
+              <td colspan="11" class="text-center py-4 text-muted">
                 조회된 숙박업소가 없습니다.
               </td>
             </tr>
@@ -179,6 +198,22 @@
                 @click="goToDetail(item.accomId)"
                 style="cursor: pointer"
             >
+              <td class="w-10px align-middle" @click.stop="toggleItem(item.accomId)">
+                <div class="form-check">
+                  <input
+                      type="checkbox"
+                      class="form-check-input"
+                      :id="`accom-${item.accomId}`"
+                      :value="item.accomId"
+                      :checked="checkedItems.includes(item.accomId)"
+                  />
+                  <label
+                      class="form-check-label"
+                      :for="`accom-${item.accomId}`"
+                  ></label>
+                </div>
+              </td>
+
               <td>{{ rowNumber(index) }}</td>
               <td>{{ item.accomName || '-' }}</td>
 
@@ -195,7 +230,7 @@
               <td>{{ getAccomTypeName(item.accomType) }}</td>
               <td>{{ item.accomAddr || '-' }}</td>
               <td>{{ item.roomCnt ?? 0 }} 실</td>
-              <td>{{ formatDate(item.putDate) }}</td>
+              <td>{{ item.putDate }}</td>
               <td>
                   <span :class="dbResultFont(item.dataStatus)">
                     {{ convertDataStatus(item.dataStatus) }}
@@ -276,6 +311,10 @@ import {toast} from "vue3-toastify";
 const router = useRouter();
 const store = useAccommodationStore();
 const loading = ref(false);
+
+const allChecked = ref(false);
+const checkedItems = ref<Array<string | number>>([]);
+
 const options = {
   onOpen: () => console.log('opened'),
   /*onClose: () => ,*/
@@ -371,18 +410,73 @@ watch(
 );
 
 onMounted(async () => {
-/*  loading.value = true;
-  try {
-    await store.callRegionList();
-    await store.callListAPI();
-  } finally {
-    loading.value = false;
-  }*/
+  /*  loading.value = true;
+    try {
+      await store.callRegionList();
+      await store.callListAPI();
+    } finally {
+      loading.value = false;
+    }*/
 });
+
+const toggleAll = () => {
+  if (allChecked.value) {
+    checkedItems.value = store.items.map((item: any) => item.accomId);
+  } else {
+    checkedItems.value = [];
+  }
+};
+
+const toggleItem = (accomId: string | number) => {
+  const index = checkedItems.value.indexOf(accomId);
+
+  if (index > -1) {
+    checkedItems.value.splice(index, 1);
+  } else {
+    checkedItems.value.push(accomId);
+  }
+
+  allChecked.value =
+      store.items.length > 0 &&
+      checkedItems.value.length === store.items.length;
+};
 
 const rowNumber = (index: number) => {
   return (Number(store.currentPage) - 1) * Number(store.searchParams.size) + index + 1;
 };
+
+
+// 삭제
+const deleteCode = async () => {
+  if (checkedItems.value.length === 0) {
+    window.$emitter.emit(
+        'warning',
+        '삭제할 숙박업소를 최소 1개 이상 선택해주세요.'
+    );
+    return;
+  }
+
+  window.$emitter.emit('confirm', {
+    message: `선택한 숙박업소 ${checkedItems.value.length}건을 삭제하시겠습니까?`,
+    callback: async () => {
+      /*
+       * 숙박 삭제 API
+       * Store의 deleteCodeAPI가 숙박 삭제 API라면 accomIdList로 전달.
+       * 실제 Store 메서드명이 다르면 이 한 줄의 메서드명만 맞춰주면 됨.
+       */
+      await store.deleteCodeAPI(
+          { accomIdList: [...checkedItems.value] },
+          async () => {
+            allChecked.value = false;
+            checkedItems.value = [];
+            await search();
+          }
+      );
+    },
+  });
+};
+
+
 
 const formatDate = (value: string) => {
   if (!value) return '-';
@@ -396,6 +490,8 @@ const formatDate = (value: string) => {
 };
 
 const search = async () => {
+  allChecked.value = false;
+  checkedItems.value = [];
   loading.value = true;
   try {
     store.searchParams.page = 1;
@@ -407,6 +503,9 @@ const search = async () => {
 
 const movePage = async (page: number) => {
   if (page < 1 || page > store.totalPages) return;
+
+  allChecked.value = false;
+  checkedItems.value = [];
   loading.value = true;
   try {
     store.searchParams.page = page;
@@ -419,7 +518,7 @@ const movePage = async (page: number) => {
 
 const updateStCode = async (accomId: number, accomCode: string) => {
   try {
-    /*		if (isBlank(stCode)) {
+    /*  if (isBlank(stCode)) {
           window.$emitter.emit('warning', '가맹점 코드를 입력해주세요.');
           return;
         }*/
@@ -709,9 +808,9 @@ const appTypeClass = (appType: string | number) => {
   }
 }
 
- .input-group .btn {
-   z-index: unset;
- }
+.input-group .btn {
+  z-index: unset;
+}
 
 .loading-overlay {
   position: fixed;

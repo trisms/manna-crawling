@@ -63,22 +63,31 @@
                       <table class="table table-condensed p-0 bg-none mb-0 p-1">
                         <tbody>
                         <tr>
-                          <td nowrap class="w-50">
-                            <div class="d-flex align-items-center">
-                              <div class="bg-indigo-200 w-15px h-15px rounded me-2"></div>
-                              <div>
-                                <b>일련번호</b> :
-                                {{ info.accomId ?? accomId ?? '-' }}
-                              </div>
-                            </div>
-                          </td>
+                          <!--                          <td nowrap class="w-50">
+                                                      <div class="d-flex align-items-center">
+                                                        <div class="bg-indigo-200 w-15px h-15px rounded me-2"></div>
+                                                        <div>
+                                                          <b>일련번호</b> :
+                                                          {{ info.accomId ?? accomId ?? '-' }}
+                                                        </div>
+                                                      </div>
+                                                    </td>-->
 
-                          <td nowrap>
+                          <td nowrap colspan="">
                             <div class="d-flex align-items-center">
                               <div class="bg-indigo-100 w-15px h-15px rounded me-2"></div>
                               <div>
                                 <b>등록상호</b> :
                                 {{ info.accomName || '-' }}
+                              </div>
+                            </div>
+                          </td>
+                          <td nowrap>
+                            <div class="d-flex align-items-center">
+                              <div class="bg-indigo-200 w-15px h-15px rounded me-2"></div>
+                              <div>
+                                <b>플랫폼</b> :
+                                {{ getPlatformTypeName(platformType) }}
                               </div>
                             </div>
                           </td>
@@ -94,42 +103,7 @@
                               </div>
                             </div>
                           </td>
-
-                          <td nowrap>
-                            <div class="d-flex align-items-center">
-                              <div class="bg-indigo-200 w-15px h-15px rounded me-2"></div>
-                              <div>
-                                <b>플랫폼</b> :
-                                {{ getPlatformTypeName(platformType) }}
-                              </div>
-                            </div>
-                          </td>
-                        </tr>
-
-                        <tr>
-                          <td nowrap>
-                            <div class="d-flex align-items-center">
-                              <div class="bg-indigo-200 w-15px h-15px rounded me-2"></div>
-                              <div>
-                                <b>수집일</b> :
-                                {{ formatDate(info.putDate) }}
-                              </div>
-                            </div>
-                          </td>
-
-                          <td nowrap>
-                            <div class="d-flex align-items-center">
-                              <div class="bg-indigo-100 w-15px h-15px rounded me-2"></div>
-                              <div>
-                                <b>DB등록일</b> :
-                                {{ formatDateTime(info.createAt) }}
-                              </div>
-                            </div>
-                          </td>
-                        </tr>
-
-                        <tr>
-                          <td colspan="2">
+                          <td colspan="">
                             <div class="d-flex">
                               <div class="bg-indigo-100 w-15px h-15px rounded me-2"></div>
                               <div>
@@ -141,16 +115,28 @@
                         </tr>
 
                         <tr>
-                          <td colspan="2">
-                            <div class="d-flex">
+                          <td nowrap>
+                            <div class="d-flex align-items-center">
                               <div class="bg-indigo-200 w-15px h-15px rounded me-2"></div>
                               <div>
-                                <b>위치 추가정보</b> :
-                                {{ info.accomAddrMemo || '-' }}
+                                <b>수집일</b> :
+                                {{ info.putDate }}
+                              </div>
+                            </div>
+                          </td>
+
+                          <td nowrap>
+                            <div class="d-flex align-items-center">
+                              <div class="bg-indigo-100 w-15px h-15px rounded me-2"></div>
+                              <div>
+                                <b>DB등록일</b> :
+                                {{ info.modDate }}
                               </div>
                             </div>
                           </td>
                         </tr>
+
+
 
                         <tr>
                           <td nowrap colspan="2">
@@ -158,13 +144,13 @@
                               <div class="bg-indigo-100 w-15px h-15px rounded me-2"></div>
                               <div>
                                 <div class="input-group">
-                                  <b class="m-auto">앱스키마 : </b>
-                                  <input
+                                  <b class="m-auto">숙박 URL : </b> {{ info.orgUrl }}
+<!--                                  <input
                                       type="text"
                                       @click.stop
                                       class="form-control w-500px bg-light border-0 height-20 pt-0 pb-0"
-                                      v-model="info.appScheme"
-                                      placeholder="앱스키마를 입력해주세요"
+                                      v-model="info.orgUrl"
+                                      placeholder="숙박 URL를 입력해주세요"
                                       style="width: 161px; margin-left: 5px;"
                                   />
                                   <button
@@ -173,8 +159,54 @@
                                       class="btn btn-sm btn-white pt-0 pb-0 fs-6"
                                   >
                                     <i class="fa fa-fw fa-plus"></i> 수정
-                                  </button>
+                                  </button>-->
                                 </div>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+
+
+                        <tr>
+                          <td colspan="2">
+                            <div class="d-flex align-items-start">
+                              <div class="bg-indigo-200 w-15px h-15px rounded me-2 mt-1"></div>
+
+                              <div class="w-100">
+                                <div class="mb-1">
+                                  <b>위치 추가정보</b> :
+                                </div>
+
+                                <div
+                                    v-if="locationMemoLines.length"
+                                    class="location-memo-list"
+                                >
+                                  <template
+                                      v-for="(line, index) in locationMemoLines"
+                                      :key="`location-${index}`"
+                                  >
+                                    <div
+                                        v-if="line.type === 'title'"
+                                        class="location-memo-title"
+                                    >
+                                      {{ line.text }}
+                                    </div>
+
+                                    <div
+                                        v-else-if="line.type === 'spacer'"
+                                        class="location-memo-spacer"
+                                    ></div>
+
+                                    <div
+                                        v-else
+                                        class="location-memo-line"
+                                    >
+                                      {{ line.text }}
+                                    </div>
+                                  </template>
+                                </div>
+
+                                <span v-else>-</span>
                               </div>
                             </div>
                           </td>
@@ -536,8 +568,8 @@
                     <th>이용시간</th>
                     <th>체크인</th>
                     <th>체크아웃</th>
-                    <th class="price-col text-end">정상가</th>
-                    <th class="price-col text-end">판매가</th>
+                    <th class="price-col ">정상가</th>
+                    <th class="price-col ">판매가</th>
                   </tr>
                   </thead>
                   <tbody>
@@ -567,10 +599,10 @@
                     <td>
                       {{ String(roomInfo.roomType) === '1' ? formatCheckTime(roomInfo.checkOutTime) : '-' }}
                     </td>
-                    <td class="text-end room-product-table__origin">
+                    <td class="room-product-table__origin">
                       {{ formatPrice(roomInfo.roomPrice) }}
                     </td>
-                    <td class="text-end room-product-table__sale">
+                    <td class="room-product-table__sale">
                       {{
                         formatPrice(
                             Number(roomInfo.roomDisPrice) > 0
@@ -840,6 +872,7 @@
                   type="checkbox"
                   class="form-check-input"
                   :checked="isReviewImageSelected(review)"
+                  :disabled="!getReviewImageValue(review)"
                   @change="toggleReviewImage(review)"
               />
             </label>
@@ -983,8 +1016,8 @@ import { useRoute, useRouter } from 'vue-router';
 import { useAccommodationStore } from '@/stores/accommodation/useAccommodationStore';
 
 type Id = number | string;
-type DeleteImageType = 'MAIN' | 'ROOM' | 'REVIEW';
-type ImageManageType = DeleteImageType;
+type DeleteImageType = 'main' | 'review' | 'room';
+type ImageManageType = 'MAIN' | 'ROOM' | 'REVIEW';
 
 interface MainImage {
   imgId?: Id;
@@ -997,6 +1030,9 @@ interface MainImage {
 interface ReviewImage {
   reviewImgId?: Id;
   imgId?: Id;
+  reviewId?: Id;
+  accomReviewImgId?: Id;
+  id?: Id;
   imgPath: string;
   createdAt?: string;
   score?: number;
@@ -1188,6 +1224,78 @@ const facilities = computed<Facility[]>(() =>
         : []
 );
 
+type LocationMemoLine = {
+  type: 'title' | 'text' | 'spacer';
+  text: string;
+};
+
+const locationMemoLines = computed<LocationMemoLine[]>(() => {
+  const raw = info.value.accomAddrMemo;
+
+  if (raw === undefined || raw === null || raw === '') {
+    return [];
+  }
+
+  let value = String(raw)
+      .replace(/\\n/g, '\n')
+      .replace(/\\r/g, '');
+
+  // "1. \"내용...\" 2." 형태의 외곽 번호/따옴표 제거
+  value = value
+      .replace(/^\s*\d+\.\s*"/, '')
+      .replace(/"\s*\n\s*\d+\.\s*"?\s*$/g, '')
+      .replace(/"\s*$/, '');
+
+  const rawLines = value.split(/\r?\n/);
+  const result: LocationMemoLine[] = [];
+
+  rawLines.forEach((rawLine) => {
+    let line = rawLine.trim();
+
+    // "2." 같은 빈 번호 항목은 화면에서 제거
+    if (/^\d+\.\s*"?$/.test(line)) {
+      return;
+    }
+
+    line = line
+        .replace(/^\d+\.\s*"/, '')
+        .replace(/"$/, '')
+        .trim();
+
+    if (!line) {
+      if (
+          result.length > 0 &&
+          result[result.length - 1]?.type !== 'spacer'
+      ) {
+        result.push({
+          type: 'spacer',
+          text: '',
+        });
+      }
+      return;
+    }
+
+    const isTitle = [
+      '주차',
+      '길안내',
+      '교통',
+      '주변정보',
+      '위치안내',
+    ].includes(line);
+
+    result.push({
+      type: isTitle ? 'title' : 'text',
+      text: line,
+    });
+  });
+
+  while (result[result.length - 1]?.type === 'spacer') {
+    result.pop();
+  }
+
+  return result;
+});
+
 const regionLabel = computed(() => {
   const address = String(info.value.accomAddr || '').trim();
 
@@ -1260,11 +1368,19 @@ const reviewImageList = computed(() =>
     reviewImages.value.map((image) => image.imgPath)
 );
 
-const areAllReviewImagesSelected = computed(() => {
-  if (!reviewImages.value.length) return false;
+const selectableReviewImages = computed(() =>
+    reviewImages.value.filter(
+        (image) => Boolean(getReviewImageValue(image))
+    )
+);
 
-  return reviewImages.value.every((image) =>
-      selectedReviewImageIds.value.includes(getReviewImageValue(image))
+const areAllReviewImagesSelected = computed(() => {
+  if (!selectableReviewImages.value.length) return false;
+
+  return selectableReviewImages.value.every((image) =>
+      selectedReviewImageIds.value.includes(
+          getReviewImageValue(image)
+      )
   );
 });
 
@@ -1345,19 +1461,11 @@ const areAllActiveRoomImagesSelected = computed(() => {
 /* =========================================================
  * 데이터 조회
  * ======================================================= */
-/*
 async function loadDetail() {
   if (!accomId.value) return;
 
-  loading.value = true;
-
-  try {
-    await store.callDetailAPI(accomId.value);
-  } finally {
-    loading.value = false;
-  }
+  await store.callDetailAPI(accomId.value);
 }
-*/
 
 /* =========================================================
  * 객실 탭
@@ -1415,11 +1523,7 @@ function handleHorizontalWheel(
  * 메인 이미지 다중 선택
  * ======================================================= */
 function getMainImageValue(image: MainImage): Id {
-  return (
-      image.accomImgId ??
-      image.imgId ??
-      image.imgPath
-  );
+  return image.accomImgId ?? image.imgId ?? '';
 }
 
 function getMainImageKey(
@@ -1440,9 +1544,12 @@ function isMainImageSelected(image: MainImage) {
 }
 
 function toggleMainImage(image: MainImage) {
+  const imageId = getMainImageValue(image);
+  if (!imageId) return;
+
   toggleValue(
       selectedMainImageIds.value,
-      getMainImageValue(image)
+      imageId
   );
 }
 
@@ -1450,14 +1557,14 @@ function toggleAllMainImages() {
   selectedMainImageIds.value =
       areAllMainImagesSelected.value
           ? []
-          : mainImages.value.map(getMainImageValue);
+          : mainImages.value.map(getMainImageValue).filter(Boolean);
 }
 
 /* =========================================================
  * 객실 이미지 다중 선택
  * ======================================================= */
 function getRoomImageValue(image: RoomImage): Id {
-  return image.roomImgId ?? image.imgPath;
+  return image.roomImgId ?? '';
 }
 
 function getRoomImageKey(
@@ -1491,11 +1598,14 @@ function toggleActiveRoomImage(
 ) {
   if (!activeRoom.value) return;
 
+  const imageId = getRoomImageValue(image);
+  if (!imageId) return;
+
   ensureRoomSelection(activeRoom.value.roomId);
 
   toggleValue(
       selectedRoomImages.value[activeRoomKey.value],
-      getRoomImageValue(image)
+      imageId
   );
 }
 
@@ -1505,7 +1615,7 @@ function toggleAllActiveRoomImages() {
   selectedRoomImages.value[activeRoomKey.value] =
       areAllActiveRoomImagesSelected.value
           ? []
-          : activeRoomImages.value.map(getRoomImageValue);
+          : activeRoomImages.value.map(getRoomImageValue).filter(Boolean);
 }
 
 /* =========================================================
@@ -1517,7 +1627,10 @@ function getReviewImageValue(
   return (
       image.reviewImgId ??
       image.imgId ??
-      image.imgPath
+      image.reviewId ??
+      image.accomReviewImgId ??
+      image.id ??
+      ''
   );
 }
 
@@ -1526,8 +1639,7 @@ function getReviewImageKey(
     index: number
 ) {
   return (
-      image.reviewImgId ??
-      image.imgId ??
+      getReviewImageValue(image) ||
       `${image.imgPath}-${image.createdAt || index}`
   );
 }
@@ -1543,9 +1655,12 @@ function isReviewImageSelected(
 function toggleReviewImage(
     image: ReviewImage
 ) {
+  const imageId = getReviewImageValue(image);
+  if (!imageId) return;
+
   toggleValue(
       selectedReviewImageIds.value,
-      getReviewImageValue(image)
+      imageId
   );
 }
 
@@ -1553,7 +1668,9 @@ function toggleAllReviewImages() {
   selectedReviewImageIds.value =
       areAllReviewImagesSelected.value
           ? []
-          : reviewImages.value.map(getReviewImageValue);
+          : selectableReviewImages.value
+              .map(getReviewImageValue)
+              .filter(Boolean);
 }
 
 function toggleValue(
@@ -1572,68 +1689,31 @@ function toggleValue(
 /* =========================================================
  * 이미지 삭제
  *
- * 현재 제공된 Accommodation Store에는 이미지 삭제 API 함수가
- * 확인되지 않아 아래 한 군데에서 Store API를 연결하도록 구성.
+ * Store:
+ * deleteImage(imgList, type, callback)
  *
- * 실제 API 예시:
- *
- * await store.callDeleteAccommodationImagesAPI({
- *   accomId: accomId.value,
- *   imageType: type,
- *   imageIds: ids,
- *   roomId,
- * });
- *
+ * type:
+ * main   = 메인 이미지
+ * review = 리뷰 이미지
+ * room   = 객실 이미지
  * ======================================================= */
 async function requestDeleteImages(
     type: DeleteImageType,
-    ids: Id[],
-    roomId?: Id
+    ids: Id[]
 ) {
   if (!ids.length || deleting.value) return;
-
-  const confirmed = window.confirm(
-      `선택한 이미지 ${ids.length}장을 삭제하시겠습니까?`
-  );
-
-  if (!confirmed) return;
 
   deleting.value = true;
 
   try {
-    const deleteApi = (store as any)
-        .callDeleteAccommodationImagesAPI;
-
-    if (typeof deleteApi !== 'function') {
-      console.warn(
-          '[AccommodationDetail] 이미지 삭제 API가 연결되지 않았습니다.',
-          {
-            accomId: accomId.value,
-            imageType: type,
-            imageIds: ids,
-            roomId,
-          }
-      );
-
-      window.alert(
-          '이미지 삭제 UI는 적용되었습니다.\n' +
-          'useAccommodationStore에 callDeleteAccommodationImagesAPI를 연결해주세요.'
-      );
-
-      return;
-    }
-
-    await deleteApi.call(store, {
-      accomId: accomId.value,
-      imageType: type,
-      imageIds: ids,
-      ...(roomId !== undefined
-          ? { roomId }
-          : {}),
-    });
-
-    clearSelections();
-    await loadDetail();
+    await store.deleteImage(
+        [...ids],
+        type,
+        async () => {
+          clearSelections();
+          await loadDetail();
+        }
+    );
   } finally {
     deleting.value = false;
   }
@@ -1641,8 +1721,15 @@ async function requestDeleteImages(
 
 async function deleteSelectedMainImages() {
   await requestDeleteImages(
-      'MAIN',
+      'main',
       [...selectedMainImageIds.value]
+  );
+}
+
+async function deleteSelectedReviewImages() {
+  await requestDeleteImages(
+      'review',
+      [...selectedReviewImageIds.value]
   );
 }
 
@@ -1650,16 +1737,8 @@ async function deleteSelectedRoomImages() {
   if (!activeRoom.value) return;
 
   await requestDeleteImages(
-      'ROOM',
-      [...activeSelectedImages.value],
-      activeRoom.value.roomId
-  );
-}
-
-async function deleteSelectedReviewImages() {
-  await requestDeleteImages(
-      'REVIEW',
-      [...selectedReviewImageIds.value]
+      'room',
+      [...activeSelectedImages.value]
   );
 }
 
@@ -4534,7 +4613,7 @@ onBeforeUnmount(() => {
 }
 
 .image-manage-backdrop {
-  z-index: 10550;
+  z-index: 1040;
 }
 
 .image-manage-modal {
@@ -5888,6 +5967,41 @@ onBeforeUnmount(() => {
     flex-basis: 82px;
     width: 82px;
   }
+}
+
+
+/* =========================================================
+   위치 추가정보
+========================================================= */
+.location-memo-list {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #e7e9ec;
+  border-radius: 4px;
+  background: #fafafa;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.location-memo-title {
+  margin-top: 6px;
+  margin-bottom: 3px;
+  color: #2d353c;
+  font-weight: 700;
+}
+
+.location-memo-title:first-child {
+  margin-top: 0;
+}
+
+.location-memo-line {
+  color: #555;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.location-memo-spacer {
+  height: 7px;
 }
 
 </style>
