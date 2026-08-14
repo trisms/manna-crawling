@@ -1,6 +1,4 @@
-`````
-````
-```
+
 <template>
   <panel>
     <panel-body class="accom-admin-page">
@@ -41,630 +39,412 @@
                 </div>
               </div>
 
-              <div class="card border-0">
-                <div class="card-body bg-none accom-summary-body">
-                  <table class="table table-condensed p-0 bg-none mb-0 accom-info-table">
-                    <tbody>
-                    <tr>
-                      <td class="w-50">
-                        <div class="accom-info-cell">
-                          <div class="info-dot bg-indigo-200"></div>
-                          <div>
-                            <b>숙소번호</b>
-                            <span>:</span>
-                            {{ info.accomId ?? accomId ?? '-' }}
-                          </div>
-                        </div>
-                      </td>
+              <div class="accom-top-grid">
+                <!-- 숙소 기본/소개 정보 -->
+                <div class="accom-top-grid__info">
+                  <div class="card border-0">
+                    <div class="card-body bg-none accom-summary-body">
+                      <table class="table table-condensed p-0 bg-none mb-0 accom-info-table">
+                        <tbody>
+                        <tr>
+                          <td class="w-50">
+                            <div class="accom-info-cell">
+                              <div class="info-dot bg-indigo-200"></div>
+                              <div>
+                                <b>숙소번호</b>
+                                <span>:</span>
+                                {{ info.accomId ?? accomId ?? '-' }}
+                              </div>
+                            </div>
+                          </td>
 
-                      <td>
-                        <div class="accom-info-cell">
-                          <div class="info-dot bg-indigo-100"></div>
-                          <div>
-                            <b>플랫폼 타입</b>
-                            <span>:</span>
-                            {{ getPlatformTypeName(platformType) }}
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
+                          <td>
+                            <div class="accom-info-cell">
+                              <div class="info-dot bg-indigo-100"></div>
+                              <div>
+                                <b>플랫폼 타입</b>
+                                <span>:</span>
+                                {{ getPlatformTypeName(platformType) }}
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
 
-                    <tr>
-                      <td>
-                        <div class="accom-info-cell">
-                          <div class="info-dot bg-indigo-100"></div>
-                          <div>
-                            <b>숙소구분</b>
-                            <span>:</span>
-                            {{ getAccomTypeName(info.accomType) }}
-                          </div>
-                        </div>
-                      </td>
+                        <tr>
+                          <td>
+                            <div class="accom-info-cell">
+                              <div class="info-dot bg-indigo-100"></div>
+                              <div>
+                                <b>숙소구분</b>
+                                <span>:</span>
+                                {{ getAccomTypeName(info.accomType) }}
+                              </div>
+                            </div>
+                          </td>
 
-                      <td>
-                        <div class="accom-info-cell">
-                          <div class="info-dot bg-indigo-200"></div>
-                          <div>
-                            <b>수집일</b>
-                            <span>:</span>
-                            {{ formatDate(info.putDate) }}
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
+                          <td>
+                            <div class="accom-info-cell">
+                              <div class="info-dot bg-indigo-200"></div>
+                              <div>
+                                <b>수집일</b>
+                                <span>:</span>
+                                {{ formatDate(info.putDate) }}
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
 
-                    <tr>
-                      <td colspan="2">
-                        <div class="accom-info-cell">
-                          <div class="info-dot bg-indigo-100"></div>
-                          <div class="accom-info-address">
-                            <b>숙소주소</b>
-                            <span>:</span>
-                            {{ info.accomAddr || '-' }}
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
+                        <tr>
+                          <td colspan="2">
+                            <div class="accom-info-cell">
+                              <div class="info-dot bg-indigo-100"></div>
+                              <div class="accom-info-address">
+                                <b>숙소주소</b>
+                                <span>:</span>
+                                {{ info.accomAddr || '-' }}
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
 
-                    <tr>
-                      <td colspan="2">
-                        <div class="accom-info-cell">
-                          <div class="info-dot bg-indigo-200"></div>
-                          <div class="accom-info-address">
-                            <b>위치 추가정보</b>
-                            <span>:</span>
-                            {{ info.accomAddrMemo || '-' }}
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              <!-- 숙소 소개 / 부대시설 -->
-              <div class="card bg-none border-0">
-                <div class="card-body bg-none accom-mini-info-wrap">
-                  <div class="accom-mini-info">
-                    <div class="accom-mini-info__title">
-                      숙소 소개
-                    </div>
-
-                    <div class="accom-mini-info__body">
-                      <template v-if="previewContents.length">
-                        <div
-                            v-for="(content, index) in previewContents"
-                            :key="`preview-${index}`"
-                            class="mini-info-line"
-                        >
-                          {{ content }}
-                        </div>
-                      </template>
-
-                      <div v-else class="text-muted">
-                        등록된 숙소 소개 정보가 없습니다.
-                      </div>
+                        <tr>
+                          <td colspan="2">
+                            <div class="accom-info-cell">
+                              <div class="info-dot bg-indigo-200"></div>
+                              <div class="accom-info-address">
+                                <b>위치 추가정보</b>
+                                <span>:</span>
+                                {{ info.accomAddrMemo || '-' }}
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                        </tbody>
+                      </table>
                     </div>
                   </div>
 
-                  <div class="accom-mini-info">
-                    <div class="accom-mini-info__title">
-                      서비스 및 부대시설
-                    </div>
+                  <!-- 숙소 소개 / 부대시설 -->
+                  <div class="card bg-none border-0">
+                    <div class="card-body bg-none accom-mini-info-wrap">
+                      <div class="accom-mini-info">
+                        <div class="accom-mini-info__title">숙소 소개</div>
 
-                    <div class="accom-mini-info__body">
-                      <div v-if="facilities.length" class="facility-inline-list">
-                        <span
-                            v-for="facility in facilities"
-                            :key="facility.sfId"
-                            class="facility-inline-item"
-                        >
-                          <i class="fa fa-check me-1"></i>
-                          {{ facility.sfName }}
+                        <div class="accom-mini-info__body">
+                          <template v-if="previewContents.length">
+                            <div
+                                v-for="(content, index) in previewContents"
+                                :key="`preview-${index}`"
+                                class="mini-info-line"
+                            >
+                              {{ content }}
+                            </div>
+                          </template>
+
+                          <div v-else class="text-muted">
+                            등록된 숙소 소개 정보가 없습니다.
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="accom-mini-info">
+                        <div class="accom-mini-info__title">서비스 및 부대시설</div>
+
+                        <div class="accom-mini-info__body">
+                          <div v-if="facilities.length" class="facility-inline-list">
+                            <span
+                                v-for="facility in facilities"
+                                :key="facility.sfId"
+                                class="facility-inline-item"
+                            >
+                              <i class="fa fa-check me-1"></i>
+                              {{ facility.sfName }}
+                            </span>
+                          </div>
+
+                          <div v-else class="text-muted">
+                            등록된 시설 정보가 없습니다.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 이미지 관리를 숙소 정보 우측에 배치 -->
+                <aside class="accom-image-quick-panel">
+                  <div class="accom-image-quick-panel__head">
+                    <div>
+                      <b>이미지 관리</b>
+                      <span class="section-count">
+                        총 {{ mainImages.length + reviewImages.length }}장
+                      </span>
+                    </div>
+                    <span
+                        v-if="selectedMainImageIds.length + selectedReviewImageIds.length > 0"
+                        class="image-selected-total"
+                    >
+                      선택 {{ selectedMainImageIds.length + selectedReviewImageIds.length }}
+                    </span>
+                  </div>
+
+                  <div class="accom-image-quick-list">
+                    <button
+                        type="button"
+                        class="image-quick-card"
+                        :class="{ 'has-selected': selectedMainImageIds.length > 0 }"
+                        @click="openImageManageModal('MAIN')"
+                    >
+                      <span class="image-quick-card__thumb">
+                        <img
+                            :src="mainImages[0]?.imgPath || NO_IMAGE_URL"
+                            alt="메인 이미지"
+                            @error="handleImageError"
+                        />
+                      </span>
+
+                      <span class="image-quick-card__content">
+                        <span class="image-quick-card__title">
+                          <i class="fa fa-image"></i>
+                          메인 이미지
                         </span>
-                      </div>
+                        <span class="image-quick-card__meta">
+                          전체 {{ mainImages.length }}장
+                        </span>
+                      </span>
 
-                      <div v-else class="text-muted">
-                        등록된 시설 정보가 없습니다.
-                      </div>
-                    </div>
+                      <span
+                          class="image-quick-card__selected"
+                          :class="{ active: selectedMainImageIds.length > 0 }"
+                      >
+                        선택 {{ selectedMainImageIds.length }}
+                      </span>
+
+                      <i class="fa fa-chevron-right image-quick-card__arrow"></i>
+                    </button>
+
+                    <button
+                        type="button"
+                        class="image-quick-card"
+                        :class="{ 'has-selected': selectedReviewImageIds.length > 0 }"
+                        @click="openImageManageModal('REVIEW')"
+                    >
+                      <span class="image-quick-card__thumb">
+                        <img
+                            :src="reviewImages[0]?.imgPath || NO_IMAGE_URL"
+                            alt="리뷰 이미지"
+                            @error="handleImageError"
+                        />
+                      </span>
+
+                      <span class="image-quick-card__content">
+                        <span class="image-quick-card__title">
+                          <i class="fa fa-star text-warning"></i>
+                          리뷰 이미지
+                        </span>
+                        <span class="image-quick-card__meta">
+                          전체 {{ reviewImages.length }}장
+                        </span>
+                      </span>
+
+                      <span
+                          class="image-quick-card__selected"
+                          :class="{ active: selectedReviewImageIds.length > 0 }"
+                      >
+                        선택 {{ selectedReviewImageIds.length }}
+                      </span>
+
+                      <i class="fa fa-chevron-right image-quick-card__arrow"></i>
+                    </button>
+
+
                   </div>
-                </div>
+                </aside>
               </div>
             </div>
           </div>
         </div>
 
         <!-- =====================================================
-             이미지 리스트 세로 배치
+             객실 선택 + 객실 이미지 + 객실 상품 정보
         ====================================================== -->
-        <div class="image-list-vertical mt-3">
-          <!-- 1. 메인 이미지 -->
-          <section class="image-list-panel image-list-panel--main vertical-image-panel">
-            <div class="image-list-panel__head">
-              <div class="d-flex align-items-center gap-2">
-                <b>메인 이미지</b>
-                <span class="section-count">{{ mainImages.length }}장</span>
-              </div>
-
-              <div class="image-list-panel__actions">
-                <span class="selected-text">
-                  {{ selectedMainImageIds.length }}개 선택
-                </span>
-
-                <button
-                    type="button"
-                    class="btn btn-xs btn-gray"
-                    :disabled="selectedMainImageIds.length === 0 || deleting"
-                    @click="deleteSelectedMainImages"
-                >
-                  <i class="far fa-circle-xmark me-1"></i>
-                  삭제
-                </button>
-              </div>
-            </div>
-
-            <div class="image-list-panel__toolbar">
-              <label class="form-check d-flex align-items-center gap-2 mb-0">
-                <input
-                    type="checkbox"
-                    class="form-check-input"
-                    :checked="areAllMainImagesSelected"
-                    @change="toggleAllMainImages"
-                />
-                <span>전체선택</span>
-              </label>
-            </div>
-
-            <div class="image-list-panel__scroll">
-              <div
-                  v-if="mainImages.length"
-                  class="compact-image-list"
-              >
-                <div
-                    v-for="(image, index) in mainImages"
-                    :key="getMainImageKey(image, index)"
-                    class="compact-image-row"
-                    :class="{ selected: isMainImageSelected(image) }"
-                >
-                  <div
-                      class="compact-image-row__check"
-                      @click.stop="toggleMainImage(image)"
-                  >
-                    <input
-                        type="checkbox"
-                        class="form-check-input"
-                        :checked="isMainImageSelected(image)"
-                        tabindex="-1"
-                    />
-                  </div>
-
-                  <div class="compact-image-row__num">
-                    {{ index + 1 }}
-                  </div>
-
-                  <button
-                      type="button"
-                      class="compact-image-thumb"
-                      @click="openImageModal(mainImageList, index, '메인 이미지')"
-                  >
-                    <img
-                        :src="image.imgPath"
-                        :alt="`메인 이미지 ${index + 1}`"
-                        @error="handleImageError"
-                    />
-                  </button>
-
-                  <div class="compact-image-row__info">
-                    <div class="compact-image-row__title">
-                      {{ image.imgType || '메인 이미지' }}
-                    </div>
-
-                    <!--                    <div class="compact-image-row__sub">
-                                          정렬 {{ image.viewOrder ?? index + 1 }}
-                                        </div>
-
-                                        <div
-                                            class="compact-image-row__path"
-                                            :title="image.imgPath"
-                                        >
-                                          {{ image.imgPath || '-' }}
-                                        </div>-->
-                  </div>
-
-                  <button
-                      type="button"
-                      class="compact-image-row__zoom"
-                      @click="openImageModal(mainImageList, index, '메인 이미지')"
-                  >
-                    <i class="fa fa-search-plus"></i>
-                  </button>
-                </div>
-              </div>
-
-              <div v-else class="admin-empty compact-empty">
-                등록된 메인 이미지가 없습니다.
-              </div>
-            </div>
-          </section>
-
-          <!-- 2. 리뷰 이미지 -->
-          <section class="image-list-panel image-list-panel--review vertical-image-panel">
-            <div class="image-list-panel__head">
-              <div class="d-flex align-items-center gap-2">
-                <b>리뷰 이미지</b>
-                <span class="section-count">{{ reviewImages.length }}장</span>
-              </div>
-
-              <div class="image-list-panel__actions">
-                <span class="selected-text">
-                  {{ selectedReviewImageIds.length }}개 선택
-                </span>
-
-                <button
-                    type="button"
-                    class="btn btn-xs btn-gray"
-                    :disabled="selectedReviewImageIds.length === 0 || deleting"
-                    @click="deleteSelectedReviewImages"
-                >
-                  <i class="far fa-circle-xmark me-1"></i>
-                  삭제
-                </button>
-              </div>
-            </div>
-
-            <div class="image-list-panel__toolbar">
-              <label class="form-check d-flex align-items-center gap-2 mb-0">
-                <input
-                    type="checkbox"
-                    class="form-check-input"
-                    :checked="areAllReviewImagesSelected"
-                    @change="toggleAllReviewImages"
-                />
-                <span>전체선택</span>
-              </label>
-            </div>
-
-            <div class="image-list-panel__scroll">
-              <div
-                  v-if="reviewImages.length"
-                  class="compact-image-list"
-              >
-                <div
-                    v-for="(review, index) in reviewImages"
-                    :key="getReviewImageKey(review, index)"
-                    class="compact-image-row"
-                    :class="{ selected: isReviewImageSelected(review) }"
-                >
-                  <div
-                      class="compact-image-row__check"
-                      @click.stop="toggleReviewImage(review)"
-                  >
-                    <input
-                        type="checkbox"
-                        class="form-check-input"
-                        :checked="isReviewImageSelected(review)"
-                        tabindex="-1"
-                    />
-                  </div>
-
-                  <div class="compact-image-row__num">
-                    {{ index + 1 }}
-                  </div>
-
-                  <button
-                      type="button"
-                      class="compact-image-thumb"
-                      @click="openImageModal(reviewImageList, index, '리뷰 이미지')"
-                  >
-                    <img
-                        :src="review.imgPath"
-                        :alt="`리뷰 이미지 ${index + 1}`"
-                        @error="handleImageError"
-                    />
-                  </button>
-
-                  <div class="compact-image-row__info">
-                    <div class="compact-image-row__title">
-                      <i class="fa fa-star text-warning me-1"></i>
-                      {{ formatScore(review.score) }}
-                    </div>
-
-                    <!--                    <div class="compact-image-row__sub">
-                                          {{ formatDate(review.createdAt) }}
-                                        </div>
-
-                                        <div
-                                            class="compact-image-row__path"
-                                            :title="review.imgPath"
-                                        >
-                                          {{ review.imgPath || '-' }}
-                                        </div>-->
-                  </div>
-
-                  <button
-                      type="button"
-                      class="compact-image-row__zoom"
-                      @click="openImageModal(reviewImageList, index, '리뷰 이미지')"
-                  >
-                    <i class="fa fa-search-plus"></i>
-                  </button>
-                </div>
-              </div>
-
-              <div v-else class="admin-empty compact-empty">
-                등록된 리뷰 이미지가 없습니다.
-              </div>
-            </div>
-          </section>
-
-          <!-- 3. 객실 이미지 -->
-          <section class="image-list-panel image-list-panel--room vertical-image-panel">
-            <div class="image-list-panel__head">
-              <div class="d-flex align-items-center gap-2">
-                <b>객실 이미지</b>
-                <span class="section-count">{{ activeRoomImages.length }}장</span>
-              </div>
-
-              <div class="image-list-panel__actions">
-                <span class="selected-text">
-                  {{ selectedRoomImageCount }}개 선택
-                </span>
-
-                <button
-                    type="button"
-                    class="btn btn-xs btn-gray"
-                    :disabled="selectedRoomImageCount === 0 || deleting"
-                    @click="deleteSelectedRoomImages"
-                >
-                  <i class="far fa-circle-xmark me-1"></i>
-                  삭제
-                </button>
-              </div>
-            </div>
-
-            <div class="image-list-panel__room-tabs">
-              <button
-                  type="button"
-                  class="room-tab-arrow compact"
-                  @click="scrollRoomTabs(-1)"
-              >
-                ‹
-              </button>
-
-              <div ref="roomTabsRef" class="compact-room-tabs">
-                <button
-                    v-for="roomItem in rooms"
-                    :key="roomItem.roomId"
-                    type="button"
-                    class="compact-room-tab"
-                    :class="{ active: activeRoom?.roomId === roomItem.roomId }"
-                    @click="selectRoom(roomItem.roomId)"
-                >
-                  {{ roomItem.roomName || '객실명 없음' }}
-                </button>
-              </div>
-
-              <button
-                  type="button"
-                  class="room-tab-arrow compact"
-                  @click="scrollRoomTabs(1)"
-              >
-                ›
-              </button>
-            </div>
-
-            <div class="image-list-panel__toolbar">
-              <label class="form-check d-flex align-items-center gap-2 mb-0">
-                <input
-                    type="checkbox"
-                    class="form-check-input"
-                    :checked="areAllActiveRoomImagesSelected"
-                    :disabled="activeRoomImages.length === 0"
-                    @change="toggleAllActiveRoomImages"
-                />
-                <span>전체선택</span>
-              </label>
-
-              <span v-if="activeRoom" class="current-room-name">
-                {{ activeRoom.roomName || '-' }}
-              </span>
-            </div>
-
-            <div class="image-list-panel__scroll">
-              <div
-                  v-if="activeRoomImages.length"
-                  class="compact-image-list"
-              >
-                <div
-                    v-for="(image, index) in activeRoomImages"
-                    :key="getRoomImageKey(image, index)"
-                    class="compact-image-row"
-                    :class="{ selected: isActiveRoomImageSelected(image) }"
-                >
-                  <div
-                      class="compact-image-row__check"
-                      @click.stop="toggleActiveRoomImage(image)"
-                  >
-                    <input
-                        type="checkbox"
-                        class="form-check-input"
-                        :checked="isActiveRoomImageSelected(image)"
-                        tabindex="-1"
-                    />
-                  </div>
-
-                  <div class="compact-image-row__num">
-                    {{ index + 1 }}
-                  </div>
-
-                  <button
-                      type="button"
-                      class="compact-image-thumb"
-                      @click="
-                        openImageModal(
-                          activeRoomImageList,
-                          index,
-                          activeRoom?.roomName || '객실 이미지'
-                        )
-                      "
-                  >
-                    <img
-                        :src="image.imgPath"
-                        alt="객실 이미지"
-                        @error="handleImageError"
-                    />
-                  </button>
-
-                  <div class="compact-image-row__info">
-                    <div class="compact-image-row__title">
-                      {{ activeRoom?.roomName || '-' }}
-                    </div>
-
-                    <!--                    <div class="compact-image-row__sub">
-                                          정렬 {{ image.viewOrder ?? index + 1 }}
-                                        </div>
-
-                                        <div
-                                            class="compact-image-row__path"
-                                            :title="image.imgPath"
-                                        >
-                                          {{ image.imgPath || '-' }}
-                                        </div>-->
-                  </div>
-
-                  <button
-                      type="button"
-                      class="compact-image-row__zoom"
-                      @click="
-                        openImageModal(
-                          activeRoomImageList,
-                          index,
-                          activeRoom?.roomName || '객실 이미지'
-                        )
-                      "
-                  >
-                    <i class="fa fa-search-plus"></i>
-                  </button>
-                </div>
-              </div>
-
-              <div v-else class="admin-empty compact-empty">
-                등록된 객실 이미지가 없습니다.
-              </div>
-            </div>
-
-
-          </section>
-        </div>
-
-
-        <!-- =====================================================
-             객실 상품 정보
-        ====================================================== -->
-        <div class="admin-section-card mt-3">
-          <div class="admin-section-head">
-            <div>
+        <div class="admin-section-card mt-3 room-product-section">
+          <div class="room-product-section__head">
+            <div class="room-product-section__title">
+              <i class="fa fa-bed me-2"></i>
               <b>객실 상품 정보</b>
-              <span v-if="activeRoom" class="section-count">
-                {{ activeRoom.roomName || '-' }}
-              </span>
+              <span class="section-count">{{ rooms.length }}개 객실</span>
+            </div>
+
+            <div v-if="activeRoom" class="room-product-section__active">
+              현재 선택
+              <strong>{{ activeRoom.roomName || '-' }}</strong>
             </div>
           </div>
 
-          <div v-if="activeRoom" class="table-responsive">
-            <table class="table table-hover text-nowrap admin-room-table mb-0">
-              <thead>
-              <tr>
-                <th>구분</th>
-                <th>기준인원</th>
-                <th>최대인원</th>
-                <th>이용시간</th>
-                <th>체크인</th>
-                <th>체크아웃</th>
-                <th class="text-end">정상가</th>
-                <th class="text-end">판매가</th>
-                <th class="text-end">할인율</th>
-              </tr>
-              </thead>
+          <!-- 객실 선택 탭 : 탭 변경 시 이미지와 금액정보가 함께 변경 -->
+          <div v-if="rooms.length" class="room-select-strip">
+            <button
+                type="button"
+                class="room-select-arrow"
+                @click="scrollRoomTabs(-1)"
+            >
+              ‹
+            </button>
 
-              <tbody>
-              <tr
-                  v-for="roomInfo in activeRoom.roomInfo || []"
-                  :key="roomInfo.roomInfoId"
+            <div ref="roomTabsRef" class="room-select-tabs">
+              <button
+                  v-for="roomItem in rooms"
+                  :key="roomItem.roomId"
+                  type="button"
+                  class="room-select-tab"
+                  :class="{ active: activeRoom?.roomId === roomItem.roomId }"
+                  @click="selectRoom(roomItem.roomId)"
               >
-                <td class="align-middle">
+                <span class="room-select-tab__name">
+                  {{ roomItem.roomName || '객실명 없음' }}
+                </span>
+                <span class="room-select-tab__meta">
+                  이미지 {{ roomItem.roomImgs?.length || 0 }}
+                  · 상품 {{ roomItem.roomInfo?.length || 0 }}
+                </span>
+              </button>
+            </div>
+
+            <button
+                type="button"
+                class="room-select-arrow"
+                @click="scrollRoomTabs(1)"
+            >
+              ›
+            </button>
+          </div>
+
+          <div v-if="activeRoom" class="room-product-layout">
+            <!-- 선택한 객실 이미지 -->
+            <div class="room-product-image-panel">
+              <button
+                  type="button"
+                  class="room-product-main-image"
+                  @click="openImageManageModal('ROOM')"
+              >
+                <img
+                    :src="activeRoomImages[0]?.imgPath || NO_IMAGE_URL"
+                    :alt="activeRoom.roomName || '객실 이미지'"
+                    @error="handleImageError"
+                />
+
+                <span class="room-product-main-image__count">
+                  <i class="fa fa-images me-1"></i>
+                  {{ activeRoomImages.length }}장
+                </span>
+              </button>
+
+              <div class="room-product-image-info">
+                <div class="room-product-image-info__name">
+                  {{ activeRoom.roomName || '-' }}
+                </div>
+
+                <div class="room-product-image-info__meta">
+                  <span>객실 이미지 {{ activeRoomImages.length }}장</span>
                   <span
-                      class="room-type-label"
-                      :class="{
-                        stay: String(roomInfo.roomType) === '1',
-                        rent: String(roomInfo.roomType) === '2'
-                      }"
+                      v-if="selectedRoomImageCount > 0"
+                      class="room-product-image-info__selected"
                   >
-                    {{ getRoomTypeName(roomInfo.roomType) }}
+                    선택 {{ selectedRoomImageCount }}장
                   </span>
-                </td>
+                </div>
 
-                <td class="align-middle">
-                  {{ formatNumber(roomInfo.baseCnt) }}명
-                </td>
-
-                <td class="align-middle">
-                  {{ formatNumber(roomInfo.maxCnt) }}명
-                </td>
-
-                <td class="align-middle">
-                  <template v-if="String(roomInfo.roomType) === '2'">
-                    {{ formatUseTime(roomInfo.availUseTime) }}
-                  </template>
-                  <template v-else>
-                    {{ formatCheckTime(roomInfo.checkInTime) }}
-                    ~
-                    {{ formatCheckTime(roomInfo.checkOutTime) }}
-                  </template>
-                </td>
-
-                <td class="align-middle">
-                  {{ formatCheckTime(roomInfo.checkInTime) }}
-                </td>
-
-                <td class="align-middle">
-                  {{ formatCheckTime(roomInfo.checkOutTime) }}
-                </td>
-
-                <td class="align-middle text-end text-muted">
-                  {{ formatPrice(roomInfo.roomPrice) }}
-                </td>
-
-                <td class="align-middle text-end fw-bold">
-                  {{
-                    formatPrice(
-                        Number(roomInfo.roomDisPrice) > 0
-                            ? roomInfo.roomDisPrice
-                            : roomInfo.roomPrice
-                    )
-                  }}
-                </td>
-
-                <td class="align-middle text-end">
-                  <span
-                      v-if="getDiscountRate(roomInfo.roomPrice, roomInfo.roomDisPrice) > 0"
-                      class="discount-label"
-                  >
-                    {{ getDiscountRate(roomInfo.roomPrice, roomInfo.roomDisPrice) }}%
+                <button
+                    type="button"
+                    class="btn btn-sm btn-white border room-image-manage-btn"
+                    @click="openImageManageModal('ROOM')"
+                >
+                  <i class="fa fa-images me-1"></i>
+                  이미지 관리
+                  <span v-if="selectedRoomImageCount > 0" class="room-image-manage-btn__selected">
+                    {{ selectedRoomImageCount }}
                   </span>
-                  <span v-else>-</span>
-                </td>
-              </tr>
+                </button>
+              </div>
+            </div>
 
-              <tr v-if="!activeRoom.roomInfo?.length">
-                <td colspan="9" class="text-center text-muted py-4">
-                  등록된 객실 상품 정보가 없습니다.
-                </td>
-              </tr>
-              </tbody>
-            </table>
+            <!-- 선택한 객실 금액/상품 정보 -->
+            <div class="room-product-info-panel">
+              <div class="room-product-info-panel__head">
+                <div>
+                  <b>{{ activeRoom.roomName || '-' }}</b>
+                  <span>의 판매 상품</span>
+                </div>
+                <span class="room-product-count">
+                  {{ activeRoom.roomInfo?.length || 0 }}개
+                </span>
+              </div>
+
+              <div v-if="activeRoom.roomInfo?.length" class="room-price-card-list">
+                <div
+                    v-for="roomInfo in activeRoom.roomInfo"
+                    :key="roomInfo.roomInfoId"
+                    class="room-price-card"
+                >
+                  <div class="room-price-card__type">
+                    <span
+                        class="room-type-label"
+                        :class="{
+                          stay: String(roomInfo.roomType) === '1',
+                          rent: String(roomInfo.roomType) === '2'
+                        }"
+                    >
+                      {{ getRoomTypeName(roomInfo.roomType) }}
+                    </span>
+                  </div>
+
+                  <div class="room-price-card__spec">
+                    <div class="room-price-spec-item">
+                      <span>인원</span>
+                      <b>{{ formatNumber(roomInfo.baseCnt) }}명 / 최대 {{ formatNumber(roomInfo.maxCnt) }}명</b>
+                    </div>
+
+                    <div class="room-price-spec-item">
+                      <span>{{ String(roomInfo.roomType) === '2' ? '이용시간' : '체크인 · 체크아웃' }}</span>
+                      <b v-if="String(roomInfo.roomType) === '2'">
+                        {{ formatUseTime(roomInfo.availUseTime) }}
+                      </b>
+                      <b v-else>
+                        {{ formatCheckTime(roomInfo.checkInTime) }} ~ {{ formatCheckTime(roomInfo.checkOutTime) }}
+                      </b>
+                    </div>
+                  </div>
+
+                  <div class="room-price-card__price">
+                    <div class="room-price-card__origin">
+                      {{ formatPrice(roomInfo.roomPrice) }}
+                    </div>
+
+                    <div class="room-price-card__sale">
+                      {{
+                        formatPrice(
+                            Number(roomInfo.roomDisPrice) > 0
+                                ? roomInfo.roomDisPrice
+                                : roomInfo.roomPrice
+                        )
+                      }}
+                    </div>
+
+                    <span
+                        v-if="getDiscountRate(roomInfo.roomPrice, roomInfo.roomDisPrice) > 0"
+                        class="room-price-card__discount"
+                    >
+                      {{ getDiscountRate(roomInfo.roomPrice, roomInfo.roomDisPrice) }}% 할인
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div v-else class="admin-empty room-product-empty-state">
+                등록된 객실 상품 정보가 없습니다.
+              </div>
+            </div>
           </div>
 
           <div v-else class="admin-empty">
@@ -783,6 +563,282 @@
   </div>
 
   <!-- =====================================================
+       이미지 관리 모달
+  ====================================================== -->
+  <div
+      v-if="imageManageModalVisible"
+      class="simple-modal-backdrop image-manage-backdrop"
+      @click="closeImageManageModal"
+  >
+    <div class="simple-modal image-manage-modal" @click.stop>
+      <div class="simple-modal__head image-manage-modal__head">
+        <div>
+          <h5 class="mb-1">
+            <i class="fa fa-images me-2"></i>
+            {{ imageManageTitle }}
+          </h5>
+          <div class="image-manage-modal__sub">
+            {{ imageManageCount }}장 등록
+          </div>
+        </div>
+
+        <button
+            type="button"
+            class="btn-close"
+            @click="closeImageManageModal"
+        ></button>
+      </div>
+
+      <!-- 객실 이미지일 때만 객실 탭 -->
+      <div
+          v-if="imageManageType === 'ROOM'"
+          class="image-manage-room-tabs"
+      >
+        <button
+            type="button"
+            class="room-tab-arrow compact"
+            @click="scrollRoomTabs(-1)"
+        >
+          ‹
+        </button>
+
+        <div ref="roomTabsRef" class="compact-room-tabs">
+          <button
+              v-for="roomItem in rooms"
+              :key="roomItem.roomId"
+              type="button"
+              class="compact-room-tab"
+              :class="{ active: activeRoom?.roomId === roomItem.roomId }"
+              @click="selectRoom(roomItem.roomId)"
+          >
+            {{ roomItem.roomName || '객실명 없음' }}
+            <span class="room-tab-count">
+              {{ roomItem.roomImgs?.length || 0 }}
+            </span>
+          </button>
+        </div>
+
+        <button
+            type="button"
+            class="room-tab-arrow compact"
+            @click="scrollRoomTabs(1)"
+        >
+          ›
+        </button>
+      </div>
+
+      <div class="image-manage-toolbar">
+        <!-- MAIN -->
+        <template v-if="imageManageType === 'MAIN'">
+          <label class="form-check d-flex align-items-center gap-2 mb-0">
+            <input
+                type="checkbox"
+                class="form-check-input"
+                :checked="areAllMainImagesSelected"
+                :disabled="mainImages.length === 0"
+                @change="toggleAllMainImages"
+            />
+            <span>전체선택</span>
+          </label>
+
+          <div class="d-flex align-items-center gap-2">
+            <span class="selected-text">{{ selectedMainImageIds.length }}개 선택</span>
+            <button
+                type="button"
+                class="btn btn-xs btn-gray"
+                :disabled="selectedMainImageIds.length === 0 || deleting"
+                @click="deleteSelectedMainImages"
+            >
+              <i class="far fa-circle-xmark me-1"></i>삭제
+            </button>
+          </div>
+        </template>
+
+        <!-- REVIEW -->
+        <template v-else-if="imageManageType === 'REVIEW'">
+          <label class="form-check d-flex align-items-center gap-2 mb-0">
+            <input
+                type="checkbox"
+                class="form-check-input"
+                :checked="areAllReviewImagesSelected"
+                :disabled="reviewImages.length === 0"
+                @change="toggleAllReviewImages"
+            />
+            <span>전체선택</span>
+          </label>
+
+          <div class="d-flex align-items-center gap-2">
+            <span class="selected-text">{{ selectedReviewImageIds.length }}개 선택</span>
+            <button
+                type="button"
+                class="btn btn-xs btn-gray"
+                :disabled="selectedReviewImageIds.length === 0 || deleting"
+                @click="deleteSelectedReviewImages"
+            >
+              <i class="far fa-circle-xmark me-1"></i>삭제
+            </button>
+          </div>
+        </template>
+
+        <!-- ROOM -->
+        <template v-else>
+          <label class="form-check d-flex align-items-center gap-2 mb-0">
+            <input
+                type="checkbox"
+                class="form-check-input"
+                :checked="areAllActiveRoomImagesSelected"
+                :disabled="activeRoomImages.length === 0"
+                @change="toggleAllActiveRoomImages"
+            />
+            <span>전체선택</span>
+          </label>
+
+          <div class="d-flex align-items-center gap-2">
+            <span class="selected-text">{{ selectedRoomImageCount }}개 선택</span>
+            <button
+                type="button"
+                class="btn btn-xs btn-gray"
+                :disabled="selectedRoomImageCount === 0 || deleting"
+                @click="deleteSelectedRoomImages"
+            >
+              <i class="far fa-circle-xmark me-1"></i>삭제
+            </button>
+          </div>
+        </template>
+      </div>
+
+      <div class="image-manage-body">
+        <!-- 메인 이미지 목록 -->
+        <div v-if="imageManageType === 'MAIN' && mainImages.length" class="image-manage-grid">
+          <div
+              v-for="(image, index) in mainImages"
+              :key="getMainImageKey(image, index)"
+              class="image-manage-item"
+              :class="{ selected: isMainImageSelected(image) }"
+          >
+            <label class="image-manage-item__check">
+              <input
+                  type="checkbox"
+                  class="form-check-input"
+                  :checked="isMainImageSelected(image)"
+                  @change="toggleMainImage(image)"
+              />
+            </label>
+
+            <button
+                type="button"
+                class="image-manage-item__thumb"
+                @click="toggleMainImage(image)"
+            >
+              <img :src="image.imgPath" alt="메인 이미지" @error="handleImageError" />
+            </button>
+
+            <div class="image-manage-item__info">
+              <b>#{{ index + 1 }}</b>
+              <span>{{ image.imgType == 1 ? '메인 이미지' : '기타' }}</span>
+              <button
+                  type="button"
+                  class="image-manage-item__zoom"
+                  @click="openImageModal(mainImageList, index, '메인 이미지')"
+              >
+                <i class="fa fa-search-plus"></i> 확대
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 리뷰 이미지 목록 -->
+        <div v-else-if="imageManageType === 'REVIEW' && reviewImages.length" class="image-manage-grid">
+          <div
+              v-for="(review, index) in reviewImages"
+              :key="getReviewImageKey(review, index)"
+              class="image-manage-item"
+              :class="{ selected: isReviewImageSelected(review) }"
+          >
+            <label class="image-manage-item__check">
+              <input
+                  type="checkbox"
+                  class="form-check-input"
+                  :checked="isReviewImageSelected(review)"
+                  @change="toggleReviewImage(review)"
+              />
+            </label>
+
+            <button
+                type="button"
+                class="image-manage-item__thumb"
+                @click="toggleReviewImage(review)"
+            >
+              <img :src="review.imgPath" alt="리뷰 이미지" @error="handleImageError" />
+            </button>
+
+            <div class="image-manage-item__info">
+              <b>#{{ index + 1 }}</b>
+              <span><i class="fa fa-star text-warning me-1"></i>{{ formatScore(review.score) }}</span>
+              <button
+                  type="button"
+                  class="image-manage-item__zoom"
+                  @click="openImageModal(reviewImageList, index, '리뷰 이미지')"
+              >
+                <i class="fa fa-search-plus"></i> 확대
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 객실 이미지 목록 -->
+        <div v-else-if="imageManageType === 'ROOM' && activeRoomImages.length" class="image-manage-grid">
+          <div
+              v-for="(image, index) in activeRoomImages"
+              :key="getRoomImageKey(image, index)"
+              class="image-manage-item"
+              :class="{ selected: isActiveRoomImageSelected(image) }"
+          >
+            <label class="image-manage-item__check">
+              <input
+                  type="checkbox"
+                  class="form-check-input"
+                  :checked="isActiveRoomImageSelected(image)"
+                  @change="toggleActiveRoomImage(image)"
+              />
+            </label>
+
+            <button
+                type="button"
+                class="image-manage-item__thumb"
+                @click="toggleActiveRoomImage(image)"
+            >
+              <img :src="image.imgPath" alt="객실 이미지" @error="handleImageError" />
+            </button>
+
+            <div class="image-manage-item__info">
+              <b>#{{ index + 1 }}</b>
+              <span>{{ activeRoom?.roomName || '-' }}</span>
+              <button
+                  type="button"
+                  class="image-manage-item__zoom"
+                  @click="openImageModal(activeRoomImageList, index, activeRoom?.roomName || '객실 이미지')"
+              >
+                <i class="fa fa-search-plus"></i> 확대
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div v-else class="admin-empty image-manage-empty">
+          등록된 이미지가 없습니다.
+        </div>
+      </div>
+
+      <div class="simple-modal__footer">
+        <button type="button" class="btn btn-sm btn-gray" @click="closeImageManageModal">
+          닫기
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================
        이미지 확대 / 스와이프
   ====================================================== -->
   <div
@@ -848,6 +904,7 @@ import { useAccommodationStore } from '@/stores/accommodation/useAccommodationSt
 
 type Id = number | string;
 type DeleteImageType = 'MAIN' | 'ROOM' | 'REVIEW';
+type ImageManageType = DeleteImageType;
 
 interface MainImage {
   imgId?: Id;
@@ -934,6 +991,30 @@ const selectedRoomImages = ref<Record<string, Id[]>>({});
  * 판매자 모달
  * ======================================================= */
 const sellerModalVisible = ref(false);
+
+/* =========================================================
+ * 이미지 관리 모달
+ * ======================================================= */
+const imageManageModalVisible = ref(false);
+const imageManageType = ref<ImageManageType>('MAIN');
+
+const imageManageTitle = computed(() => {
+  const titleMap: Record<ImageManageType, string> = {
+    MAIN: '메인 이미지 관리',
+    REVIEW: '리뷰 이미지 관리',
+    ROOM: activeRoom.value?.roomName
+        ? `${activeRoom.value.roomName} 이미지 관리`
+        : '객실 이미지 관리',
+  };
+
+  return titleMap[imageManageType.value];
+});
+
+const imageManageCount = computed(() => {
+  if (imageManageType.value === 'MAIN') return mainImages.value.length;
+  if (imageManageType.value === 'REVIEW') return reviewImages.value.length;
+  return activeRoomImages.value.length;
+});
 
 /* =========================================================
  * 이미지 확대 모달
@@ -1121,6 +1202,13 @@ const rooms = computed<RoomItem[]>(() => {
   return [];
 });
 
+const totalRoomImagesCount = computed(() =>
+    rooms.value.reduce(
+        (total, room) => total + sortByOrder(room.roomImgs || []).length,
+        0
+    )
+);
+
 const activeRoom = computed(() =>
     rooms.value.find(
         (room) => room.roomId === activeRoomId.value
@@ -1149,6 +1237,19 @@ const activeSelectedImages = computed(() =>
 
 const selectedRoomImageCount = computed(() =>
     activeSelectedImages.value.length
+);
+
+const selectedTotalRoomImageCount = computed(() =>
+    Object.values(selectedRoomImages.value).reduce(
+        (total, ids) => total + ids.length,
+        0
+    )
+);
+
+const totalSelectedImageCount = computed(() =>
+    selectedMainImageIds.value.length +
+    selectedReviewImageIds.value.length +
+    selectedTotalRoomImageCount.value
 );
 
 const areAllActiveRoomImagesSelected = computed(() => {
@@ -1493,6 +1594,28 @@ function clearSelections() {
 }
 
 /* =========================================================
+ * 이미지 관리 모달
+ * ======================================================= */
+function openImageManageModal(type: ImageManageType) {
+  imageManageType.value = type;
+  imageManageModalVisible.value = true;
+
+  if (type === 'ROOM' && !activeRoom.value && rooms.value.length) {
+    activeRoomId.value = rooms.value[0].roomId;
+  }
+
+  document.body.style.overflow = 'hidden';
+}
+
+function closeImageManageModal() {
+  imageManageModalVisible.value = false;
+
+  if (!imageModalVisible.value) {
+    document.body.style.overflow = '';
+  }
+}
+
+/* =========================================================
  * 이미지 확대 / 이전 / 다음 / 모바일 스와이프
  * ======================================================= */
 function openImageModal(
@@ -1523,7 +1646,9 @@ function closeImageModal() {
   modalImageIndex.value = 0;
   touchStartX.value = null;
 
-  document.body.style.overflow = '';
+  document.body.style.overflow = imageManageModalVisible.value
+      ? 'hidden'
+      : '';
 }
 
 function moveModalImage(direction: -1 | 1) {
@@ -1563,18 +1688,25 @@ function handleModalTouchEnd(
 }
 
 function handleKeydown(event: KeyboardEvent) {
-  if (!imageModalVisible.value) return;
+  if (imageModalVisible.value) {
+    if (event.key === 'Escape') {
+      closeImageModal();
+      return;
+    }
 
-  if (event.key === 'Escape') {
-    closeImageModal();
+    if (event.key === 'ArrowLeft') {
+      moveModalImage(-1);
+    }
+
+    if (event.key === 'ArrowRight') {
+      moveModalImage(1);
+    }
+
+    return;
   }
 
-  if (event.key === 'ArrowLeft') {
-    moveModalImage(-1);
-  }
-
-  if (event.key === 'ArrowRight') {
-    moveModalImage(1);
+  if (imageManageModalVisible.value && event.key === 'Escape') {
+    closeImageManageModal();
   }
 }
 
@@ -4256,10 +4388,860 @@ onBeforeUnmount(() => {
   }
 }
 
+
+/* =========================================================
+   이미지 관리 요약 + 팝업
+========================================================= */
+.image-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  padding: 12px;
+}
+
+.image-summary-card {
+  min-width: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  overflow: hidden;
+  border: 1px solid #dde1e6;
+  border-radius: 6px;
+  background: #fff;
+  color: #333;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease;
+}
+
+.image-summary-card:hover {
+  border-color: #aebed1;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, .06);
+  transform: translateY(-1px);
+}
+
+.image-summary-card__thumb {
+  height: 86px;
+  overflow: hidden;
+  border-right: 1px solid #eceff2;
+  background: #f4f4f4;
+}
+
+.image-summary-card__thumb img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.image-summary-card__body {
+  min-width: 0;
+  padding: 11px 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.image-summary-card__title {
+  color: #303840;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.image-summary-card__count {
+  margin-top: 5px;
+  overflow: hidden;
+  color: #6b7280;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.image-summary-card__room {
+  color: #8a9199;
+}
+
+.image-summary-card__action {
+  margin-top: 7px;
+  color: #348fe2;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.image-manage-backdrop {
+  z-index: 10550;
+}
+
+.image-manage-modal {
+  width: min(1100px, 95vw);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.image-manage-modal__head {
+  flex: 0 0 auto;
+}
+
+.image-manage-modal__sub {
+  margin-top: 2px;
+  color: #8a8f96;
+  font-size: 11px;
+}
+
+.image-manage-room-tabs {
+  flex: 0 0 auto;
+  min-height: 46px;
+  padding: 7px 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #fff;
+}
+
+.image-manage-toolbar {
+  flex: 0 0 auto;
+  min-height: 44px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #fafafa;
+}
+
+.image-manage-body {
+  min-height: 250px;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 12px;
+  background: #f5f6f8;
+}
+
+.image-manage-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.image-manage-item {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid #dfe3e8;
+  border-radius: 5px;
+  background: #fff;
+}
+
+.image-manage-item.selected {
+  border-color: #348fe2;
+  box-shadow: inset 0 0 0 1px #348fe2;
+}
+
+.image-manage-item__check {
+  position: absolute;
+  top: 7px;
+  left: 7px;
+  z-index: 2;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, .92);
+  cursor: pointer;
+}
+
+.image-manage-item__check .form-check-input {
+  margin: 0;
+}
+
+.image-manage-item__thumb {
+  width: 100%;
+  height: 118px;
+  padding: 0;
+  display: block;
+  overflow: hidden;
+  border: 0;
+  background: #eceff2;
+  cursor: pointer;
+}
+
+.image-manage-item__thumb img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.image-manage-item__info {
+  min-height: 43px;
+  padding: 7px 8px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 6px;
+  align-items: center;
+  border-top: 1px solid #eceff2;
+  color: #555;
+  font-size: 11px;
+}
+
+.image-manage-item__info > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.image-manage-item__zoom {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #348fe2;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.image-manage-empty {
+  min-height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 900px) {
+  .image-summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .image-summary-card {
+    grid-template-columns: 82px minmax(0, 1fr);
+  }
+
+  .image-summary-card__thumb {
+    height: 76px;
+  }
+}
+
+@media (max-width: 767px) {
+  .image-manage-modal {
+    width: 96vw;
+    max-height: 92vh;
+  }
+
+  .image-manage-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .image-manage-item__thumb {
+    height: 100px;
+  }
+
+  .image-manage-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+
+
+/* =========================================================
+   숙소 정보 + 이미지 관리 압축 상단 레이아웃
+========================================================= */
+.accom-top-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 390px;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.accom-top-grid__info {
+  min-width: 0;
+}
+
+.accom-image-quick-panel {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.accom-image-quick-panel__head {
+  min-height: 42px;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border-bottom: 1px solid #e7e7e7;
+  background: #fafafa;
+}
+
+.accom-image-quick-panel__head b {
+  font-size: 13px;
+}
+
+.image-selected-total {
+  flex: 0 0 auto;
+  padding: 3px 7px;
+  border-radius: 10px;
+  background: #eaf3ff;
+  color: #2878c8;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.accom-image-quick-list {
+  padding: 7px;
+  display: grid;
+  gap: 6px;
+}
+
+.image-quick-card {
+  width: 100%;
+  min-width: 0;
+  min-height: 64px;
+  padding: 6px;
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr) auto 14px;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #e1e5e9;
+  border-radius: 5px;
+  background: #fff;
+  color: #333;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .15s ease, background .15s ease;
+}
+
+.image-quick-card:hover {
+  border-color: #b9c9da;
+  background: #fafcff;
+}
+
+.image-quick-card.has-selected {
+  border-color: #9fc7ef;
+  background: #f6faff;
+}
+
+.image-quick-card__thumb {
+  width: 58px;
+  height: 50px;
+  overflow: hidden;
+  border-radius: 4px;
+  background: #f0f0f0;
+}
+
+.image-quick-card__thumb img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.image-quick-card__content {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.image-quick-card__title {
+  overflow: hidden;
+  color: #343a40;
+  font-size: 12px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.image-quick-card__title i {
+  width: 15px;
+  margin-right: 2px;
+  text-align: center;
+}
+
+.image-quick-card__meta {
+  overflow: hidden;
+  color: #81878d;
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.image-quick-card__selected {
+  flex: 0 0 auto;
+  padding: 3px 6px;
+  border-radius: 10px;
+  background: #f0f1f2;
+  color: #8b9095;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.image-quick-card__selected.active {
+  background: #e3f0ff;
+  color: #2476c5;
+}
+
+.image-quick-card__arrow {
+  color: #a2a8ae;
+  font-size: 10px;
+}
+
+/* 우측 이미지 패널과 높이 균형을 맞추기 위해 기존 숙소 영역을 조금 압축 */
+.accom-top-grid .accom-summary-body {
+  padding: 5px 8px !important;
+}
+
+.accom-top-grid .accom-info-table td {
+  padding: 6px 7px;
+}
+
+.accom-top-grid .accom-mini-info-wrap {
+  gap: 6px;
+  padding: 7px 8px !important;
+}
+
+.accom-top-grid .accom-mini-info {
+  padding: 8px;
+}
+
+.accom-top-grid .accom-mini-info__title {
+  margin-bottom: 5px;
+  font-size: 12px;
+}
+
+.accom-top-grid .accom-mini-info__body {
+  max-height: 72px;
+}
+
+@media (max-width: 1250px) {
+  .accom-top-grid {
+    grid-template-columns: minmax(0, 1fr) 340px;
+  }
+}
+
+@media (max-width: 1050px) {
+  .accom-top-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .accom-image-quick-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .image-quick-card {
+    grid-template-columns: 50px minmax(0, 1fr) auto;
+  }
+
+  .image-quick-card__thumb {
+    width: 50px;
+    height: 46px;
+  }
+
+  .image-quick-card__arrow {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .accom-image-quick-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* =========================================================
+   객실 선택 + 이미지 + 금액 정보 통합 카드
+========================================================= */
+.room-product-section {
+  overflow: hidden;
+}
+
+.room-product-section__head {
+  min-height: 48px;
+  padding: 9px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid #e4e7eb;
+  background: #fafafa;
+}
+
+.room-product-section__title {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.room-product-section__title b {
+  font-size: 13px;
+}
+
+.room-product-section__active {
+  flex: 0 0 auto;
+  padding: 5px 9px;
+  border: 1px solid #dce6f4;
+  border-radius: 4px;
+  background: #f3f7fd;
+  color: #6b7280;
+  font-size: 11px;
+}
+
+.room-product-section__active strong {
+  margin-left: 5px;
+  color: #2767ad;
+}
+
+.room-select-strip {
+  padding: 8px 9px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-bottom: 1px solid #e7eaee;
+  background: #fff;
+}
+
+.room-select-tabs {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.room-select-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.room-select-arrow {
+  flex: 0 0 28px;
+  width: 28px;
+  height: 42px;
+  padding: 0;
+  border: 1px solid #dfe3e8;
+  border-radius: 4px;
+  background: #fff;
+  color: #667085;
+  font-size: 19px;
+}
+
+.room-select-tab {
+  min-width: 150px;
+  max-width: 230px;
+  height: 44px;
+  padding: 5px 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  border: 1px solid #dfe3e8;
+  border-radius: 5px;
+  background: #fff;
+  color: #444;
+  text-align: left;
+  cursor: pointer;
+}
+
+.room-select-tab:hover {
+  border-color: #a8bfdc;
+  background: #fafcff;
+}
+
+.room-select-tab.active {
+  border-color: #348fe2;
+  background: #f0f7ff;
+  box-shadow: inset 3px 0 0 #348fe2;
+}
+
+.room-select-tab__name {
+  width: 100%;
+  overflow: hidden;
+  font-size: 12px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.room-select-tab.active .room-select-tab__name {
+  color: #2368aa;
+}
+
+.room-select-tab__meta {
+  margin-top: 2px;
+  color: #8a8f98;
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.room-product-layout {
+  display: grid;
+  grid-template-columns: 250px minmax(0, 1fr);
+  min-height: 235px;
+}
+
+.room-product-image-panel {
+  padding: 12px;
+  border-right: 1px solid #e7eaee;
+  background: #fbfbfc;
+}
+
+.room-product-main-image {
+  position: relative;
+  width: 100%;
+  height: 145px;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid #dfe3e8;
+  border-radius: 5px;
+  background: #f3f4f6;
+  cursor: pointer;
+}
+
+.room-product-main-image img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.room-product-main-image__count {
+  position: absolute;
+  right: 7px;
+  bottom: 7px;
+  padding: 4px 7px;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.room-product-image-info {
+  padding-top: 9px;
+}
+
+.room-product-image-info__name {
+  overflow: hidden;
+  color: #343a40;
+  font-size: 13px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.room-product-image-info__meta {
+  min-height: 24px;
+  margin-top: 3px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #858b93;
+  font-size: 10px;
+}
+
+.room-product-image-info__selected {
+  padding: 2px 5px;
+  border-radius: 3px;
+  background: #eaf4ff;
+  color: #2470b8;
+  font-weight: 700;
+}
+
+.room-image-manage-btn {
+  width: 100%;
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.room-image-manage-btn__selected {
+  min-width: 18px;
+  height: 18px;
+  margin-left: 5px;
+  padding: 0 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  background: #348fe2;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.room-product-info-panel {
+  min-width: 0;
+  background: #fff;
+}
+
+.room-product-info-panel__head {
+  min-height: 42px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-bottom: 1px solid #eceef1;
+}
+
+.room-product-info-panel__head b {
+  color: #343a40;
+  font-size: 12px;
+}
+
+.room-product-info-panel__head span {
+  color: #8a8f98;
+  font-size: 11px;
+}
+
+.room-product-count {
+  padding: 3px 7px;
+  border-radius: 10px;
+  background: #f1f3f5;
+  color: #666 !important;
+  font-weight: 700;
+}
+
+.room-price-card-list {
+  padding: 8px 10px 10px;
+}
+
+.room-price-card {
+  min-height: 72px;
+  padding: 9px 10px;
+  display: grid;
+  grid-template-columns: 58px minmax(260px, 1fr) 170px;
+  gap: 12px;
+  align-items: center;
+  border-bottom: 1px solid #eceef1;
+}
+
+.room-price-card:last-child {
+  border-bottom: 0;
+}
+
+.room-price-card:hover {
+  background: #fafbfc;
+}
+
+.room-price-card__type {
+  display: flex;
+  justify-content: center;
+}
+
+.room-price-card__spec {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(140px, .8fr) minmax(180px, 1.2fr);
+  gap: 14px;
+}
+
+.room-price-spec-item {
+  min-width: 0;
+}
+
+.room-price-spec-item span {
+  display: block;
+  margin-bottom: 2px;
+  color: #91969d;
+  font-size: 10px;
+}
+
+.room-price-spec-item b {
+  display: block;
+  overflow: hidden;
+  color: #444;
+  font-size: 11px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.room-price-card__price {
+  text-align: right;
+}
+
+.room-price-card__origin {
+  min-height: 16px;
+  color: #9a9da2;
+  font-size: 10px;
+  text-decoration: line-through;
+}
+
+.room-price-card__sale {
+  color: #20252b;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.room-price-card__discount {
+  display: inline-block;
+  margin-top: 2px;
+  color: #e5484d;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.room-product-empty-state {
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 1100px) {
+  .room-product-layout {
+    grid-template-columns: 215px minmax(0, 1fr);
+  }
+
+  .room-price-card {
+    grid-template-columns: 52px minmax(220px, 1fr) 145px;
+  }
+
+  .room-price-card__spec {
+    grid-template-columns: 1fr;
+    gap: 5px;
+  }
+}
+
+@media (max-width: 767px) {
+  .room-product-section__head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .room-product-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .room-product-image-panel {
+    border-right: 0;
+    border-bottom: 1px solid #e7eaee;
+  }
+
+  .room-product-main-image {
+    height: 210px;
+  }
+
+  .room-price-card {
+    grid-template-columns: 52px minmax(0, 1fr);
+  }
+
+  .room-price-card__price {
+    grid-column: 2;
+    text-align: left;
+  }
+}
+
 </style>
-
-```
-
-````
-
-`````
