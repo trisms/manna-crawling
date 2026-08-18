@@ -7,6 +7,8 @@
       </div>
 
       <template v-else>
+
+
         <!-- =====================================================
              상단 숙소 정보
         ====================================================== -->
@@ -60,7 +62,7 @@
                         </b>
                       </div>
 
-                      <table class="table table-condensed p-0 bg-none mb-0 p-1">
+                      <table class="table table-striped mb-0 align-middle">
                         <tbody>
                         <tr>
                           <!--                          <td nowrap class="w-50">
@@ -225,7 +227,7 @@
                         </b>
                       </div>
 
-                      <table class="table table-condensed p-0 bg-none mb-0 p-1">
+                      <table class="table table-striped mb-0 align-middle">
                         <tbody>
                         <tr>
                           <td nowrap class="w-50">
@@ -532,7 +534,7 @@
                     </div>
 
 
-                    <button
+<!--                    <button
                         type="button"
                         class="image-manage-summary__item"
                         :class="{ active: selectedMainImageIds.length > 0 }"
@@ -596,7 +598,82 @@
                         관리
                         <i class="fa fa-chevron-right ms-1"></i>
                       </span>
-                    </button>
+                    </button>-->
+
+                    <div class="image-summary-row">
+                      <!-- 메인 이미지 -->
+                      <button
+                          type="button"
+                          class="image-manage-summary__item"
+                          :class="{ active: selectedMainImageIds.length > 0 }"
+                          @click="openImageManageModal('MAIN')"
+                      >
+    <span class="image-manage-summary__thumb">
+      <img
+          :src="mainImages[0]?.imgPath || NO_IMAGE_URL"
+          alt="메인 이미지"
+          @error="handleImageError"
+      />
+    </span>
+
+                        <span class="image-manage-summary__body">
+      <span class="image-manage-summary__name">
+        <i class="fa fa-image me-1"></i>
+        메인 이미지
+      </span>
+
+      <span class="image-manage-summary__meta">
+        {{ mainImages.length }}장
+
+        <template v-if="selectedMainImageIds.length">
+          · 선택 {{ selectedMainImageIds.length }}
+        </template>
+      </span>
+    </span>
+
+                        <span class="image-manage-summary__action">
+                          관리
+                          <i class="fa fa-chevron-right ms-1"></i>
+                        </span>
+                      </button>
+
+
+                      <!-- 리뷰 이미지 -->
+                      <button
+                          type="button"
+                          class="image-manage-summary__item"
+                          :class="{ active: selectedReviewImageIds.length > 0 }"
+                          @click="openImageManageModal('REVIEW')"
+                      >
+                        <span class="image-manage-summary__thumb">
+                          <img
+                              :src="reviewImages[0]?.imgPath || NO_IMAGE_URL"
+                              alt="리뷰 이미지"
+                              @error="handleImageError"
+                          />
+                        </span>
+
+                                            <span class="image-manage-summary__body">
+                          <span class="image-manage-summary__name">
+                            <i class="fa fa-star text-warning me-1"></i>
+                            리뷰 이미지
+                          </span>
+
+                          <span class="image-manage-summary__meta">
+                            {{ reviewImages.length }}장
+
+                            <template v-if="selectedReviewImageIds.length">
+                              · 선택 {{ selectedReviewImageIds.length }}
+                            </template>
+                          </span>
+                        </span>
+
+                                            <span class="image-manage-summary__action">
+                          관리
+                          <i class="fa fa-chevron-right ms-1"></i>
+                        </span>
+                      </button>
+                    </div>
                   </div>
 
 
@@ -5969,8 +6046,8 @@ onBeforeUnmount(() => {
 }
 
 .side-info-card__body {
-  min-height: 108px;
-  max-height: 118px;
+  min-height: 152px;
+  max-height: 152px;
   padding: 8px 9px;
   overflow-y: auto;
   color: #555;
@@ -6493,5 +6570,67 @@ onBeforeUnmount(() => {
     height: 150px;
   }
 }
+.image-summary-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  width: 100%;
+}
 
+.image-summary-row .image-manage-summary__item {
+  width: 100%;
+  min-width: 0;
+}
+.image-summary-row .image-manage-summary__item {
+  display: flex;
+  align-items: center;
+  padding: 8px 10px;
+  min-height: 66px;
+}
+
+.image-summary-row .image-manage-summary__thumb {
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.image-summary-row .image-manage-summary__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-summary-row .image-manage-summary__body {
+  flex: 1;
+  min-width: 0;
+  margin-left: 9px;
+  text-align: left;
+}
+
+.image-summary-row .image-manage-summary__name {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.image-summary-row .image-manage-summary__meta {
+  display: block;
+  margin-top: 3px;
+  font-size: 11px;
+  color: #8a8f98;
+}
+
+.image-summary-row .image-manage-summary__action {
+  flex-shrink: 0;
+  margin-left: 8px;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.table-striped{
+  border : 1px solid #ddd;
+}
 </style>
