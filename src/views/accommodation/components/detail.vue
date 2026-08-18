@@ -1988,8 +1988,8 @@ function getPlatformTypeName(
   const value = String(type).trim();
 
   const map: Record<string, string> = {
-    '1': '야놀자',
-    '2': '여기어때',
+    '1': '여기어때',
+    '2': '야놀자',
     YANOLJA: '야놀자',
     yanolja: '야놀자',
     GOODCHOICE: '여기어때',
