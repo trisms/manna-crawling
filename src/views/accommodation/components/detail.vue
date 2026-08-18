@@ -344,9 +344,9 @@
                   <div class="accom-image-quick-panel__head refined-side-panel__head">
                     <div>
                       <b>이미지 관리</b>
-                     <!-- <span class="section-count">
-                        총 {{ mainImages.length + reviewImages.length }}장
-                      </span>-->
+                      <!-- <span class="section-count">
+                         총 {{ mainImages.length + reviewImages.length }}장
+                       </span>-->
                     </div>
 
                     <span
@@ -481,8 +481,6 @@
                                   <th>이용시간</th>
                                   <th>체크인</th>
                                   <th>체크아웃</th>
-                                  <th class="price-col">정상가</th>
-                                  <th class="price-col">판매가</th>
                                 </tr>
                                 </thead>
 
@@ -514,25 +512,11 @@
                                   </td>
 
                                   <td>
-                                    {{ String(roomInfo.roomType) === '1' ? formatCheckTime(roomInfo.checkInTime) : '-' }}
+                                    {{ formatCheckTime(roomInfo.checkInTime) }}
                                   </td>
 
                                   <td>
-                                    {{ String(roomInfo.roomType) === '1' ? formatCheckTime(roomInfo.checkOutTime) : '-' }}
-                                  </td>
-
-                                  <td class="room-product-table__origin">
-                                    {{ formatPrice(roomInfo.roomPrice) }}
-                                  </td>
-
-                                  <td class="room-product-table__sale">
-                                    {{
-                                      formatPrice(
-                                          Number(roomInfo.roomDisPrice) > 0
-                                              ? roomInfo.roomDisPrice
-                                              : roomInfo.roomPrice
-                                      )
-                                    }}
+                                    {{ formatCheckTime(roomInfo.checkOutTime) }}
                                   </td>
                                 </tr>
                                 </tbody>
@@ -1098,8 +1082,6 @@ interface RoomImage {
 interface RoomInfo {
   roomInfoId: Id;
   roomType?: string | number;
-  roomPrice?: number;
-  roomDisPrice?: number;
   baseCnt?: number;
   maxCnt?: number;
   availUseTime?: number;
@@ -1223,8 +1205,9 @@ const rawRoom = computed<any>(() => store.form.room || []);
  * 실제 key가 platformType 하나로 확정되면 info.value.platformType만 남겨도 됨.
  */
 const platformType = computed(() =>
-    info.value.platformType ??
+    info.value.app_type ??
     info.value.appType ??
+    info.value.platformType ??
     info.value.platform ??
     info.value.orderAppType ??
     ''
@@ -1469,24 +1452,6 @@ const activeRoomImages = computed<RoomImage[]>(() =>
     sortByOrder(activeRoom.value?.roomImgs || [])
 );
 
-function getRoomSummaryPrice(room: RoomItem) {
-  const prices = (room.roomInfo || [])
-      .map((item) => {
-        const salePrice =
-            Number(item.roomDisPrice) > 0
-                ? Number(item.roomDisPrice)
-                : Number(item.roomPrice);
-
-        return Number.isFinite(salePrice) && salePrice > 0
-            ? salePrice
-            : null;
-      })
-      .filter((price): price is number => price !== null);
-
-  if (!prices.length) return '-';
-
-  return `${Math.min(...prices).toLocaleString('ko-KR')}원~`;
-}
 
 const activeRoomImageList = computed(() =>
     activeRoomImages.value.map((image) => image.imgPath)
@@ -2123,17 +2088,6 @@ function formatNumber(
   return number.toLocaleString('ko-KR');
 }
 
-function formatPrice(
-    value?: number | string
-) {
-  const price = Number(value);
-
-  if (!Number.isFinite(price)) {
-    return '-';
-  }
-
-  return `${price.toLocaleString('ko-KR')}원`;
-}
 
 function formatCheckTime(
     value?: string | number
@@ -5660,19 +5614,6 @@ onBeforeUnmount(() => {
   width: 68px;
 }
 
-.room-product-table .price-col {
-  width: 110px;
-}
-
-.room-product-table__origin {
-  color: #8b9096 !important;
-}
-
-.room-product-table__sale {
-  color: #20252b !important;
-  font-size: 12px;
-  font-weight: 700;
-}
 
 @media (max-width: 767px) {
   .detail-summary-grid,
@@ -6482,7 +6423,7 @@ onBeforeUnmount(() => {
 .room-product-tab-image {
   position: relative;
   width: 100%;
-  height: 108px;
+  height: 93px;
   padding: 0;
   overflow: hidden;
   border: 0;
@@ -6554,5 +6495,3 @@ onBeforeUnmount(() => {
 }
 
 </style>
-
-
