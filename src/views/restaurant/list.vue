@@ -323,12 +323,23 @@ const paginatedData = computed(() => {
 });
 
 const filteredSigunList = computed(() => {
-	const sido = store.searchParams.sidoCode;
+  const sido = store.searchParams.sidoCode;
 
-	// 시도가 선택 안되면 전체 시군구 반환
-	if (!sido) return store.sigunList;
+  const allOption = {
+    label: '시/군/구',
+    value: '',
+  };
 
-	return store.sigunList.filter((item) => String(item.sigunCode).startsWith(String(sido)));
+  // 시도가 선택되지 않은 경우
+  if (!sido) {
+    return [allOption, ...store.sigunList];
+  }
+
+  const list = store.sigunList.filter((item) =>
+      String(item.sigunCode).startsWith(String(sido)),
+  );
+
+  return [allOption, ...list];
 });
 watch(currentPage, () => {
   allChecked.value = false;
