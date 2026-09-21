@@ -101,6 +101,15 @@
                 <label class="form-check-label" for="onlyGoods">상품정보만 등록</label>
               </div>
             </div>
+            <div
+                class="mt-md-0 mt-2 btn btn-success btn-sm d-flex me-2 pe-3 rounded-3"
+                @click="excelDownload"
+            >
+              <div class="text-white text-decoration-none">
+                <i class="fa fa-file-excel fa-fw me-1"></i>
+                엑셀 다운로드
+              </div>
+            </div>
 						<div class="mt-md-0 mt-2 btn btn-secondary btn-sm d-flex me-2 pe-3 rounded-3" @click="rebaseUplode()">
 							<div class="text-white text-decoration-none rounded">
 								<i class="fa fa-upload fa-fw me-1 text-white"></i> 기존상품삭제후 신규업로드
@@ -216,6 +225,7 @@ import { useRestaurantStore } from '@/stores/restaurant/useRestaurantStore';
 import SelectLabel from '@/components/common/SelectLabel.vue';
 import Pagenation from '@/components/common/Pagenation.vue';
 import 'vue3-toastify/dist/index.css';
+import * as XLSX from 'xlsx';
 /*import { Toast } from 'bootstrap';*/
 import { toast } from 'vue3-toastify';
 import VueDatePicker from '@vuepic/vue-datepicker';
@@ -463,7 +473,69 @@ function goToDetail(grStNo: string | number) {
 	router.push({ name: 'RestaurantMenu', params: { id: grStNo } });
 }
 
+const excelDownload = () => {
+  if (!store.items || store.items.length === 0) {
+    window.$emitter.emit('warning', '다운로드할 데이터가 없습니다.');
+    return;
+  }
 
+  const excelData = store.items.map((item) => ({
+    '일련번호': item.grStNo,
+    '음식점 앱 등록상호': item.stName ?? '',
+    '음식점 사업자번호': String(item.bizNum ?? ''),
+    '사업자 상호': item.bizName ?? '',
+    '주문앱': getAppName(item.appType),
+    '주소': item.stAddr ?? '',
+    '상품수': item.goodsCnt ?? 0,
+    '수집일': item.putDate ?? '',
+    'DB등록상태': convertDataStatus(item.dataStatus) ?? '',
+    'DB 등록일': item.modDate ?? '',
+    '가맹점코드': String(item.stCode ?? ''),
+  }));
+
+  const worksheet = XLSX.utils.json_to_sheet(excelData);
+
+  // 컬럼 너비
+  worksheet['!cols'] = [
+    { wch: 12 }, // 일련번호
+    { wch: 30 }, // 음식점 앱 등록상호
+    { wch: 20 }, // 사업자번호
+    { wch: 30 }, // 사업자 상호
+    { wch: 12 }, // 주문앱
+    { wch: 50 }, // 주소
+    { wch: 10 }, // 상품수
+    { wch: 20 }, // 수집일
+    { wch: 15 }, // DB등록상태
+    { wch: 20 }, // DB 등록일
+    { wch: 20 }, // 가맹점코드
+  ];
+
+  const workbook = XLSX.utils.book_new();
+
+  XLSX.utils.book_append_sheet(
+      workbook,
+      worksheet,
+      '음식점 목록',
+  );
+
+  const now = new Date();
+
+  const fileDate = [
+    now.getFullYear(),
+    String(now.getMonth() + 1).padStart(2, '0'),
+    String(now.getDate()).padStart(2, '0'),
+  ].join('');
+
+  const fileTime = [
+    String(now.getHours()).padStart(2, '0'),
+    String(now.getMinutes()).padStart(2, '0'),
+  ].join('');
+
+  XLSX.writeFile(
+      workbook,
+      `음식점_DB목록_${fileDate}_${fileTime}.xlsx`,
+  );
+};
 
 const convertDataStatus = (val) => {
 	switch (val) {
