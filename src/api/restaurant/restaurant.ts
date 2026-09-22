@@ -45,6 +45,9 @@ export const restaurantAPI = {
 	async updateStCode(params: any) {
 		return await getApiCall().patch(getV1(`/store/stcode`), params);
 	},
+	async updateStCodeBatch(params: any) {
+		return await getApiCall().put(getV1(`/store/batch/stcode`), params);
+	},
 	async deleteCode(grStNoList: any) {
 		return await getApiCall().delete(getV1(`/store/`), grStNoList);
 	},

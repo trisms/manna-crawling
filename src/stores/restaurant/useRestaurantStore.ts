@@ -144,6 +144,12 @@ export const useRestaurantStore = defineStore('useRestaurantStore', {
 		async updateStCodeAPI(params: any, callback): Promise<void> | null {
 			await useCallUpdateDirectAPI(() => restaurantAPI.updateStCode(params), callback);
 		},
+		async updateStCodeBatchAPI(params: any, callback: Function) {
+			await useCallUpdateDirectAPI(
+				() => restaurantAPI.updateStCodeBatch(params),
+				callback
+			);
+		},
 		async callDetailAPI(id: number) {
 			const res = await useCallAPI(() => restaurantAPI.detail(id));
 			if (res) {

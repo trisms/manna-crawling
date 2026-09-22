@@ -135,7 +135,16 @@
             </div>
           </div>
         </div>
-        <div class="card border-0">
+<!--        <div
+            class="mt-md-0 mt-2 btn btn-success btn-sm d-flex me-2 pe-3 rounded-3"
+            @click="excelDownload"
+        >
+          <div class="text-white text-decoration-none rounded">
+            <i class="fa fa-file-excel fa-fw me-1 text-white"></i>
+            엑셀 다운로드
+          </div>
+        </div>-->
+       <!--<div class="card border-0">
           <div class="d-md-flex fw-bold ms-auto">
             <div class="mt-md-0 mt-2 btn btn-success btn-sm d-flex me-2 pe-3 rounded-3" @click="goToCreate">
               <div class="text-white text-decoration-none rounded">
@@ -143,7 +152,7 @@
               </div>
             </div>
           </div>
-        </div>
+        </div>-->
       </div>
 
       <hr />
@@ -307,7 +316,7 @@ import '@vuepic/vue-datepicker/dist/main.css';
 import { useRouter } from 'vue-router';
 import { useAccommodationStore } from '@/stores/accommodation/useAccommodationStore';
 import {toast} from "vue3-toastify";
-
+import * as XLSX from 'xlsx';
 const router = useRouter();
 const store = useAccommodationStore();
 const loading = ref(false);
@@ -367,6 +376,178 @@ const filteredSigunList = computed(() => {
   );
 });
 
+
+const excelDownloading = ref(false);
+
+const excelDownload = async () => {
+  if (excelDownloading.value) return;
+
+  if (!store.totalSize || Number(store.totalSize) === 0) {
+    window.$emitter.emit(
+        'warning',
+        '다운로드할 데이터가 없습니다.'
+    );
+    return;
+  }
+
+  excelDownloading.value = true;
+
+  // 기존 검색/페이지 정보 보관
+  const originalPage = store.searchParams.page;
+  const originalSize = store.searchParams.size;
+
+  try {
+    /*
+     * 엑셀 다운로드할 때만
+     * 전체 데이터를 한 번에 조회
+     */
+    store.searchParams.page = 1;
+    store.searchParams.size = Number(store.totalSize);
+
+    await store.callListAPI();
+
+    const allItems = store.items.map((item: any) => ({
+      ...item
+    }));
+
+    if (allItems.length === 0) {
+      window.$emitter.emit(
+          'warning',
+          '다운로드할 데이터가 없습니다.'
+      );
+      return;
+    }
+
+    /*
+     * 엑셀 데이터
+     */
+    const excelData = allItems.map(
+        (item: any, index: number) => ({
+          '번호': index + 1,
+          '숙박업소 앱 등록상호': item.accomName ?? '',
+          '플랫폼 타입': getAppName(item.appType),
+          '숙소유형': getAccomTypeName(item.accomType),
+          '주소': item.accomAddr ?? '',
+          '객실 수': item.roomCnt ?? 0,
+          '수집일': formatExcelDate(item.putDate),
+          'DB등록상태': convertDataStatus(item.dataStatus),
+          'DB 수정일': formatExcelDate(item.modDate),
+          '숙소코드': item.accomCode ?? '',
+        })
+    );
+
+    /*
+     * Sheet 생성
+     */
+    const worksheet =
+        XLSX.utils.json_to_sheet(excelData);
+
+    /*
+     * 컬럼 너비
+     */
+    worksheet['!cols'] = [
+      { wch: 8 },
+      { wch: 35 },
+      { wch: 15 },
+      { wch: 18 },
+      { wch: 50 },
+      { wch: 12 },
+      { wch: 18 },
+      { wch: 15 },
+      { wch: 18 },
+      { wch: 20 },
+    ];
+
+    /*
+     * Workbook
+     */
+    const workbook =
+        XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(
+        workbook,
+        worksheet,
+        '숙박업소 목록'
+    );
+
+    /*
+     * 파일명
+     */
+    const now = new Date();
+
+    const yyyy = now.getFullYear();
+
+    const MM = String(
+        now.getMonth() + 1
+    ).padStart(2, '0');
+
+    const dd = String(
+        now.getDate()
+    ).padStart(2, '0');
+
+    const HH = String(
+        now.getHours()
+    ).padStart(2, '0');
+
+    const mm = String(
+        now.getMinutes()
+    ).padStart(2, '0');
+
+    /*
+     * 실제 파일 다운로드
+     */
+    XLSX.writeFile(
+        workbook,
+        `숙박업소_DB목록_${yyyy}${MM}${dd}_${HH}${mm}.xlsx`
+    );
+
+  } catch (error) {
+    console.error(
+        '엑셀 다운로드 오류:',
+        error
+    );
+
+    window.$emitter.emit(
+        'warning',
+        '엑셀 다운로드 중 오류가 발생했습니다.'
+    );
+
+  } finally {
+    /*
+     * 원래 페이지 설정 복구
+     */
+    store.searchParams.page = originalPage;
+    store.searchParams.size = originalSize;
+
+    try {
+      await store.callListAPI();
+    } catch (error) {
+      console.error(
+          '목록 복구 오류:',
+          error
+      );
+    }
+
+    excelDownloading.value = false;
+  }
+};
+
+
+const formatExcelDate = (value: string | null | undefined) => {
+  if (!value) return '';
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  const yyyy = date.getFullYear();
+  const MM = String(date.getMonth() + 1).padStart(2, '0');
+  const dd = String(date.getDate()).padStart(2, '0');
+
+  return `${yyyy}-${MM}-${dd}`;
+};
 const visiblePages = computed(() => {
   const current = Number(store.currentPage || 1);
   const total = Number(store.totalPages || 1);
