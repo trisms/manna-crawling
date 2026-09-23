@@ -380,7 +380,9 @@ import SelectLabel from '@/components/common/SelectLabel.vue';
 import Pagenation from '@/components/common/Pagenation.vue';
 import UploadHistoryList from '@/views/restaurant/components/uploadHistoryList.vue';
 
+const excelDownloading = ref(false);
 const store = useRestaurantStore();
+
 const router = useRouter();
 
 const modalVisible = ref(false);
@@ -887,6 +889,8 @@ function goToDetail(grStNo: string | number) {
  * ==============================
  */
 const excelDownload = () => {
+  if (excelDownloading.value) return;
+
   if (!store.items || store.items.length === 0) {
     window.$emitter.emit(
         'warning',
@@ -894,6 +898,8 @@ const excelDownload = () => {
     );
     return;
   }
+
+  excelDownloading.value = true;
 
   /**
    * 실제 상점일괄등록 Excel 양식 컬럼
@@ -933,7 +939,7 @@ const excelDownload = () => {
 
     return [
       '',                          // 총판코드
-      '',                          // 배송그룹코드
+      '1000',                      // 배송그룹코드
       item.stName ?? '',           // 가맹점명
       item.bizName ?? '',          // 앱표시명
       bizNum ? `on${bizNum}` : '', // 로그인ID
@@ -1042,6 +1048,7 @@ const excelDownload = () => {
       workbook,
       `상점일괄등록_${fileDate}_${fileTime}.xlsx`
   );
+  excelDownloading.value = false;
 };
 
 /**
