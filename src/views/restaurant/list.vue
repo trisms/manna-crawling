@@ -3,13 +3,15 @@
     <panel-body>
       <!-- 검색 및 필터 영역 -->
       <div class="row gx-2 pb-30px">
+        <!-- 날짜 -->
         <div class="col-lg-3 d-lg-block d-none">
-          <a href="#" class="btn d-flex align-items-center rounded-3 p-0">
+          <div class="d-flex align-items-center rounded-3 p-0">
             <VueDatePicker
                 v-model="store.searchParams.startDate"
                 format="yyyy-MM-dd"
                 :auto-apply="true"
                 :enable-time-picker="false"
+                :max-date="today"
                 placeholder="DB생성기간 (시작일)"
             />
 
@@ -20,9 +22,11 @@
                 format="yyyy-MM-dd"
                 :auto-apply="true"
                 :enable-time-picker="false"
+                :min-date="minSearchEndDate"
+                :max-date="maxSearchEndDate"
                 placeholder="DB생성기간 (종료일)"
             />
-          </a>
+          </div>
         </div>
 
         <SelectLabel
@@ -67,9 +71,13 @@
 
         <div class="col-lg-1" style="width: 40px"></div>
 
+        <!-- 검색 -->
         <div class="col-lg-3 d-flex justify-content-end" style="width: 30%">
           <div class="input-group">
-            <select class="form-select" v-model="store.searchParams.searchType">
+            <select
+                class="form-select"
+                v-model="store.searchParams.searchType"
+            >
               <option value="">전체</option>
               <option value="bizName">사업자상호</option>
               <option value="bizNum">사업자번호</option>
@@ -77,11 +85,7 @@
               <option value="stCode">가맹점코드</option>
             </select>
 
-            <a
-                href="#"
-                class="btn btn-white d-flex align-items-center w-75 p-0"
-                aria-expanded="false"
-            >
+            <div class="btn btn-white d-flex align-items-center w-75 p-0">
               <i class="fa-lg fa-fw fa fa-search ms-2 me-2 text-opacity-50"></i>
 
               <div class="input-group">
@@ -96,33 +100,35 @@
                 <button
                     type="button"
                     class="btn btn-sm btn-white border-0"
+                    :disabled="searching"
                     @click="search"
                 >
-                  <i class="fa fa-fw fa-search ms-n1"></i>
-                  검색
+                  <i
+                      class="fa fa-fw ms-n1"
+                      :class="searching ? 'fa-spinner fa-spin' : 'fa-search'"
+                  ></i>
+                  {{ searching ? '검색중' : '검색' }}
                 </button>
               </div>
-            </a>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- 상단 버튼 영역 -->
+      <!-- 상단 -->
       <div class="d-flex justify-content-between align-items-center">
         <!-- 왼쪽 -->
         <div class="d-flex align-items-center">
-          <div class="card border-0" @click="deleteCode()">
-            <div class="d-md-flex fw-bold ms-auto">
-              <div class="mt-md-0 mt-2 btn btn-danger btn-sm d-flex me-2 pe-3 rounded-3">
-                <div class="text-white text-decoration-none rounded">
-                  <i class="fa fa-cancel fa-fw me-1 text-white"></i>
-                  삭제
-                </div>
-              </div>
-            </div>
-          </div>
+          <button
+              type="button"
+              class="btn btn-danger btn-sm me-2"
+              @click="deleteCode"
+          >
+            <i class="fa fa-cancel fa-fw me-1"></i>
+            삭제
+          </button>
 
-          <div class="me-3 fw-bold text-secondary">
+          <div class="fw-bold text-secondary">
             전체
             <span class="text-primary">
               {{ (store.items?.length ?? 0).toLocaleString() }}
@@ -132,98 +138,102 @@
         </div>
 
         <!-- 오른쪽 -->
-        <div class="card border-0">
-          <div class="d-md-flex fw-bold ms-auto">
-            <div
-                class="d-flex p-1 pe-3 ps-2 me-2 rounded-3 border"
-                style="align-items: flex-end"
-            >
-              <div class="form-check form-switch">
-                <input
-                    class="form-check-input"
-                    type="checkbox"
-                    id="onlyGoods"
-                    v-model="store.selectOnlyGoods"
-                />
+        <div class="d-flex align-items-center action-area">
+          <!-- 상품정보만 등록 -->
+          <div class="only-goods-box">
+            <div class="form-check form-switch mb-0">
+              <input
+                  class="form-check-input"
+                  type="checkbox"
+                  id="onlyGoods"
+                  v-model="store.selectOnlyGoods"
+              />
 
-                <label class="form-check-label" for="onlyGoods">
-                  상품정보만 등록
-                </label>
-              </div>
-            </div>
-
-            <!-- 가맹점코드 엑셀 일괄등록 -->
-            <div
-                class="mt-md-0 mt-2 btn btn-primary btn-sm d-flex me-2 pe-3 rounded-3"
-                :class="{ disabled: excelUploading }"
-                @click="openExcelUpload"
-            >
-              <div class="text-white text-decoration-none">
-                <i
-                    class="fa fa-fw me-1"
-                    :class="excelUploading ? 'fa-spinner fa-spin' : 'fa-file-excel'"
-                ></i>
-
-                {{ excelUploading ? '등록중...' : '가맹점코드 일괄등록' }}
-              </div>
-            </div>
-
-            <!-- 업로드용 파일 선택 -->
-            <input
-                ref="excelFileInput"
-                type="file"
-                accept=".xlsx,.xls"
-                style="display: none"
-                @change="excelUpload"
-            />
-
-            <!-- 상점일괄등록 양식 다운로드 -->
-            <div
-                class="mt-md-0 mt-2 btn btn-success btn-sm d-flex me-2 pe-3 rounded-3"
-                :class="{ disabled: excelDownloading }"
-                @click="excelDownload"
-            >
-              <div class="text-white text-decoration-none">
-                <i
-                    class="fa fa-fw me-1"
-                    :class="excelDownloading ? 'fa-spinner fa-spin' : 'fa-file-excel'"
-                ></i>
-
-                {{ excelDownloading ? '엑셀 생성중...' : '엑셀 다운로드' }}
-              </div>
-            </div>
-
-            <div
-                class="mt-md-0 mt-2 btn btn-secondary btn-sm d-flex me-2 pe-3 rounded-3"
-                @click="rebaseUplode()"
-            >
-              <div class="text-white text-decoration-none rounded">
-                <i class="fa fa-upload fa-fw me-1 text-white"></i>
-                기존상품삭제후 신규업로드
-              </div>
-            </div>
-
-            <div
-                class="mt-md-0 mt-2 btn btn-secondary btn-sm d-flex me-2 pe-3 rounded-3"
-                @click="usageUpload()"
-            >
-              <div class="text-white text-decoration-none">
-                <i class="fa fa-upload fa-fw me-1"></i>
-                기존상품유지후 추가업로드
-              </div>
-            </div>
-
-            <div
-                class="mt-md-0 mt-2 btn btn-secondary btn-sm d-flex me-2 pe-3 rounded-3"
-                @click="openModal()"
-            >
-              <div class="text-white text-decoration-none">
-                <i class="fa fa-list fa-fw me-1"></i>
-                업로드 내역
-              </div>
+              <label class="form-check-label" for="onlyGoods">
+                상품정보만 등록
+              </label>
             </div>
           </div>
+          <div class="segment-group me-2 ">
+            <button
+                type="button"
+                class="segment-button"
+                :disabled="excelDownloading"
+                @click="excelDownload"
+            >
+              <i
+                  class="fa fa-fw me-1"
+                  :class="excelDownloading ? 'fa-spinner fa-spin' : 'fa-file-excel'"
+              ></i>
+              {{ excelDownloading ? '생성중' : '조회내역 엑셀 다운로드' }}
+            </button>
+
+          </div>
+          <!-- 엑셀 그룹 -->
+          <div class="segment-group me-2">
+            <button
+                type="button"
+                class="segment-button"
+                :disabled="excelUploading"
+                @click="openExcelUpload"
+            >
+              <i
+                  class="fa fa-fw me-1"
+                  :class="excelUploading ? 'fa-spinner fa-spin' : 'fa-upload'"
+              ></i>
+              {{ excelUploading ? '등록중' : '가맹점코드 일괄등록' }}
+            </button>
+
+
+            <button
+                type="button"
+                class="segment-button"
+                @click="excelTemplateDownload"
+            >
+              <i class="fa fa-file-arrow-down fa-fw me-1"></i>
+              양식 다운로드
+            </button>
+          </div>
+
+          <!-- 상품 업로드 그룹 -->
+          <div class="segment-group me-2">
+            <button
+                type="button"
+                class="segment-button"
+                @click="goodsUpload(1)"
+            >
+              <i class="fa fa-rotate fa-fw me-1"></i>
+              기존상품삭제후 신규업로드
+            </button>
+
+            <button
+                type="button"
+                class="segment-button"
+                @click="goodsUpload(2)"
+            >
+              <i class="fa fa-plus fa-fw me-1"></i>
+              기존상품유지후 추가
+            </button>
+          </div>
+
+          <!-- 업로드 내역 -->
+          <button
+              type="button"
+              class="btn btn-outline-secondary btn-sm upload-history-btn"
+              @click="openModal"
+          >
+            <i class="fa fa-list fa-fw me-1"></i>
+            업로드 내역
+          </button>
         </div>
+
+        <input
+            ref="excelFileInput"
+            type="file"
+            accept=".xlsx,.xls"
+            style="display: none"
+            @change="excelUpload"
+        />
       </div>
 
       <hr />
@@ -246,7 +256,11 @@
                       v-model="allChecked"
                       @change="toggleAll"
                   />
-                  <label class="form-check-label" for="allCheck"></label>
+
+                  <label
+                      class="form-check-label"
+                      for="allCheck"
+                  ></label>
                 </div>
               </th>
 
@@ -366,7 +380,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { toast } from 'vue3-toastify';
 import * as XLSX from 'xlsx';
@@ -380,9 +394,7 @@ import SelectLabel from '@/components/common/SelectLabel.vue';
 import Pagenation from '@/components/common/Pagenation.vue';
 import UploadHistoryList from '@/views/restaurant/components/uploadHistoryList.vue';
 
-const excelDownloading = ref(false);
 const store = useRestaurantStore();
-
 const router = useRouter();
 
 const modalVisible = ref(false);
@@ -395,7 +407,18 @@ const currentPage = ref(1);
 const itemsPerPage = 13;
 
 const excelFileInput = ref<HTMLInputElement | null>(null);
+
 const excelUploading = ref(false);
+const excelDownloading = ref(false);
+const searching = ref(false);
+
+/**
+ * 최대 조회기간
+ */
+const MAX_SEARCH_MONTHS = 3;
+
+const today = new Date();
+today.setHours(0, 0, 0, 0);
 
 const options = {
   onOpen: () => console.log('opened'),
@@ -414,19 +437,312 @@ const options = {
 };
 
 /**
- * ==============================
- * 엑셀 업로드
- * 일련번호 + 가맹점코드
- * ==============================
+ * =========================================================
+ * 날짜
+ * =========================================================
+ */
+
+const toDate = (value: any): Date | null => {
+  if (!value) return null;
+
+  const date =
+      value instanceof Date
+          ? new Date(value)
+          : new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return null;
+  }
+
+  date.setHours(0, 0, 0, 0);
+
+  return date;
+};
+
+/**
+ * 월 증가 시 31일 문제 방지
+ *
+ * 예:
+ * 1/31 + 3개월
+ * -> 4/30
+ */
+const addMonthsClamped = (
+    source: Date,
+    months: number
+) => {
+  const date = new Date(source);
+
+  const originalDay = date.getDate();
+
+  date.setDate(1);
+  date.setMonth(date.getMonth() + months);
+
+  const lastDay = new Date(
+      date.getFullYear(),
+      date.getMonth() + 1,
+      0
+  ).getDate();
+
+  date.setDate(
+      Math.min(originalDay, lastDay)
+  );
+
+  date.setHours(0, 0, 0, 0);
+
+  return date;
+};
+
+/**
+ * 종료일 최소
+ */
+const minSearchEndDate = computed(() => {
+  return (
+      toDate(store.searchParams.startDate) ||
+      undefined
+  );
+});
+
+/**
+ * 종료일 최대
+ *
+ * 시작일 + 3개월과
+ * 오늘 중 더 빠른 날짜
+ */
+const maxSearchEndDate = computed(() => {
+  const startDate =
+      toDate(store.searchParams.startDate);
+
+  if (!startDate) {
+    return today;
+  }
+
+  const maxByRange =
+      addMonthsClamped(
+          startDate,
+          MAX_SEARCH_MONTHS
+      );
+
+  return maxByRange < today
+      ? maxByRange
+      : today;
+});
+
+/**
+ * 시작일 선택 시
+ * 종료일 자동 지정
+ *
+ * 시작일이 최근 3개월 안이면 오늘
+ * 그보다 과거면 시작일 + 3개월
+ */
+const setAutoEndDate = () => {
+  const startDate =
+      toDate(store.searchParams.startDate);
+
+  if (!startDate) {
+    return;
+  }
+
+  const maxByRange =
+      addMonthsClamped(
+          startDate,
+          MAX_SEARCH_MONTHS
+      );
+
+  store.searchParams.endDate =
+      maxByRange < today
+          ? maxByRange
+          : new Date(today);
+};
+
+/**
+ * 조회기간 검증
+ */
+const validateSearchDate = () => {
+  const startDate =
+      toDate(store.searchParams.startDate);
+
+  const endDate =
+      toDate(store.searchParams.endDate);
+
+  if (!startDate || !endDate) {
+    window.$emitter.emit(
+        'warning',
+        '조회기간을 시작일과 종료일 모두 선택해주세요.'
+    );
+
+    return false;
+  }
+
+  if (startDate > today) {
+    window.$emitter.emit(
+        'warning',
+        '시작일은 오늘 이후로 선택할 수 없습니다.'
+    );
+
+    return false;
+  }
+
+  if (endDate > today) {
+    window.$emitter.emit(
+        'warning',
+        '종료일은 오늘 이후로 선택할 수 없습니다.'
+    );
+
+    return false;
+  }
+
+  if (startDate > endDate) {
+    window.$emitter.emit(
+        'warning',
+        '시작일은 종료일보다 늦을 수 없습니다.'
+    );
+
+    return false;
+  }
+
+  const maxDate =
+      addMonthsClamped(
+          startDate,
+          MAX_SEARCH_MONTHS
+      );
+
+  if (endDate > maxDate) {
+    window.$emitter.emit(
+        'warning',
+        '조회기간은 최대 3개월까지 가능합니다.'
+    );
+
+    return false;
+  }
+
+  return true;
+};
+
+/**
+ * 시작일 변경
+ *
+ * API 검색은 하지 않고
+ * 종료일만 자동 설정
+ */
+watch(
+    () => store.searchParams.startDate,
+    (newValue, oldValue) => {
+      if (!newValue) {
+        return;
+      }
+
+      const newDate = toDate(newValue);
+      const oldDate = toDate(oldValue);
+
+      /**
+       * DatePicker 내부 갱신 등으로
+       * 같은 날짜가 다시 들어오는 경우 방지
+       */
+      if (
+          newDate &&
+          oldDate &&
+          newDate.getTime() === oldDate.getTime()
+      ) {
+        return;
+      }
+
+      setAutoEndDate();
+    }
+);
+
+/**
+ * 종료일 직접 변경 시에도
+ * 범위를 넘는 값이면 최대값으로 보정
+ */
+watch(
+    () => store.searchParams.endDate,
+    (newValue) => {
+      const startDate =
+          toDate(store.searchParams.startDate);
+
+      const endDate =
+          toDate(newValue);
+
+      if (!startDate || !endDate) {
+        return;
+      }
+
+      const maxDate =
+          maxSearchEndDate.value;
+
+      if (!maxDate) {
+        return;
+      }
+
+      if (endDate > maxDate) {
+        store.searchParams.endDate =
+            new Date(maxDate);
+
+        window.$emitter.emit(
+            'warning',
+            '조회기간은 최대 3개월까지 가능합니다.'
+        );
+      }
+
+      if (endDate < startDate) {
+        store.searchParams.endDate =
+            new Date(startDate);
+      }
+    }
+);
+
+/**
+ * =========================================================
+ * 검색
+ * =========================================================
+ */
+
+const search = async () => {
+  if (searching.value) {
+    return;
+  }
+
+  if (!validateSearchDate()) {
+    return;
+  }
+
+  searching.value = true;
+
+  try {
+    await store.callListAPI(() => {});
+  } catch (error) {
+    console.error(
+        '검색 오류:',
+        error
+    );
+
+    window.$emitter.emit(
+        'warning',
+        '검색 중 오류가 발생했습니다.'
+    );
+  } finally {
+    searching.value = false;
+  }
+};
+/**
+ * =========================================================
+ * Excel 업로드
+ * =========================================================
  */
 
 interface StCodeUploadItem {
   grStNo: number;
   stCode: string;
+  dbType: number;
 }
 
+const EXCEL_DB_TYPE_HEADER =
+    'DB등록여부(1:등록, 2:미등록, 3:가맹점코드등록)';
+
 const openExcelUpload = () => {
-  if (excelUploading.value) return;
+  if (excelUploading.value) {
+    return;
+  }
 
   if (excelFileInput.value) {
     excelFileInput.value.value = '';
@@ -435,162 +751,580 @@ const openExcelUpload = () => {
   excelFileInput.value?.click();
 };
 
-const excelUpload = async (event: Event) => {
-  const input = event.target as HTMLInputElement;
-  const file = input.files?.[0];
+const excelUpload = async (
+    event: Event
+) => {
+  const input =
+      event.target as HTMLInputElement;
 
-  if (!file) return;
+  const file =
+      input.files?.[0];
+
+  if (!file) {
+    return;
+  }
 
   excelUploading.value = true;
 
   try {
-    const arrayBuffer = await file.arrayBuffer();
+    /**
+     * =====================================================
+     * Excel 읽기
+     * =====================================================
+     */
 
-    const workbook = XLSX.read(arrayBuffer, {
-      type: 'array',
-    });
+    const arrayBuffer =
+        await file.arrayBuffer();
 
-    const sheetName = workbook.SheetNames[0];
+    const workbook =
+        XLSX.read(
+            arrayBuffer,
+            {
+              type: 'array',
+            }
+        );
+
+    const sheetName =
+        workbook.SheetNames[0];
 
     if (!sheetName) {
-      throw new Error('엑셀 시트를 찾을 수 없습니다.');
+      throw new Error(
+          '엑셀 시트를 찾을 수 없습니다.'
+      );
     }
 
-    const worksheet = workbook.Sheets[sheetName];
+    const worksheet =
+        workbook.Sheets[sheetName];
 
-    /**
-     * 업로드 Excel 형식
-     *
-     * 일련번호 | 가맹점코드
-     * 10001   | ST00001
-     * 10002   | ST00002
-     */
-    const rows = XLSX.utils.sheet_to_json<any>(worksheet, {
-      raw: false,
-      defval: '',
-    });
+    const rows =
+        XLSX.utils.sheet_to_json<any>(
+            worksheet,
+            {
+              raw: false,
+              defval: '',
+            }
+        );
 
     if (rows.length === 0) {
-      throw new Error('엑셀에 등록할 데이터가 없습니다.');
-    }
-
-    const data: StCodeUploadItem[] = rows
-        .filter((row: any) => {
-          const grStNo = String(row['일련번호'] ?? '').trim();
-          const stCode = String(row['가맹점코드'] ?? '').trim();
-
-          return grStNo !== '' || stCode !== '';
-        })
-        .map((row: any, index: number) => {
-          const grStNoValue = String(row['일련번호'] ?? '').trim();
-          const stCode = String(row['가맹점코드'] ?? '').trim();
-
-          const rowNumber = index + 2;
-
-          if (!grStNoValue) {
-            throw new Error(`${rowNumber}행의 일련번호가 없습니다.`);
-          }
-
-          if (!stCode) {
-            throw new Error(`${rowNumber}행의 가맹점코드가 없습니다.`);
-          }
-
-          const grStNo = Number(grStNoValue);
-
-          if (Number.isNaN(grStNo)) {
-            throw new Error(
-                `${rowNumber}행의 일련번호 형식이 올바르지 않습니다.`
-            );
-          }
-
-          return {
-            grStNo,
-            stCode,
-          };
-        });
-
-    if (data.length === 0) {
-      throw new Error('등록할 가맹점코드가 없습니다.');
+      throw new Error(
+          '엑셀에 등록할 데이터가 없습니다.'
+      );
     }
 
     /**
-     * 동일 일련번호 중복 체크
+     * =====================================================
+     * 데이터 변환
+     * =====================================================
      */
-    const duplicateCheck = new Set<number>();
 
-    for (const item of data) {
-      if (duplicateCheck.has(item.grStNo)) {
+    const data: StCodeUploadItem[] =
+        rows
+            .filter((row: any) => {
+              const grStNo =
+                  String(
+                      row['일련번호'] ?? ''
+                  ).trim();
+
+              const stCode =
+                  String(
+                      row['가맹점코드'] ?? ''
+                  ).trim();
+
+              const dbType =
+                  String(
+                      row[EXCEL_DB_TYPE_HEADER] ?? ''
+                  ).trim();
+
+              /**
+               * 완전히 빈 행 제거
+               */
+              return (
+                  grStNo !== '' ||
+                  stCode !== '' ||
+                  dbType !== ''
+              );
+            })
+            .map(
+                (
+                    row: any,
+                    index: number
+                ) => {
+                  const rowNumber =
+                      index + 2;
+
+                  const grStNoValue =
+                      String(
+                          row['일련번호'] ?? ''
+                      ).trim();
+
+                  const stCode =
+                      String(
+                          row['가맹점코드'] ?? ''
+                      ).trim();
+
+                  const dbTypeValue =
+                      String(
+                          row[EXCEL_DB_TYPE_HEADER] ?? ''
+                      ).trim();
+
+                  /**
+                   * 일련번호 체크
+                   */
+                  if (!grStNoValue) {
+                    throw new Error(
+                        `${rowNumber}행의 일련번호가 없습니다.`
+                    );
+                  }
+
+                  const grStNo =
+                      Number(grStNoValue);
+
+                  if (
+                      Number.isNaN(grStNo)
+                  ) {
+                    throw new Error(
+                        `${rowNumber}행의 일련번호 형식이 올바르지 않습니다.`
+                    );
+                  }
+
+                  /**
+                   * DB등록여부 체크
+                   */
+                  if (!dbTypeValue) {
+                    throw new Error(
+                        `${rowNumber}행의 DB등록여부가 없습니다.`
+                    );
+                  }
+
+                  const dbType =
+                      Number(dbTypeValue);
+
+                  if (
+                      ![1, 2, 3].includes(
+                          dbType
+                      )
+                  ) {
+                    throw new Error(
+                        `${rowNumber}행의 DB등록여부는 1, 2, 3 중 하나여야 합니다.`
+                    );
+                  }
+
+                  /**
+                   * 3번
+                   * 가맹점코드 등록일 때만
+                   * stCode 필수
+                   */
+                  if (
+                      dbType === 3 &&
+                      !stCode
+                  ) {
+                    throw new Error(
+                        `${rowNumber}행의 가맹점코드가 없습니다.`
+                    );
+                  }
+
+                  return {
+                    grStNo,
+                    stCode,
+                    dbType,
+                  };
+                }
+            );
+
+    if (
+        data.length === 0
+    ) {
+      throw new Error(
+          '처리할 데이터가 없습니다.'
+      );
+    }
+
+    /**
+     * =====================================================
+     * 중복 일련번호 확인
+     * =====================================================
+     */
+
+    const duplicateCheck =
+        new Set<number>();
+
+    for (
+        const item of data
+        ) {
+      if (
+          duplicateCheck.has(
+              item.grStNo
+          )
+      ) {
         throw new Error(
             `중복된 일련번호가 있습니다. (${item.grStNo})`
         );
       }
 
-      duplicateCheck.add(item.grStNo);
+      duplicateCheck.add(
+          item.grStNo
+      );
     }
 
-    /**
-     * 최종 API Request
-     *
-     * {
-     *   "data": [
-     *     {
-     *       "grStNo": 10001,
-     *       "stCode": "ST00001"
-     *     }
-     *   ]
-     * }
-     */
-    const params = {
-      data,
-    };
-
     console.log(
-        '가맹점코드 일괄등록 Request:',
-        JSON.stringify(params, null, 2)
+        '===== 엑셀 원본 처리 데이터 =====',
+        data
     );
 
-    await store.updateStCodeBatchAPI(
-        params,
+    /**
+     * =====================================================
+     * Store에서 분기 처리
+     * =====================================================
+     */
+
+    await store.excelBatchUpload(
+        data,
         async () => {
           window.$emitter.emit(
               'success',
-              `${data.length}건의 가맹점코드가 등록되었습니다.`
+              `총 ${data.length}건의 엑셀 데이터 처리가 완료되었습니다.`
           );
 
           await search();
         }
     );
+
   } catch (error: any) {
-    console.error('가맹점코드 엑셀 업로드 오류:', error);
+    console.error(
+        '엑셀 업로드 오류:',
+        error
+    );
 
     window.$emitter.emit(
         'warning',
-        error?.message || '엑셀 처리 중 오류가 발생했습니다.'
+        error?.message ||
+        '엑셀 처리 중 오류가 발생했습니다.'
     );
-  } finally {
-    excelUploading.value = false;
 
-    if (excelFileInput.value) {
-      excelFileInput.value.value = '';
+  } finally {
+    excelUploading.value =
+        false;
+
+    if (
+        excelFileInput.value
+    ) {
+      excelFileInput.value.value =
+          '';
     }
   }
 };
 
 /**
- * ==============================
- * 체크박스
- * ==============================
+ * =========================================================
+ * 일괄등록 양식 다운로드
+ * =========================================================
+ */
+
+const excelTemplateDownload = () => {
+  const rows = [
+    [
+      '일련번호',
+      '가맹점코드',
+      EXCEL_DB_TYPE_HEADER,
+    ],
+
+    /**
+     * 샘플
+     */
+    [10001, '', 1],
+    [10002, '', 2],
+    [10003, 'ST00003', 3],
+  ];
+
+  const worksheet =
+      XLSX.utils.aoa_to_sheet(
+          rows
+      );
+
+  worksheet['!cols'] = [
+    {
+      wch: 18,
+    },
+    {
+      wch: 22,
+    },
+    {
+      wch: 45,
+    },
+  ];
+
+  worksheet['!autofilter'] = {
+    ref:
+        `A1:C${rows.length}`,
+  };
+
+  const workbook =
+      XLSX.utils.book_new();
+
+  XLSX.utils.book_append_sheet(
+      workbook,
+      worksheet,
+      '가맹점코드_일괄등록'
+  );
+
+  XLSX.writeFile(
+      workbook,
+      '가맹점코드_일괄등록_양식.xlsx'
+  );
+};
+
+/**
+ * =========================================================
+ * 기존 데이터 Excel 다운로드
+ * =========================================================
+ */
+
+const excelDownload = async () => {
+  if (excelDownloading.value) {
+    return;
+  }
+
+  if (!store.items?.length) {
+    window.$emitter.emit(
+        'warning',
+        '다운로드할 데이터가 없습니다.'
+    );
+
+    return;
+  }
+
+  excelDownloading.value = true;
+
+  try {
+    await nextTick();
+
+    await new Promise(
+        (resolve) =>
+            setTimeout(
+                resolve,
+                20
+            )
+    );
+
+    const headers = [
+      '총판코드(5)(필수)',
+      '배송그룹코드(4)',
+      '가맹점명(15)(필수)',
+      '앱표시명 (사업자명으로 등록)(15)',
+      '로그인ID(20)(필수)',
+      '비밀번호(50)(필수)',
+      '인증용휴대전화(11)(필수)',
+      '주소 (실제주소) (필수)',
+      '상세주소',
+      '가상계좌은행코드(생략)',
+      '사업자번호(12)(필수)',
+      '사업장명(필수)',
+      '대표자명(13)(필수)',
+      '사업장주소 (사업자등록증상)(필수)',
+      '계산서용이메일(필수)',
+      '업태',
+      '업종',
+      '대표자생년월일(6)(필수)',
+      '가맹점전화번호(필수)',
+      '마스터가맹점코드(7)',
+      '가맹점코드',
+      '처리상태',
+      '처리메시지',
+      'DUA 상점일련번호',
+    ];
+
+    const usedBizNums = new Set<string>();
+
+    const getRandomAlpha = () => {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+      return Array.from(
+          { length: 2 },
+          () => chars[
+              Math.floor(
+                  Math.random() * chars.length
+              )
+              ]
+      ).join('');
+    };
+
+    const rows =
+        store.items.map(
+            (item: any) => {
+              const bizNum =
+                  String(
+                      item.bizNum ?? ''
+                  ).trim();
+
+              let exportBizNum = '';
+
+              if (bizNum) {
+                let retryCount = 0;
+
+                do {
+                  const randomSuffix =
+                      getRandomAlpha();
+
+                  exportBizNum =
+                      `${bizNum}${randomSuffix}`;
+
+                  retryCount++;
+                } while (
+                    usedBizNums.has(exportBizNum) &&
+                    retryCount < 100
+                    );
+
+                usedBizNums.add(exportBizNum);
+              }
+
+              return [
+                '',
+                '',
+                item.stName ?? '',
+                item.bizName ?? '',
+
+                // 로그인 ID
+                exportBizNum
+                    ? `on${exportBizNum}`
+                    : '',
+
+                '0000',
+                '01011112222',
+                item.stAddr ?? '',
+                '',
+                '',
+
+                // 사업자번호
+                item.bizNum,
+
+                item.bizName ?? '',
+                '',
+                item.stAddr ?? '',
+                'a@naver.com',
+                '',
+                '',
+                '123456',
+                '123456',
+                '',
+                String(item.stCode ?? ''),
+                '',
+                '',
+                String(item.grStNo ?? ''),
+              ];
+            }
+        );
+
+    const worksheet =
+        XLSX.utils.aoa_to_sheet([
+          headers,
+          ...rows,
+        ]);
+
+    worksheet['!cols'] = [
+      { wch: 18 },
+      { wch: 18 },
+      { wch: 25 },
+      { wch: 32 },
+      { wch: 25 },
+      { wch: 18 },
+      { wch: 23 },
+      { wch: 45 },
+      { wch: 30 },
+      { wch: 25 },
+      { wch: 22 },
+      { wch: 25 },
+      { wch: 20 },
+      { wch: 45 },
+      { wch: 30 },
+      { wch: 18 },
+      { wch: 18 },
+      { wch: 25 },
+      { wch: 22 },
+      { wch: 25 },
+      { wch: 20 },
+      { wch: 15 },
+      { wch: 35 },
+      { wch: 22 },
+    ];
+
+    const workbook =
+        XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(
+        workbook,
+        worksheet,
+        '상점일괄등록'
+    );
+
+    const now =
+        new Date();
+
+    const fileDate = [
+      now.getFullYear(),
+      String(
+          now.getMonth() + 1
+      ).padStart(2, '0'),
+      String(
+          now.getDate()
+      ).padStart(2, '0'),
+    ].join('');
+
+    const fileTime = [
+      String(
+          now.getHours()
+      ).padStart(2, '0'),
+      String(
+          now.getMinutes()
+      ).padStart(2, '0'),
+    ].join('');
+
+    XLSX.writeFile(
+        workbook,
+        `상점일괄등록_${fileDate}_${fileTime}.xlsx`
+    );
+
+  } catch (error) {
+    console.error(
+        '엑셀 다운로드 오류:',
+        error
+    );
+
+    window.$emitter.emit(
+        'warning',
+        '엑셀 다운로드 중 오류가 발생했습니다.'
+    );
+
+  } finally {
+    excelDownloading.value =
+        false;
+  }
+};
+
+/**
+ * =========================================================
+ * 체크
+ * =========================================================
  */
 
 function toggleAll() {
-  const pageItems = paginatedData.value;
+  const pageItems =
+      paginatedData.value;
 
   if (allChecked.value) {
-    checkedItems.value = pageItems.map((item: any) => item.grStNo);
+    checkedItems.value =
+        pageItems.map(
+            (item: any) =>
+                item.grStNo
+        );
 
-    checkStcodeItems.value = pageItems.map((item: any) =>
-        item.stCode ? item.stCode : '-1'
-    );
+    checkStcodeItems.value =
+        pageItems.map(
+            (item: any) =>
+                item.stCode
+                    ? item.stCode
+                    : '-1'
+        );
+
   } else {
     checkedItems.value = [];
     checkStcodeItems.value = [];
@@ -601,100 +1335,125 @@ function toggleItem(
     grStNo: string | number,
     stCode: string
 ) {
-  const index = checkedItems.value.indexOf(grStNo);
+  const index =
+      checkedItems.value.indexOf(
+          grStNo
+      );
 
   if (index > -1) {
-    checkedItems.value.splice(index, 1);
-    checkStcodeItems.value.splice(index, 1);
+    checkedItems.value.splice(
+        index,
+        1
+    );
+
+    checkStcodeItems.value.splice(
+        index,
+        1
+    );
+
   } else {
-    checkedItems.value.push(grStNo);
-    checkStcodeItems.value.push(stCode || '-1');
+    checkedItems.value.push(
+        grStNo
+    );
+
+    checkStcodeItems.value.push(
+        stCode || '-1'
+    );
   }
 
   allChecked.value =
       paginatedData.value.length > 0 &&
-      checkedItems.value.length === paginatedData.value.length;
+      checkedItems.value.length ===
+      paginatedData.value.length;
 }
 
 /**
- * ==============================
- * 업로드 히스토리
- * ==============================
+ * 업로드 내역
  */
-
 const openModal = async () => {
   await store.callUploadHistory();
+
   modalVisible.value = true;
 };
 
 /**
- * ==============================
  * 주문앱
- * ==============================
  */
+const getAppName = (
+    appType: string | number
+) => {
+  if (String(appType) === '1') {
+    return '배민';
+  }
 
-const getAppName = (appType: string | number) => {
-  if (String(appType) === '1') return '배민';
-  if (String(appType) === '2') return '쿠팡';
-  if (String(appType) === '3') return '요기요';
+  if (String(appType) === '2') {
+    return '쿠팡';
+  }
+
+  if (String(appType) === '3') {
+    return '요기요';
+  }
 
   return '';
 };
 
 /**
- * ==============================
  * 페이지
- * ==============================
  */
+const paginatedData =
+    computed(() => {
+      const arr =
+          store.items || [];
 
-const paginatedData = computed(() => {
-  const arr = store.items || [];
-  const start = (currentPage.value - 1) * itemsPerPage;
+      const start =
+          (currentPage.value - 1) *
+          itemsPerPage;
 
-  return arr.slice(start, start + itemsPerPage);
-});
+      return arr.slice(
+          start,
+          start + itemsPerPage
+      );
+    });
 
 /**
- * ==============================
- * 시/군/구
- * ==============================
+ * 지역
  */
+const filteredSigunList =
+    computed(() => {
+      const sido =
+          store.searchParams.sidoCode;
 
-const filteredSigunList = computed(() => {
-  const sido = store.searchParams.sidoCode;
+      const allOption = {
+        label: '시/군/구',
+        value: '',
+      };
 
-  const allOption = {
-    label: '시/군/구',
-    value: '',
-  };
+      if (!sido) {
+        return [
+          allOption,
+          ...store.sigunList,
+        ];
+      }
 
-  if (!sido) {
-    return [allOption, ...store.sigunList];
-  }
+      const list =
+          store.sigunList.filter(
+              (item: any) =>
+                  String(
+                      item.sigunCode
+                  ).startsWith(
+                      String(sido)
+                  )
+          );
 
-  const list = store.sigunList.filter((item: any) =>
-      String(item.sigunCode).startsWith(String(sido))
-  );
-
-  return [allOption, ...list];
-});
-
-/**
- * ==============================
- * Watch
- * ==============================
- */
-
-watch(currentPage, () => {
-  allChecked.value = false;
-  checkedItems.value = [];
-  checkStcodeItems.value = [];
-});
+      return [
+        allOption,
+        ...list,
+      ];
+    });
 
 watch(
-    () => store.items?.length,
+    currentPage,
     () => {
-      currentPage.value = 1;
       allChecked.value = false;
       checkedItems.value = [];
       checkStcodeItems.value = [];
@@ -702,108 +1461,106 @@ watch(
 );
 
 watch(
-    () => store.searchParams.sidoCode,
+    () => store.items?.length,
     () => {
-      store.searchParams.sigunCode = '';
+      currentPage.value = 1;
+
+      allChecked.value = false;
+      checkedItems.value = [];
+      checkStcodeItems.value = [];
     }
 );
 
 watch(
-    () => store.searchParams.startDate,
+    () =>
+        store.searchParams.sidoCode,
     () => {
-      search();
-    }
-);
-
-watch(
-    () => store.searchParams.endDate,
-    () => {
-      search();
+      store.searchParams.sigunCode =
+          '';
     }
 );
 
 /**
- * ==============================
- * 검색
- * ==============================
+ * 기존상품삭제후 신규
  */
-
-const search = async () => {
-  await store.callListAPI(() => {});
-};
-
-/**
- * ==============================
- * 기존상품삭제후 신규업로드
- * ==============================
- */
-
-const rebaseUplode = async () => {
-  if (checkedItems.value.length === 0) {
+const goodsUpload = async (type) => {
+  if (
+      checkedItems.value.length === 0
+  ) {
     window.$emitter.emit(
         'warning',
         '가맹점을 한개 이상 선택해주세요.'
     );
+
     return;
   }
 
-  if (checkStcodeItems.value.includes('-1')) {
+  if (
+      checkStcodeItems.value.includes(
+          '-1'
+      )
+  ) {
     window.$emitter.emit(
         'warning',
         '가맹점 코드가 없는 음식점이 존재합니다.'
     );
+
     return;
   }
 
-  await store.rebaseUpload(
+  await store.goodsUpload(
       {
-        grStNoList: checkedItems.value,
+        grStNoList:
+        checkedItems.value,
       },
       () => {
         search();
-      }
+      }, type, 1
   );
 };
 
 /**
- * ==============================
- * 기존상품유지후 추가업로드
- * ==============================
+ * 기존상품유지후 추가
  */
-
-const usageUpload = async () => {
-  if (checkedItems.value.length === 0) {
+/*const usageUpload = async () => {
+  if (
+      checkedItems.value.length === 0
+  ) {
     window.$emitter.emit(
         'warning',
         '가맹점을 한개 이상 선택해주세요.'
     );
+
     return;
   }
 
-  if (checkStcodeItems.value.includes('-1')) {
+  if (
+      checkStcodeItems.value.includes(
+          '-1'
+      )
+  ) {
     window.$emitter.emit(
         'warning',
         '가맹점 코드가 없는 음식점이 존재합니다.'
     );
+
     return;
   }
 
   await store.usageUpload(
       {
-        grStNoList: checkedItems.value,
+        grStNoList:
+        checkedItems.value,
       },
       () => {
         search();
-      }
+      },2
   );
-};
+};*/
 
 /**
- * ==============================
- * 가맹점코드 단건 수정
- * ==============================
+ * 단건 수정
  */
-
 const updateStCode = async (
     grStNo: number,
     stCode: string
@@ -829,6 +1586,7 @@ const updateStCode = async (
           search();
         }
     );
+
   } catch (error) {
     console.error(error);
 
@@ -842,23 +1600,24 @@ const updateStCode = async (
 };
 
 /**
- * ==============================
  * 삭제
- * ==============================
  */
-
 const deleteCode = async () => {
-  if (checkedItems.value.length === 0) {
+  if (
+      checkedItems.value.length === 0
+  ) {
     window.$emitter.emit(
         'warning',
         '삭제할 가맹점을 최소 1개 이상 선택해주세요.'
     );
+
     return;
   }
 
   await store.deleteCodeAPI(
       {
-        grStNoList: checkedItems.value,
+        grStNoList:
+        checkedItems.value,
       },
       () => {
         search();
@@ -867,12 +1626,11 @@ const deleteCode = async () => {
 };
 
 /**
- * ==============================
  * 상세
- * ==============================
  */
-
-function goToDetail(grStNo: string | number) {
+function goToDetail(
+    grStNo: string | number
+) {
   router.push({
     name: 'RestaurantMenu',
     params: {
@@ -882,206 +1640,45 @@ function goToDetail(grStNo: string | number) {
 }
 
 /**
- * ==============================
- * 엑셀 다운로드
- *
- * 상점일괄등록 Excel 양식
- * ==============================
+ * 상태
  */
-const excelDownload = () => {
-  if (excelDownloading.value) return;
-
-  if (!store.items || store.items.length === 0) {
-    window.$emitter.emit(
-        'warning',
-        '다운로드할 데이터가 없습니다.'
-    );
-    return;
-  }
-
-  excelDownloading.value = true;
-
-  /**
-   * 실제 상점일괄등록 Excel 양식 컬럼
-   */
-  const headers = [
-    '총판코드(5)(필수)',
-    '배송그룹코드(4)',
-    '가맹점명(15)(필수)',
-    '앱표시명 (사업자명으로 등록)(15)',
-    '로그인ID(20)(필수)',
-    '비밀번호(50)(필수)',
-    '인증용휴대전화(11)(필수)',
-    '주소 (실제주소) (필수)',
-    '상세주소',
-    '가상계좌은행코드(생략)',
-    '사업자번호(12)(필수)',
-    '사업장명(필수)',
-    '대표자명(13)(필수)',
-    '사업장주소 (사업자등록증상)(필수)',
-    '계산서용이메일(필수)',
-    '업태',
-    '업종',
-    '대표자생년월일(6)(필수)',
-    '가맹점전화번호(필수)',
-    '마스터가맹점코드(7)',
-    '가맹점코드',
-    '처리상태',
-    '처리메시지',
-    'DUA 상점일련번호',
-  ];
-
-  /**
-   * 목록 데이터를 상점일괄등록 양식으로 변환
-   */
-  const rows = store.items.map((item: any) => {
-    const bizNum = String(item.bizNum ?? '').trim();
-
-    return [
-      '',                          // 총판코드
-      '1000',                      // 배송그룹코드
-      item.stName ?? '',           // 가맹점명
-      item.bizName ?? '',          // 앱표시명
-      bizNum ? `on${bizNum}` : '', // 로그인ID
-      '0000',                      // 비밀번호
-      '01011112222',               // 인증용휴대전화
-      item.stAddr ?? '',           // 실제 주소
-      '',                          // 상세주소
-      '',                          // 가상계좌은행코드
-      bizNum,                      // 사업자번호
-      item.bizName ?? '',          // 사업장명
-      '',                          // 대표자명
-      item.stAddr ?? '',           // 사업장주소
-      'a@naver.com',               // 계산서용이메일
-      '',                          // 업태
-      '',                          // 업종
-      '123456',                    // 대표자생년월일
-      '123456',                    // 가맹점전화번호
-      '',                          // 마스터가맹점코드
-      String(item.stCode ?? ''),   // 가맹점코드
-      '',                          // 처리상태
-      '',                          // 처리메시지
-      String(item.grStNo ?? ''),   // DUA 상점일련번호
-    ];
-  });
-
-  /**
-   * 엑셀 생성
-   */
-  const worksheet = XLSX.utils.aoa_to_sheet([
-    headers,
-    ...rows,
-  ]);
-
-  /**
-   * 컬럼 너비
-   */
-  worksheet['!cols'] = [
-    { wch: 18 },
-    { wch: 18 },
-    { wch: 25 },
-    { wch: 32 },
-    { wch: 25 },
-    { wch: 18 },
-    { wch: 23 },
-    { wch: 45 },
-    { wch: 30 },
-    { wch: 25 },
-    { wch: 22 },
-    { wch: 25 },
-    { wch: 20 },
-    { wch: 45 },
-    { wch: 30 },
-    { wch: 18 },
-    { wch: 18 },
-    { wch: 25 },
-    { wch: 22 },
-    { wch: 25 },
-    { wch: 20 },
-    { wch: 15 },
-    { wch: 35 },
-    { wch: 22 },
-  ];
-
-  /**
-   * 코드/전화번호/사업자번호 등이
-   * Excel에서 숫자로 변형되지 않게 문자열 처리
-   */
-/*  for (let rowIndex = 1; rowIndex <= rows.length; rowIndex++) {
-    [
-      0, 1, 4, 5, 6, 9, 10,
-      17, 18, 19, 20, 23,
-    ].forEach((columnIndex) => {
-      const cell = XLSX.utils.encode_cell({
-        r: rowIndex,
-        c: columnIndex,
-      });
-
-      if (worksheet[cell]) {
-        worksheet[cell].t = 's';
-      }
-    });
-  }*/
-
-  const workbook = XLSX.utils.book_new();
-
-  XLSX.utils.book_append_sheet(
-      workbook,
-      worksheet,
-      '상점일괄등록'
-  );
-
-  const now = new Date();
-
-  const fileDate = [
-    now.getFullYear(),
-    String(now.getMonth() + 1).padStart(2, '0'),
-    String(now.getDate()).padStart(2, '0'),
-  ].join('');
-
-  const fileTime = [
-    String(now.getHours()).padStart(2, '0'),
-    String(now.getMinutes()).padStart(2, '0'),
-  ].join('');
-
-  XLSX.writeFile(
-      workbook,
-      `상점일괄등록_${fileDate}_${fileTime}.xlsx`
-  );
-  excelDownloading.value = false;
-};
-
-/**
- * ==============================
- * DB 상태
- * ==============================
- */
-
-const convertDataStatus = (val: string | number) => {
+const convertDataStatus = (
+    val: string | number
+) => {
   switch (String(val)) {
     case '1':
       return '미등록';
+
     case '2':
       return '등록완료';
+
     case '3':
       return '진행중';
+
     case '4':
       return '등록실패';
+
     default:
       return '';
   }
 };
 
-const dbResultFont = (val: string | number) => {
+const dbResultFont = (
+    val: string | number
+) => {
   switch (String(val)) {
     case '1':
       return '';
+
     case '2':
       return 'text-bold';
+
     case '3':
       return 'text-info';
+
     case '4':
       return 'text-danger';
+
     default:
       return '';
   }
@@ -1093,25 +1690,107 @@ const dbResultFont = (val: string | number) => {
   z-index: unset;
 }
 
-.loading-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(255, 255, 255, 0.7);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-}
-
 .text-bold {
   font-weight: bold;
 }
 
-.btn.disabled {
-  pointer-events: none;
-  opacity: 0.65;
+/* ============================= */
+/* 오른쪽 액션 영역 */
+/* ============================= */
+
+.action-area {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0;
+}
+
+/* 상품정보만 등록 */
+.only-goods-box {
+  height: 33px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  margin-right: 8px;
+  border: 1px solid #d9dde3;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+/* ============================= */
+/* 스크린샷 스타일 세그먼트 버튼 */
+/* ============================= */
+
+.segment-group {
+  display: inline-flex;
+  align-items: stretch;
+  overflow: hidden;
+  border: 1px solid #d8dde5;
+  border-radius: 8px;
+  background: #f1f3f6;
+}
+
+.segment-button {
+  height: 33px;
+  padding: 0 13px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 0;
+  border-right: 1px solid #d0d5dd;
+
+  background: #f1f3f6;
+
+  color: #292d32;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  white-space: nowrap;
+
+  transition:
+      background-color 0.15s ease,
+      color 0.15s ease;
+}
+
+.segment-button:last-child {
+  border-right: 0;
+}
+
+.segment-button:hover:not(:disabled) {
+  background: #e0e4ea;
+}
+
+.segment-button:active:not(:disabled) {
+  background: #cdd3dc;
+}
+
+.segment-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 업로드 내역 */
+.upload-history-btn {
+  height: 33px;
+  border-radius: 8px;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* 모바일/좁은 화면 */
+@media (max-width: 1400px) {
+  .action-area {
+    row-gap: 8px;
+  }
+
+  .segment-button {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
 }
 </style>

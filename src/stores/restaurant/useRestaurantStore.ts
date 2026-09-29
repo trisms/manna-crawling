@@ -117,15 +117,131 @@ export const useRestaurantStore = defineStore('useRestaurantStore', {
 			const message = '<h3>DB삭제시 복구가 불가능합니다 </h3>' + grStGoodsNoList.grStGoodsNoList.length + '개의 데이터를 삭제하시겠습니까?';
 			await useCallDeleteMsgAPI(() => restaurantAPI.deleteImage(grStGoodsNoList), message, callback);
 		},
+	/*	/!* 기존상품삭제후 신규 업로드 *!/
 		async rebaseUpload(grStNoList: any, callback: Function) {
 			const selectOnlyGoods = this.selectOnlyGoods ? 1 : 2
 			const userId = localStorage.getItem('userId');
 			await useCallUploadAPI(() => restaurantAPI.rebaseUpload(grStNoList ,selectOnlyGoods,userId), callback);
 		},
+		/!* 기존상품유지후 신규 업로드 *!/
 		async usageUpload(grStNoList: any, callback: Function) {
 			const selectOnlyGoods = this.selectOnlyGoods ? 1 : 2
 			const userId = localStorage.getItem('userId');
 			await useCallUploadAPI(() => restaurantAPI.usageUpload(grStNoList, selectOnlyGoods,userId), callback);
+		},*/
+		/* 가맹점코드 일괄등록용 */
+		async goodsUpload(grStNoList: any, callback: Function, type: any, uploadType: any) {
+			/* Type  : 1 (기존상품삭제후 신규 업로드) , 2 (기존상품유지후 추가) */
+			/* UploadType  : 1 (일반 버튼등록) , 2 (가맹점코드 일괄등록) */
+
+			const selectOnlyGoods = this.selectOnlyGoods ? 1 : 2;
+			const userId = localStorage.getItem('userId');
+
+		/*	if (uploadType === 1) {
+				userId = localStorage.getItem('userId');
+			} else {
+				userId = 'SYSTEM';
+			}*/
+
+			console.log('STORE goodsUpload', {
+				grStNoList,
+				type,
+				uploadType,
+				selectOnlyGoods,
+				userId,
+			});
+
+			await useCallUploadAPI(
+				() => restaurantAPI.goodsUpload(grStNoList, selectOnlyGoods, userId, type),
+				callback,
+			);
+		},
+
+		/* 엑셀 일괄등록 */
+		async excelBatchUpload(data: any[], callback: Function) {
+			/*
+             * dbType
+             * 1 : 기존상품삭제후 신규 업로드
+             * 2 : 기존상품유지후 추가
+             * 3 : 가맹점코드 등록
+             */
+
+			const type1Items = data.filter((item: any) => item.dbType === 1);
+			const type2Items = data.filter((item: any) => item.dbType === 2);
+			const type3Items = data.filter((item: any) => item.dbType === 3);
+
+			console.log('엑셀 일괄등록 분류', {
+				type1Items,
+				type2Items,
+				type3Items,
+			});
+
+			const selectOnlyGoods = this.selectOnlyGoods ? 1 : 2;
+			const userId = 'SYSTEM';
+
+			const requests: Promise<any>[] = [];
+
+			/* 1 : 기존상품삭제후 신규 업로드 */
+			if (type1Items.length > 0) {
+				const params = {
+					grStNoList: type1Items.map((item: any) => item.grStNo),
+				};
+
+				console.log('엑셀 goodsUpload type 1', params);
+
+				requests.push(
+					restaurantAPI.goodsUpload(
+						params,
+						selectOnlyGoods,
+						userId,
+						1,
+					),
+				);
+			}
+
+			/* 2 : 기존상품유지후 추가 */
+			if (type2Items.length > 0) {
+				const params = {
+					grStNoList: type2Items.map((item: any) => item.grStNo),
+				};
+
+				console.log('엑셀 goodsUpload type 2', params);
+
+				requests.push(
+					restaurantAPI.goodsUpload(
+						params,
+						selectOnlyGoods,
+						userId,
+						2,
+					),
+				);
+			}
+
+			/* 3 : 가맹점코드 일괄등록 */
+			if (type3Items.length > 0) {
+				const params = {
+					data: type3Items.map((item: any) => ({
+						grStNo: item.grStNo,
+						stCode: item.stCode,
+					})),
+				};
+
+				console.log('엑셀 updateStCodeBatch', params);
+
+				requests.push(
+					restaurantAPI.updateStCodeBatch(params),
+				);
+			}
+
+			if (requests.length === 0) {
+				throw new Error('처리할 데이터가 없습니다.');
+			}
+
+			await Promise.all(requests);
+
+			if (callback) {
+				await callback();
+			}
 		},
 		async callUploadHistory() {
 			const searchParams = { ...this.searchParamsHistory };

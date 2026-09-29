@@ -33,12 +33,14 @@ export const restaurantAPI = {
 	/*async rebaseUpload(grStNoList: any) {
 		return await getJigBaeApiCall().post(`https://api-d.jigbae.co.kr:8443/broad/v1/upload-data?type=1`, grStNoList);
 	},*/
-	async rebaseUpload(grStNoList: any, onlyGoods:any, userId:any) {
-		return await getJigBaeApiCall().post(getBoardV1(`/upload-data?type=1&onlyGoods=${onlyGoods}&userId=${userId}`), grStNoList );
+	async goodsUpload(grStNoList: any, onlyGoods:any, userId:any, type:any) {
+		/* Upload Type  : 1 (기존상품삭제후 신규 업로드) , 2 (기존상품유지후 추가) */
+		console.log("API  수신 :"+ type)
+		return await getJigBaeApiCall().post(getBoardV1(`/upload-data?type=${type}&onlyGoods=${onlyGoods}&userId=${userId}`), grStNoList );
 	},
-	async usageUpload(grStNoList: any, onlyGoods:any, userId:any) {
+/*	async usageUpload(grStNoList: any, onlyGoods:any, userId:any) {
 		return await getJigBaeApiCall().post(getBoardV1(`/upload-data?type=2&onlyGoods=${onlyGoods}&userId=${userId}`), grStNoList);
-	},
+	},*/
 	async callUploadHistory(params: any) {
 		return await getApiCall().get(getV1(`/store/history/list`), params);
 	},
@@ -46,6 +48,7 @@ export const restaurantAPI = {
 		return await getApiCall().patch(getV1(`/store/stcode`), params);
 	},
 	async updateStCodeBatch(params: any) {
+		console.log("API  수신 :"+ params)
 		return await getApiCall().put(getV1(`/store/batch/stcode`), params);
 	},
 	async deleteCode(grStNoList: any) {

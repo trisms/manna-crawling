@@ -145,7 +145,7 @@
             </div>
 
             <div class="mb-2">
-              <label class="form-label">전화번호</label>
+              <label class="form-label">전화번호 (번호만 입력)</label>
               <input type="text" class="form-control" v-model="editForm.phone" />
             </div>
 
