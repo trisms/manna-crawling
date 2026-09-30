@@ -181,7 +181,7 @@
                   class="fa fa-fw me-1"
                   :class="excelUploading ? 'fa-spinner fa-spin' : 'fa-upload'"
               ></i>
-              {{ excelUploading ? '등록중' : '가맹점코드 일괄등록' }}
+              {{ excelUploading ? '등록중' : '가맹점 일괄등록' }}
             </button>
 
 
