@@ -168,7 +168,9 @@ export const useRestaurantStore = defineStore('useRestaurantStore', {
 
 			const type1Items = data.filter((item: any) => item.dbType === 1);
 			const type2Items = data.filter((item: any) => item.dbType === 2);
-			const type3Items = data.filter((item: any) => item.dbType === 3);
+
+			// 가맹점코드는 엑셀로 들어온 전체 데이터 등록
+			const type3Items = data;
 
 			console.log('엑셀 일괄등록 분류', {
 				type1Items,
@@ -176,12 +178,49 @@ export const useRestaurantStore = defineStore('useRestaurantStore', {
 				type3Items,
 			});
 
-			const selectOnlyGoods = this.selectOnlyGoods ? 1 : 2;
-			const userId = 'SYSTEM';
+			if (type3Items.length === 0) {
+				throw new Error('처리할 데이터가 없습니다.');
+			}
 
+			const selectOnlyGoods = this.selectOnlyGoods ? 1 : 2;
+			const userId = localStorage.getItem('userId');
+
+			/*
+             * 1. 가맹점코드 먼저 일괄등록
+             */
+			const stCodeParams = {
+				data: type3Items.map((item: any) => ({
+					grStNo: item.grStNo,
+					stCode: item.stCode,
+				})),
+			};
+
+			console.log('엑셀 updateStCodeBatch', stCodeParams);
+
+			const stCodeRes = await restaurantAPI.updateStCodeBatch(stCodeParams);
+
+			console.log('엑셀 updateStCodeBatch 결과', stCodeRes);
+
+			/*
+             * updateStCodeBatch 성공 여부 확인
+             */
+			if (!stCodeRes || stCodeRes.data?.success !== true) {
+				throw new Error(
+					stCodeRes?.data?.message || '가맹점코드 일괄등록에 실패하였습니다.',
+				);
+			}
+
+			/*
+             * 여기까지 왔다는 것은
+             * 가맹점코드 일괄등록 성공
+             *
+             * 이제 dbType 1 / 2 상품등록 진행
+             */
 			const requests: Promise<any>[] = [];
 
-			/* 1 : 기존상품삭제후 신규 업로드 */
+			/*
+             * 2. 기존상품삭제후 신규 업로드
+             */
 			if (type1Items.length > 0) {
 				const params = {
 					grStNoList: type1Items.map((item: any) => item.grStNo),
@@ -199,7 +238,9 @@ export const useRestaurantStore = defineStore('useRestaurantStore', {
 				);
 			}
 
-			/* 2 : 기존상품유지후 추가 */
+			/*
+             * 3. 기존상품유지후 추가
+             */
 			if (type2Items.length > 0) {
 				const params = {
 					grStNoList: type2Items.map((item: any) => item.grStNo),
@@ -217,27 +258,12 @@ export const useRestaurantStore = defineStore('useRestaurantStore', {
 				);
 			}
 
-			/* 3 : 가맹점코드 일괄등록 */
-			if (type3Items.length > 0) {
-				const params = {
-					data: type3Items.map((item: any) => ({
-						grStNo: item.grStNo,
-						stCode: item.stCode,
-					})),
-				};
-
-				console.log('엑셀 updateStCodeBatch', params);
-
-				requests.push(
-					restaurantAPI.updateStCodeBatch(params),
-				);
+			/*
+             * type 1 / 2 상품등록
+             */
+			if (requests.length > 0) {
+				await Promise.all(requests);
 			}
-
-			if (requests.length === 0) {
-				throw new Error('처리할 데이터가 없습니다.');
-			}
-
-			await Promise.all(requests);
 
 			if (callback) {
 				await callback();
