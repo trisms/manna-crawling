@@ -739,7 +739,7 @@ interface StCodeUploadItem {
 }
 
 const EXCEL_DB_TYPE_HEADER =
-    'DB등록여부(1:삭제후등록, 2:유지등록, 3:가맹점코드등록)';
+    '구분(1:메뉴삭제및등록, 2:메뉴신규등록, 3:가맹점코드매칭)';
 
 const openExcelUpload = () => {
   if (excelUploading.value) {

@@ -195,11 +195,11 @@ export const useRestaurantStore = defineStore('useRestaurantStore', {
 				})),
 			};
 
-			console.log('엑셀 updateStCodeBatch', stCodeParams);
+		/*	console.log('엑셀 updateStCodeBatch', stCodeParams);*/
 
 			const stCodeRes = await restaurantAPI.updateStCodeBatch(stCodeParams);
 
-			console.log('엑셀 updateStCodeBatch 결과', stCodeRes);
+		/*	console.log('엑셀 updateStCodeBatch 결과', stCodeRes);*/
 
 			/*
              * updateStCodeBatch 성공 여부 확인
