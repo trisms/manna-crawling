@@ -267,6 +267,7 @@
               <th>일련번호</th>
               <th>음식점 앱 등록상호</th>
               <th>음식점 사업자번호</th>
+              <th>음식점 전화번호</th>
               <th>사업자 상호</th>
               <th>주문앱</th>
               <th>주소</th>
@@ -307,6 +308,7 @@
 
               <td>{{ item.grStNo }}</td>
               <td>{{ item.stName }}</td>
+              <td>{{ item.stTel }}</td>
               <td>{{ item.bizNum }}</td>
               <td>{{ item.bizName }}</td>
 
@@ -1127,10 +1129,10 @@ const excelDownload = async () => {
       '대표자생년월일(6)(필수)',
       '가맹점전화번호(필수)',
       '마스터가맹점코드(7)',
+      'DUA 상점일련번호',
       '가맹점코드',
       '처리상태',
       '처리메시지',
-      'DUA 상점일련번호',
     ];
 
     const usedBizNums = new Set<string>();
@@ -1196,7 +1198,6 @@ const excelDownload = async () => {
 
                 // 사업자번호
                 item.bizNum,
-
                 item.bizName ?? '',
                 '',
                 item.stAddr ?? '',
@@ -1204,12 +1205,12 @@ const excelDownload = async () => {
                 '',
                 '',
                 '123456',
-                '123456',
+                item.stTel ?? '',
                 '',
+                String(item.grStNo ?? ''),
                 String(item.stCode ?? ''),
                 '',
                 '',
-                String(item.grStNo ?? ''),
               ];
             }
         );
