@@ -74,12 +74,17 @@ export const useRestaurantStore = defineStore('useRestaurantStore', {
 	}),
 	actions: {
 		async callListAPI(callback: Function) {
-			const searchParams = { ...this.searchParams };
+			const searchParams = {
+				...this.searchParams,
+				startDate: formatDateOnly(this.searchParams.startDate),
+				endDate: formatDateOnly(this.searchParams.endDate),
+			};
 			// delete searchParams.userNo;
 
 			if (isBlank(searchParams.keyword)) {
 				delete searchParams.searchType;
 			}
+
 
 			const res = await useCallAPI(() => restaurantAPI.list(searchParams));
 			if (res) {
@@ -420,4 +425,18 @@ export const useRestaurantStore = defineStore('useRestaurantStore', {
 			}
 		},
 	},
+
 });
+const formatDateOnly = (value: any): string => {
+	if (!value) return '';
+
+	if (value instanceof Date) {
+		const year = value.getFullYear();
+		const month = String(value.getMonth() + 1).padStart(2, '0');
+		const day = String(value.getDate()).padStart(2, '0');
+
+		return `${year}-${month}-${day}`;
+	}
+
+	return String(value).substring(0, 10);
+};
