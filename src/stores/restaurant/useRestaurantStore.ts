@@ -351,18 +351,61 @@ export const useRestaurantStore = defineStore('useRestaurantStore', {
 				},
 			});
 		},
-		async callChageAppScheme(grStNo:number , params: any, callback: Function) {
+		async callChageAppScheme(
+			grStNo: number,
+			params: any,
+			field?: string,
+			callback: Function
+
+		) {
+			const appSchemeFields: Record<string, string> = {
+				baeminAppScheme: '배민',
+				coupangAppScheme: '쿠팡',
+				yogiyoAppScheme: '요기요',
+				ddangyoAppScheme: '땡겨요',
+				mukkebiAppScheme: '먹깨비'
+			};
+
+			const targetField = field || Object.keys(appSchemeFields).find(
+				key => Object.prototype.hasOwnProperty.call(params ?? {}, key)
+			);
+
+			if (!targetField || !appSchemeFields[targetField]) {
+				window.$emitter.emit('warning', '변경할 앱 스킴을 확인해주세요.');
+				return;
+			}
+
+			const appName = appSchemeFields[targetField];
+			const appScheme = params[targetField] ?? '';
+
+			// 기존 API에 맞게 appScheme으로 변환
+			const payload = {
+				appScheme: appScheme
+			};
+
+			const displayScheme = String(appScheme).replace(
+				/[&<>"']/g,
+				char => ({
+					'&': '&amp;',
+					'<': '&lt;',
+					'>': '&gt;',
+					'"': '&quot;',
+					"'": '&#39;'
+				}[char] || char)
+			);
+
 			window.$emitter.emit('confirm', {
-				message: '앱스키마 : '+ params.appScheme +' <br><br>해당스키마를 변경하시겠습니까?',
+				message: `${appName} 앱 스킴 : ${displayScheme || '(비어 있음)'}<br><br>해당 스킴을 변경하시겠습니까?`,
 				callback: async () => {
-					if (params) {
-						const res = await useCallAPI(() => restaurantAPI.changeAppScheme(grStNo, params));
-						if (res) {
-							window.$emitter.emit('success', '변경에 성공하였습니다');
-							callback();
-						}
+					const res = await useCallAPI(() =>
+						restaurantAPI.changeAppScheme(grStNo, payload)
+					);
+
+					if (res) {
+						window.$emitter.emit('success', `${appName} 스킴 변경에 성공하였습니다.`);
+						callback();
 					}
-				},
+				}
 			});
 		},
 
