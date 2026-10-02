@@ -269,6 +269,7 @@
               <th>음식점 전화번호</th>
               <th>음식점 사업자번호</th>
               <th>사업자 상호</th>
+              <th>보유스킴</th>
               <th>주문앱</th>
               <th>주소</th>
               <th>상품수</th>
@@ -311,7 +312,59 @@
               <td>{{ item.stTel }}</td>
               <td>{{ item.bizNum }}</td>
               <td>{{ item.bizName }}</td>
-
+              <td class="text-center">
+                <div class="delivery-app-list">
+                <span
+                    v-if="item.baeminAppScheme"
+                    class="delivery-app baemin"
+                    title="배달의민족 연동"
+                >
+                  <span class="delivery-icon">배</span>
+                  배민
+                </span>
+                  <span
+                      v-if="item.coupangAppScheme"
+                      class="delivery-app coupang"
+                      title="쿠팡이츠 연동"
+                  >
+                  <span class="delivery-icon">C</span>
+                  쿠팡
+                </span>
+                  <span
+                      v-if="item.yogiyoAppScheme"
+                      class="delivery-app yogiyo"
+                      title="요기요 연동"
+                  >
+                  <span class="delivery-icon">요</span>
+                  요기요
+                </span>
+                  <span
+                      v-if="item.ddangyoAppScheme"
+                      class="delivery-app ddangyo"
+                      title="땡겨요 연동"
+                  >
+                    <span class="delivery-icon">땡</span>
+                    땡겨요
+                  </span>
+                  <span
+                      v-if="item.mukkebiAppScheme"
+                      class="delivery-app mukkebi"
+                      title="먹깨비 연동"
+                  >
+                    <span class="delivery-icon">먹</span>
+                    먹깨비
+                  </span>
+                   <span v-if="
+                      !item.baeminAppScheme &&
+                      !item.coupangAppScheme &&
+                      !item.yogiyoAppScheme &&
+                      !item.ddangyoAppScheme &&
+                      !item.mukkebiAppScheme
+                    "
+                      class="text-muted">-
+                  </span>
+                </div>
+              </td>
               <td>
                   <span
                       class="badge border px-2 pt-5px pb-5px rounded fs-12px d-inline-flex align-items-center"
@@ -1793,5 +1846,95 @@ const dbResultFont = (
     padding-left: 10px;
     padding-right: 10px;
   }
+}
+
+.delivery-app-list {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  gap: 5px;
+}
+
+.delivery-app {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 7px 3px 3px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 20px;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+
+.delivery-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* 배달의민족 */
+.delivery-app.baemin {
+  background: #e5f8f6;
+  color: #159c98;
+  border-color: #c5eeeb;
+}
+
+.baemin .delivery-icon {
+  background: #2ac1bc;
+}
+
+/* 쿠팡이츠 */
+.delivery-app.coupang {
+  background: #fdeceb;
+  color: #d73a30;
+  border-color: #f8d1cc;
+}
+
+.coupang .delivery-icon {
+  background: #e44338;
+}
+
+/* 요기요 */
+.delivery-app.yogiyo {
+  background: #fdeaf1;
+  color: #df1253;
+  border-color: #f9cddd;
+}
+
+.yogiyo .delivery-icon {
+  background: #fa0050;
+}
+
+/* 땡겨요 */
+.delivery-app.ddangyo {
+  background: #fff1e5;
+  color: #db691c;
+  border-color: #ffe0c5;
+}
+
+.ddangyo .delivery-icon {
+  background: #f58220;
+}
+
+/* 먹깨비 */
+.delivery-app.mukkebi {
+  background: #f1ebfc;
+  color: #7048ad;
+  border-color: #e3d7f5;
+}
+
+.mukkebi .delivery-icon {
+  background: #7952b3;
 }
 </style>
