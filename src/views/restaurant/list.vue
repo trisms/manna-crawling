@@ -1090,7 +1090,7 @@ const excelDownload = async () => {
                 '',
                 '',
                 '123456',
-                item.stTel.replaceAll('-','') ?? '',
+                item.stTel.replaceAll('-','') ?? '01011112222',
                 '',
                 String(item.grStNo ?? ''),
                 String(item.stCode ?? ''),
