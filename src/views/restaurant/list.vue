@@ -281,6 +281,7 @@
               <th>음식점 전화번호</th>
               <th>음식점 사업자번호</th>
               <th>사업자 상호</th>
+              <th>지역화폐 존재여부</th>
               <th>보유스킴</th>
               <th>주문앱</th>
               <th>주소</th>
@@ -325,6 +326,7 @@
               <td>{{ item.stTel }}</td>
               <td>{{ item.bizNum }}</td>
               <td>{{ item.bizName }}</td>
+              <td>{{ item.currencyYn === 'Y' ? '있음' : '없음' }}</td>
               <td class="text-center">
                 <div class="delivery-app-list">
                 <span
@@ -1088,7 +1090,7 @@ const excelDownload = async () => {
                 '',
                 '',
                 '123456',
-                item.stTel ?? '',
+                item.stTel.replaceAll('-','') ?? '',
                 '',
                 String(item.grStNo ?? ''),
                 String(item.stCode ?? ''),
