@@ -996,7 +996,6 @@ const excelDownload = async () => {
       '총판코드(5)(필수)',
       '배송그룹코드(4)',
       '가맹점명(15)(필수)',
-      '대표자명',
       '앱표시명 (사업자명으로 등록)(15)',
       '로그인ID(20)(필수)',
       '비밀번호(50)(필수)',
@@ -1068,9 +1067,7 @@ const excelDownload = async () => {
                 '',
                 '',
                 item.stName ?? '',
-                item.stOwner ?? '',
                 item.bizName ?? '',
-
                 // 로그인 ID
                 exportBizNum
                     ? `on${exportBizNum}`
@@ -1085,7 +1082,7 @@ const excelDownload = async () => {
                 // 사업자번호
                 item.bizNum,
                 item.bizName ?? '',
-                '',
+                item.stOwner ?? '',
                 item.stAddr ?? '',
                 'a@naver.com',
                 '',
