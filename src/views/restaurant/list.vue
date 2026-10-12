@@ -238,8 +238,19 @@
 
       <hr />
 
-      <!-- 테이블 -->
-      <div class="card border-0">
+      <!-- 테이블: 검색 중 진행 상태를 목록 전체에 표시 -->
+      <div class="card border-0 search-list-container" :aria-busy="searching">
+        <div v-if="searching" class="search-progress-track" role="progressbar"
+             aria-label="음식점 목록 조회 중" aria-valuetext="검색 중">
+          <div class="search-progress-indicator"></div>
+        </div>
+        <div v-if="searching" class="search-loading-overlay" role="status" aria-live="polite">
+          <div class="search-loading-content">
+            <span class="spinner-border text-primary" aria-hidden="true"></span>
+            <strong>조회 중입니다</strong>
+            <span class="text-muted">검색 조건에 맞는 음식점 목록을 불러오고 있습니다.</span>
+          </div>
+        </div>
         <div class="table-responsive mb-3">
           <table
               class="table table-hover table-panel text-nowrap align-middle mb-0"
@@ -265,6 +276,7 @@
               </th>
 
               <th>일련번호</th>
+              <th>대표자명</th>
               <th>음식점 앱 등록상호</th>
               <th>음식점 전화번호</th>
               <th>음식점 사업자번호</th>
@@ -308,6 +320,7 @@
               </td>
 
               <td>{{ item.grStNo }}</td>
+              <td>{{ item.stOwner }}</td>
               <td>{{ item.stName }}</td>
               <td>{{ item.stTel }}</td>
               <td>{{ item.bizNum }}</td>
@@ -354,14 +367,14 @@
                     <span class="delivery-icon">먹</span>
                     먹깨비
                   </span>
-                   <span v-if="
+                  <span v-if="
                       !item.baeminAppScheme &&
                       !item.coupangAppScheme &&
                       !item.yogiyoAppScheme &&
                       !item.ddangyoAppScheme &&
                       !item.mukkebiAppScheme
                     "
-                      class="text-muted">-
+                        class="text-muted">-
                   </span>
                 </div>
               </td>
@@ -467,11 +480,6 @@ const excelUploading = ref(false);
 const excelDownloading = ref(false);
 const searching = ref(false);
 
-/**
- * 최대 조회기간
- */
-const MAX_SEARCH_MONTHS = 3;
-
 const today = new Date();
 today.setHours(0, 0, 0, 0);
 
@@ -493,255 +501,77 @@ const options = {
 
 /**
  * =========================================================
- * 날짜
+ * 날짜 (조회기간 제한 없음, 오늘 이후 선택 불가)
  * =========================================================
  */
-
 const toDate = (value: any): Date | null => {
   if (!value) return null;
 
-  const date =
-      value instanceof Date
-          ? new Date(value)
-          : new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    return null;
-  }
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
 
   date.setHours(0, 0, 0, 0);
-
   return date;
 };
 
-/**
- * 월 증가 시 31일 문제 방지
- *
- * 예:
- * 1/31 + 3개월
- * -> 4/30
- */
-const addMonthsClamped = (
-    source: Date,
-    months: number
-) => {
-  const date = new Date(source);
+const minSearchEndDate = computed(() =>
+    toDate(store.searchParams.startDate) || undefined
+);
 
-  const originalDay = date.getDate();
+const maxSearchEndDate = computed(() => today);
 
-  date.setDate(1);
-  date.setMonth(date.getMonth() + months);
-
-  const lastDay = new Date(
-      date.getFullYear(),
-      date.getMonth() + 1,
-      0
-  ).getDate();
-
-  date.setDate(
-      Math.min(originalDay, lastDay)
-  );
-
-  date.setHours(0, 0, 0, 0);
-
-  return date;
-};
-
-/**
- * 종료일 최소
- */
-const minSearchEndDate = computed(() => {
-  return (
-      toDate(store.searchParams.startDate) ||
-      undefined
-  );
-});
-
-/**
- * 종료일 최대
- *
- * 시작일 + 3개월과
- * 오늘 중 더 빠른 날짜
- */
-const maxSearchEndDate = computed(() => {
-  const startDate =
-      toDate(store.searchParams.startDate);
-
-  if (!startDate) {
-    return today;
-  }
-
-  const maxByRange =
-      addMonthsClamped(
-          startDate,
-          MAX_SEARCH_MONTHS
-      );
-
-  return maxByRange < today
-      ? maxByRange
-      : today;
-});
-
-/**
- * 시작일 선택 시
- * 종료일 자동 지정
- *
- * 시작일이 최근 3개월 안이면 오늘
- * 그보다 과거면 시작일 + 3개월
- */
+// 시작일 변경 시 종료일을 오늘로 자동 설정
 const setAutoEndDate = () => {
-  const startDate =
-      toDate(store.searchParams.startDate);
-
-  if (!startDate) {
-    return;
-  }
-
-  const maxByRange =
-      addMonthsClamped(
-          startDate,
-          MAX_SEARCH_MONTHS
-      );
-
-  store.searchParams.endDate =
-      maxByRange < today
-          ? maxByRange
-          : new Date(today);
+  if (!toDate(store.searchParams.startDate)) return;
+  store.searchParams.endDate = new Date(today);
 };
 
-/**
- * 조회기간 검증
- */
 const validateSearchDate = () => {
-  const startDate =
-      toDate(store.searchParams.startDate);
-
-  const endDate =
-      toDate(store.searchParams.endDate);
+  const startDate = toDate(store.searchParams.startDate);
+  const endDate = toDate(store.searchParams.endDate);
 
   if (!startDate || !endDate) {
-    window.$emitter.emit(
-        'warning',
-        '조회기간을 시작일과 종료일 모두 선택해주세요.'
-    );
-
+    window.$emitter.emit('warning', '조회기간을 시작일과 종료일 모두 선택해주세요.');
     return false;
   }
-
   if (startDate > today) {
-    window.$emitter.emit(
-        'warning',
-        '시작일은 오늘 이후로 선택할 수 없습니다.'
-    );
-
+    window.$emitter.emit('warning', '시작일은 오늘 이후로 선택할 수 없습니다.');
     return false;
   }
-
   if (endDate > today) {
-    window.$emitter.emit(
-        'warning',
-        '종료일은 오늘 이후로 선택할 수 없습니다.'
-    );
-
+    window.$emitter.emit('warning', '종료일은 오늘 이후로 선택할 수 없습니다.');
     return false;
   }
-
   if (startDate > endDate) {
-    window.$emitter.emit(
-        'warning',
-        '시작일은 종료일보다 늦을 수 없습니다.'
-    );
-
+    window.$emitter.emit('warning', '시작일은 종료일보다 늦을 수 없습니다.');
     return false;
   }
-
-  const maxDate =
-      addMonthsClamped(
-          startDate,
-          MAX_SEARCH_MONTHS
-      );
-
-  if (endDate > maxDate) {
-    window.$emitter.emit(
-        'warning',
-        '조회기간은 최대 3개월까지 가능합니다.'
-    );
-
-    return false;
-  }
-
   return true;
 };
 
-/**
- * 시작일 변경
- *
- * API 검색은 하지 않고
- * 종료일만 자동 설정
- */
 watch(
     () => store.searchParams.startDate,
     (newValue, oldValue) => {
-      if (!newValue) {
-        return;
-      }
-
+      if (!newValue) return;
       const newDate = toDate(newValue);
       const oldDate = toDate(oldValue);
-
-      /**
-       * DatePicker 내부 갱신 등으로
-       * 같은 날짜가 다시 들어오는 경우 방지
-       */
-      if (
-          newDate &&
-          oldDate &&
-          newDate.getTime() === oldDate.getTime()
-      ) {
-        return;
-      }
-
+      if (newDate && oldDate && newDate.getTime() === oldDate.getTime()) return;
       setAutoEndDate();
     }
 );
 
-/**
- * 종료일 직접 변경 시에도
- * 범위를 넘는 값이면 최대값으로 보정
- */
+// 종료일은 시작일 ~ 오늘 범위로만 보정 (3개월 제한 없음)
 watch(
     () => store.searchParams.endDate,
     (newValue) => {
-      const startDate =
-          toDate(store.searchParams.startDate);
+      const startDate = toDate(store.searchParams.startDate);
+      const endDate = toDate(newValue);
+      if (!startDate || !endDate) return;
 
-      const endDate =
-          toDate(newValue);
-
-      if (!startDate || !endDate) {
-        return;
-      }
-
-      const maxDate =
-          maxSearchEndDate.value;
-
-      if (!maxDate) {
-        return;
-      }
-
-      if (endDate > maxDate) {
-        store.searchParams.endDate =
-            new Date(maxDate);
-
-        window.$emitter.emit(
-            'warning',
-            '조회기간은 최대 3개월까지 가능합니다.'
-        );
-      }
-
-      if (endDate < startDate) {
-        store.searchParams.endDate =
-            new Date(startDate);
+      if (endDate > today) {
+        store.searchParams.endDate = new Date(today);
+      } else if (endDate < startDate) {
+        store.searchParams.endDate = new Date(startDate);
       }
     }
 );
@@ -764,6 +594,7 @@ const search = async () => {
   searching.value = true;
 
   try {
+    await nextTick();
     await store.callListAPI(() => {});
   } catch (error) {
     console.error(
@@ -1165,6 +996,7 @@ const excelDownload = async () => {
       '총판코드(5)(필수)',
       '배송그룹코드(4)',
       '가맹점명(15)(필수)',
+      '대표자명',
       '앱표시명 (사업자명으로 등록)(15)',
       '로그인ID(20)(필수)',
       '비밀번호(50)(필수)',
@@ -1236,6 +1068,7 @@ const excelDownload = async () => {
                 '',
                 '',
                 item.stName ?? '',
+                item.stOwner ?? '',
                 item.bizName ?? '',
 
                 // 로그인 ID
@@ -1740,6 +1573,66 @@ const dbResultFont = (
 </script>
 
 <style scoped>
+/* 검색 중 테이블을 가리고 상단에 무한 진행바를 표시 */
+.search-list-container {
+  position: relative;
+  min-height: 230px;
+}
+
+.search-progress-track {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  overflow: hidden;
+  background: rgba(52, 143, 226, 0.14);
+  z-index: 12;
+}
+
+.search-progress-indicator {
+  position: absolute;
+  width: 35%;
+  height: 100%;
+  background: #348fe2;
+  border-radius: 4px;
+  animation: search-progress 1.25s ease-in-out infinite;
+}
+
+@keyframes search-progress {
+  from { left: -35%; }
+  to { left: 100%; }
+}
+
+.search-loading-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 11;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(2px);
+}
+
+.search-loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 22px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.search-loading-content .text-muted { font-size: 12px; }
+.search-loading-content .spinner-border { width: 2rem; height: 2rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .search-progress-indicator { animation-duration: 3s; }
+}
+
 .input-group .btn {
   z-index: unset;
 }

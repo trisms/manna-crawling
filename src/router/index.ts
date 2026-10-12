@@ -3,6 +3,7 @@ import { useRestaurantStore } from '@/stores/restaurant/useRestaurantStore';
 import { useAppOptionStore } from '@/stores/app-option';
 import { useAdminStore } from '@/stores/systems/useAdminStore';
 import {useAccommodationStore} from "@/stores/accommodation/useAccommodationStore";
+import {useLocaionPayStore} from "@/stores/locaionpay/useLocationPayStore";
 
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
@@ -24,6 +25,15 @@ const router = createRouter({
 			path: '/',
 			component: () => import('@/layouts/MainLayout.vue'),
 			children: [
+				{
+					path: '/locationpay/',
+					component: () => import('@/views/locaionpay/list.vue'),
+					beforeEnter: async (to, from, next) => {
+						const store = useLocaionPayStore();
+						await store.callListAPI(() => {});
+						next();
+					},
+				},
 				{
 					path: '/restaurant/',
 					component: () => import('@/views/restaurant/list.vue'),

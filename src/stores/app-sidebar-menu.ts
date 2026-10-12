@@ -7,6 +7,7 @@ export const useAppSidebarMenuStore = defineStore({
     	text: 'Navigation',
     	is_header: true
     },
+    /*{ url: '/locationpay', icon: 'fa fa-money', title: '지역화폐'},*/
     { url: '/restaurant', icon: 'fa fa-utensils', title: '음식점',},
     { url: '/accommodation', icon: 'fa fa-hotel', title: '숙박업소'},
     { url: '/hairdressers', icon: 'fa fa-sitemap', title: '미용실'},

@@ -110,8 +110,9 @@
                   placeholder="검색어를 입력해주세요."
                   @keyup.enter="search"
               />
-              <button type="button" class="btn btn-dark filter-keyword-btn" @click="search">
-                검색
+              <button type="button" class="btn btn-dark filter-keyword-btn" :disabled="loading" @click="search">
+                <i v-if="loading" class="fa fa-spinner fa-spin me-1"></i>
+                {{ loading ? '검색 중' : '검색' }}
               </button>
             </div>
           </div>
@@ -135,30 +136,40 @@
             </div>
           </div>
         </div>
-<!--        <div
-            class="mt-md-0 mt-2 btn btn-success btn-sm d-flex me-2 pe-3 rounded-3"
-            @click="excelDownload"
-        >
-          <div class="text-white text-decoration-none rounded">
-            <i class="fa fa-file-excel fa-fw me-1 text-white"></i>
-            엑셀 다운로드
-          </div>
-        </div>-->
-       <!--<div class="card border-0">
-          <div class="d-md-flex fw-bold ms-auto">
-            <div class="mt-md-0 mt-2 btn btn-success btn-sm d-flex me-2 pe-3 rounded-3" @click="goToCreate">
-              <div class="text-white text-decoration-none rounded">
-                <i class="fa fa-plus fa-fw me-1 text-white"></i> 숙박업소 등록
-              </div>
-            </div>
-          </div>
-        </div>-->
+        <!--        <div
+                    class="mt-md-0 mt-2 btn btn-success btn-sm d-flex me-2 pe-3 rounded-3"
+                    @click="excelDownload"
+                >
+                  <div class="text-white text-decoration-none rounded">
+                    <i class="fa fa-file-excel fa-fw me-1 text-white"></i>
+                    엑셀 다운로드
+                  </div>
+                </div>-->
+        <!--<div class="card border-0">
+           <div class="d-md-flex fw-bold ms-auto">
+             <div class="mt-md-0 mt-2 btn btn-success btn-sm d-flex me-2 pe-3 rounded-3" @click="goToCreate">
+               <div class="text-white text-decoration-none rounded">
+                 <i class="fa fa-plus fa-fw me-1 text-white"></i> 숙박업소 등록
+               </div>
+             </div>
+           </div>
+         </div>-->
       </div>
 
       <hr />
 
       <!-- 테이블 -->
-      <div class="card border-0">
+      <div class="card border-0 accommodation-list-card" :aria-busy="loading">
+        <div v-if="loading" class="list-progress-track" role="progressbar" aria-label="숙박업소 목록 조회 중" aria-valuetext="조회 중">
+          <div class="list-progress-indicator"></div>
+        </div>
+        <div v-if="loading" class="list-loading-overlay" aria-live="polite">
+          <div class="list-loading-content">
+            <i class="fa fa-spinner fa-spin list-loading-spinner" aria-hidden="true"></i>
+            <strong>조회 중입니다</strong>
+            <span>숙박업소 목록을 불러오고 있습니다.</span>
+          </div>
+        </div>
         <div class="table-responsive mb-3">
           <table class="table table-hover table-panel text-nowrap align-middle mb-0" style="min-width: 1400px; overflow-x: auto">
             <thead>
@@ -189,13 +200,7 @@
             </thead>
 
             <tbody>
-            <tr v-if="loading">
-              <td colspan="11" class="text-center py-4 text-muted">
-                조회중입니다.
-              </td>
-            </tr>
-
-            <tr v-else-if="store.items.length === 0">
+            <tr v-if="!loading && store.items.length === 0">
               <td colspan="11" class="text-center py-4 text-muted">
                 조회된 숙박업소가 없습니다.
               </td>
@@ -671,6 +676,7 @@ const formatDate = (value: string) => {
 };
 
 const search = async () => {
+  if (loading.value) return;
   allChecked.value = false;
   checkedItems.value = [];
   loading.value = true;
@@ -683,7 +689,7 @@ const search = async () => {
 };
 
 const movePage = async (page: number) => {
-  if (page < 1 || page > store.totalPages) return;
+  if (loading.value || page < 1 || page > store.totalPages) return;
 
   allChecked.value = false;
   checkedItems.value = [];
@@ -1008,4 +1014,75 @@ const appTypeClass = (appType: string | number) => {
 .text-bold {
   font-weight: bold
 }
+
+/* 숙박업소 목록 조회 프로그레스 및 로딩 오버레이 */
+.accommodation-list-card {
+  position: relative;
+  min-height: 180px;
+}
+
+.list-progress-track {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  overflow: hidden;
+  background: rgba(52, 143, 226, 0.13);
+  z-index: 11;
+}
+
+.list-progress-indicator {
+  width: 38%;
+  height: 100%;
+  background: #348fe2;
+  border-radius: 999px;
+  animation: accommodation-progress 1.35s ease-in-out infinite;
+}
+
+@keyframes accommodation-progress {
+  from { transform: translateX(-110%); }
+  to { transform: translateX(290%); }
+}
+
+.list-loading-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(1px);
+}
+
+.list-loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  color: #344054;
+  font-size: 14px;
+}
+
+.list-loading-spinner {
+  color: #348fe2;
+  font-size: 30px;
+  margin-bottom: 3px;
+}
+
+.list-loading-content span {
+  color: #667085;
+  font-size: 12px;
+}
+
+:global(html.dark-mode) .list-loading-overlay {
+  background: rgba(22, 27, 34, 0.88);
+}
+
+:global(html.dark-mode) .list-loading-content {
+  color: #e5e7eb;
+}
+
 </style>
