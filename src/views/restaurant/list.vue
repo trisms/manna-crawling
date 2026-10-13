@@ -69,10 +69,21 @@
           ]"
         />
 
-        <div class="col-lg-1" style="width: 40px"></div>
+
+        <!-- 지역화폐 존재여부 -->
+        <SelectLabel
+            size="col-lg-1"
+            icon="fas fa-lg fa-fw fa-wallet"
+            v-model="store.searchParams.currencyYn"
+            :options="[
+              { label: '지역화폐', value: '' },
+              { label: '있음', value: 'Y' },
+              { label: '없음', value: 'N' },
+            ]"
+        />
 
         <!-- 검색 -->
-        <div class="col-lg-3 d-flex justify-content-end" style="width: 30%">
+        <div class="col-lg-3 d-flex justify-content-end">
           <div class="input-group">
             <select
                 class="form-select"
@@ -326,7 +337,23 @@
               <td>{{ item.stTel }}</td>
               <td>{{ item.bizNum }}</td>
               <td>{{ item.bizName }}</td>
-              <td>{{ item.currencyYn === 'Y' ? '있음' : '없음' }}</td>
+              <td class="text-center">
+                <span
+                    v-if="String(item.currencyYn ?? '').toUpperCase() === 'Y'"
+                    class="currency-badge currency-badge--yes"
+                >
+                  <i class="fas fa-circle-check" aria-hidden="true"></i>
+                  있음
+                </span>
+                <span
+                    v-else-if="String(item.currencyYn ?? '').toUpperCase() === 'N'"
+                    class="currency-badge currency-badge--no"
+                >
+                  <i class="fas fa-circle-minus" aria-hidden="true"></i>
+                  없음
+                </span>
+                <span v-else class="text-muted">-</span>
+              </td>
               <td class="text-center">
                 <div class="delivery-app-list">
                 <span
@@ -1573,6 +1600,34 @@ const dbResultFont = (
 </script>
 
 <style scoped>
+/* 지역화폐 존재여부 배지 */
+.currency-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 66px;
+  padding: 5px 9px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.currency-badge--yes {
+  color: #198754;
+  background: #e8f6ee;
+  border-color: #bfe7d1;
+}
+
+.currency-badge--no {
+  color: #6c757d;
+  background: #f1f3f5;
+  border-color: #dee2e6;
+}
+
 /* 검색 중 테이블을 가리고 상단에 무한 진행바를 표시 */
 .search-list-container {
   position: relative;
@@ -1831,3 +1886,4 @@ const dbResultFont = (
   background: #7952b3;
 }
 </style>
+
