@@ -63,13 +63,21 @@
                         </div>
                       </td>
                     </tr>
-
                     <!-- 📌 연락처 / 주소 -->
                     <tr >
                       <td colspan="2">
                         <div class="d-flex">
                           <div class="bg-indigo-100 w-15px h-15px rounded me-2"></div>
                           <div><b>가맹점주소</b> : {{ store.form.stAddr }}</div>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td nowrap="" class="" colspan="2">
+                        <div class="d-flex align-items-center">
+                          <div class="bg-indigo-100 w-15px h-15px rounded me-2"></div>
+                          <div><b>지역화페</b> : {{ store.form.currencyName ? store.form.currencyName : '-' }}
+                          </div>
                         </div>
                       </td>
                     </tr>
@@ -97,6 +105,7 @@
                         </div>
                       </td>
                     </tr>
+
                     <tr>
                       <td nowrap="" colspan="2">
                         <div class="d-flex align-items-center">
@@ -121,6 +130,7 @@
                         </div>
                       </td>
                     </tr>
+
                     <tr>
                       <td nowrap="" colspan="2">
                         <div class="d-flex align-items-center">
