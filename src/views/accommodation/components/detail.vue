@@ -17,7 +17,7 @@
             <div class="note-content">
               <div class="accom-page-head">
                 <h4 class="mb-0">
-                  <i class="fa fa-info-circle fa-fw"></i>
+                  <i class="fa fa-info-circle fa-fw"></i>z
                   <b>숙소 상세 정보</b>
                   <span class="accom-page-head__name">
                     - {{ info.accomName || '-' }}
@@ -144,27 +144,24 @@
                         </tr>
 
                         <tr>
-                          <td nowrap colspan="2">
-                            <div class="d-flex align-items-center">
-                              <div class="bg-indigo-100 w-15px h-15px rounded me-2"></div>
-                              <div>
-                                <div class="input-group">
-                                  <b class="m-auto">숙박 URL : </b> {{ info.orgUrl }}
-                                  <!--                                  <input
-                                                                        type="text"
-                                                                        @click.stop
-                                                                        class="form-control w-500px bg-light border-0 height-20 pt-0 pb-0"
-                                                                        v-model="info.orgUrl"
-                                                                        placeholder="숙박 URL를 입력해주세요"
-                                                                        style="width: 161px; margin-left: 5px;"
-                                                                    />
-                                                                    <button
-                                                                        type="button"
-                                                                        @click.stop="changeAppScheme()"
-                                                                        class="btn btn-sm btn-white pt-0 pb-0 fs-6"
-                                                                    >
-                                                                      <i class="fa fa-fw fa-plus"></i> 수정
-                                                                    </button>-->
+                          <td colspan="2">
+                            <div class="d-flex align-items-start">
+                              <div class="bg-indigo-100 w-15px h-15px rounded me-2 mt-2 flex-shrink-0"></div>
+                              <div class="w-100 accom-platform-url-wrap">
+                                <b class="d-block mb-2">숙박 플랫폼 URL</b>
+                                <div class="accom-platform-url-list">
+                                  <div
+                                      v-for="platform in accommodationUrls"
+                                      :key="platform.key"
+                                      class="accom-platform-url-item"
+                                  >
+                                    <span class="accom-platform-url-label">{{ platform.name }}</span>
+                                    <span
+                                        class="accom-platform-url-value"
+                                        :class="{ 'text-muted': !platform.url }"
+                                        :title="platform.url || ''"
+                                    >{{ platform.url || '-' }}</span>
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -534,71 +531,71 @@
                     </div>
 
 
-<!--                    <button
-                        type="button"
-                        class="image-manage-summary__item"
-                        :class="{ active: selectedMainImageIds.length > 0 }"
-                        @click="openImageManageModal('MAIN')"
-                    >
-                      <span class="image-manage-summary__thumb">
-                        <img
-                            :src="mainImages[0]?.imgPath || NO_IMAGE_URL"
-                            alt="메인 이미지"
-                            @error="handleImageError"
-                        />
-                      </span>
+                    <!--                    <button
+                                            type="button"
+                                            class="image-manage-summary__item"
+                                            :class="{ active: selectedMainImageIds.length > 0 }"
+                                            @click="openImageManageModal('MAIN')"
+                                        >
+                                          <span class="image-manage-summary__thumb">
+                                            <img
+                                                :src="mainImages[0]?.imgPath || NO_IMAGE_URL"
+                                                alt="메인 이미지"
+                                                @error="handleImageError"
+                                            />
+                                          </span>
 
-                      <span class="image-manage-summary__body">
-                        <span class="image-manage-summary__name">
-                          <i class="fa fa-image me-1"></i>
-                          메인 이미지
-                        </span>
-                        <span class="image-manage-summary__meta">
-                          {{ mainImages.length }}장
-                          <template v-if="selectedMainImageIds.length">
-                            · 선택 {{ selectedMainImageIds.length }}
-                          </template>
-                        </span>
-                      </span>
+                                          <span class="image-manage-summary__body">
+                                            <span class="image-manage-summary__name">
+                                              <i class="fa fa-image me-1"></i>
+                                              메인 이미지
+                                            </span>
+                                            <span class="image-manage-summary__meta">
+                                              {{ mainImages.length }}장
+                                              <template v-if="selectedMainImageIds.length">
+                                                · 선택 {{ selectedMainImageIds.length }}
+                                              </template>
+                                            </span>
+                                          </span>
 
-                      <span class="image-manage-summary__action">
-                        관리
-                        <i class="fa fa-chevron-right ms-1"></i>
-                      </span>
-                    </button>
+                                          <span class="image-manage-summary__action">
+                                            관리
+                                            <i class="fa fa-chevron-right ms-1"></i>
+                                          </span>
+                                        </button>
 
-                    <button
-                        type="button"
-                        class="image-manage-summary__item"
-                        :class="{ active: selectedReviewImageIds.length > 0 }"
-                        @click="openImageManageModal('REVIEW')"
-                    >
-                      <span class="image-manage-summary__thumb">
-                        <img
-                            :src="reviewImages[0]?.imgPath || NO_IMAGE_URL"
-                            alt="리뷰 이미지"
-                            @error="handleImageError"
-                        />
-                      </span>
+                                        <button
+                                            type="button"
+                                            class="image-manage-summary__item"
+                                            :class="{ active: selectedReviewImageIds.length > 0 }"
+                                            @click="openImageManageModal('REVIEW')"
+                                        >
+                                          <span class="image-manage-summary__thumb">
+                                            <img
+                                                :src="reviewImages[0]?.imgPath || NO_IMAGE_URL"
+                                                alt="리뷰 이미지"
+                                                @error="handleImageError"
+                                            />
+                                          </span>
 
-                      <span class="image-manage-summary__body">
-                        <span class="image-manage-summary__name">
-                          <i class="fa fa-star text-warning me-1"></i>
-                          리뷰 이미지
-                        </span>
-                        <span class="image-manage-summary__meta">
-                          {{ reviewImages.length }}장
-                          <template v-if="selectedReviewImageIds.length">
-                            · 선택 {{ selectedReviewImageIds.length }}
-                          </template>
-                        </span>
-                      </span>
+                                          <span class="image-manage-summary__body">
+                                            <span class="image-manage-summary__name">
+                                              <i class="fa fa-star text-warning me-1"></i>
+                                              리뷰 이미지
+                                            </span>
+                                            <span class="image-manage-summary__meta">
+                                              {{ reviewImages.length }}장
+                                              <template v-if="selectedReviewImageIds.length">
+                                                · 선택 {{ selectedReviewImageIds.length }}
+                                              </template>
+                                            </span>
+                                          </span>
 
-                      <span class="image-manage-summary__action">
-                        관리
-                        <i class="fa fa-chevron-right ms-1"></i>
-                      </span>
-                    </button>-->
+                                          <span class="image-manage-summary__action">
+                                            관리
+                                            <i class="fa fa-chevron-right ms-1"></i>
+                                          </span>
+                                        </button>-->
 
                     <div class="image-summary-row">
                       <!-- 메인 이미지 -->
@@ -653,7 +650,7 @@
                           />
                         </span>
 
-                                            <span class="image-manage-summary__body">
+                        <span class="image-manage-summary__body">
                           <span class="image-manage-summary__name">
                             <i class="fa fa-star text-warning me-1"></i>
                             리뷰 이미지
@@ -668,7 +665,7 @@
                           </span>
                         </span>
 
-                                            <span class="image-manage-summary__action">
+                        <span class="image-manage-summary__action">
                           관리
                           <i class="fa fa-chevron-right ms-1"></i>
                         </span>
@@ -1273,6 +1270,14 @@ const accomId = computed(() =>
 );
 
 const info = computed<any>(() => store.form.info || {});
+
+// 숙박 소개정보 API에서 반환하는 플랫폼별 URL (기존 orgUrl 미사용)
+const accommodationUrls = computed(() => [
+  { key: 'yanoljaUrl', name: '야놀자', url: String(info.value.yanoljaUrl ?? '').trim() },
+  { key: 'yeogiUrl', name: '여기어때', url: String(info.value.yeogiUrl ?? '').trim() },
+  { key: 'tripUrl', name: '트립닷컴', url: String(info.value.tripUrl ?? '').trim() },
+  { key: 'agodaUrl', name: '아고다', url: String(info.value.agodaUrl ?? '').trim() },
+]);
 const rawRoom = computed<any>(() => store.form.room || []);
 
 /**
@@ -2375,6 +2380,16 @@ onBeforeUnmount(() => {
 
 
 <style scoped>
+.accom-platform-url-wrap { min-width: 0; }
+.accom-platform-url-list { display: grid; gap: 7px; }
+.accom-platform-url-item { display: flex; align-items: flex-start; gap: 12px; min-width: 0; }
+.accom-platform-url-label { flex: 0 0 76px; font-weight: 600; color: #586274; }
+.accom-platform-url-value { min-width: 0; overflow-wrap: anywhere; white-space: normal; line-height: 1.5; }
+@media (max-width: 575px) {
+  .accom-platform-url-item { flex-direction: column; gap: 2px; }
+  .accom-platform-url-label { flex-basis: auto; }
+}
+
 .accom-admin-page {
   padding: 16px 20px 34px;
   background: #f4f4f4;

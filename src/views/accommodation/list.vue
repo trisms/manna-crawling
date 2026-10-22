@@ -1,216 +1,289 @@
-
 <template>
   <panel>
     <panel-body>
-      <!-- 검색 영역 -->
-      <!-- 검색 영역 -->
-      <div class="search-filter-wrap mb-4">
-        <!-- 1줄 -->
-        <div class="search-filter-row search-filter-row-top">
-          <div class="filter-item filter-date">
-            <div class="filter-date-group">
-              <VueDatePicker
-                  v-model="dateRange.startDate"
-                  format="yyyy-MM-dd"
-                  :auto-apply="true"
-                  :enable-time-picker="false"
-                  placeholder="DB생성기간 (시작일)"
-              />
-              <span class="filter-date-tilde">~</span>
-              <VueDatePicker
-                  v-model="dateRange.endDate"
-                  format="yyyy-MM-dd"
-                  :auto-apply="true"
-                  :enable-time-picker="false"
-                  placeholder="DB생성기간 (종료일)"
-              />
-            </div>
-          </div>
-
-          <div class="filter-item filter-sido">
-            <select class="form-select" v-model="store.searchParams.sidoCode">
-              <option
-                  v-for="item in store.sidoList"
-                  :key="item.sidoCode"
-                  :value="item.sidoCode"
-              >
-                {{ item.addrName }}
-              </option>
-            </select>
-          </div>
-
-          <div class="filter-item filter-sigun">
-            <select
-                class="form-select"
-                v-model="store.searchParams.sigunCode"
-                :disabled="!store.searchParams.sidoCode"
-            >
-              <option value="">시/군/구</option>
-              <option
-                  v-for="item in filteredSigunList"
-                  :key="item.sigunCode"
-                  :value="item.sigunCode"
-              >
-                {{ item.addrName }}
-              </option>
-            </select>
-          </div>
-
-          <div class="filter-item filter-app">
-            <select class="form-select" v-model="store.searchParams.appType">
-              <option value="">플랫폼 타입</option>
-              <option value="1">여기어때</option>
-              <option value="2">야놀자</option>
-            </select>
-          </div>
-
-          <div class="filter-item filter-accom-type">
-            <select class="form-select" v-model="store.searchParams.accomType">
-              <option value="">숙소유형</option>
-              <option value="1">모텔</option>
-              <option value="2">호텔/리조트</option>
-              <option value="3">펜션</option>
-              <option value="4">홈 & 빌라</option>
-              <option value="5">캠핑</option>
-              <option value="6">게하/한옥</option>
-              <option value="7">레지던스</option>
-            </select>
-          </div>
-
-          <div class="filter-item filter-status">
-            <select class="form-select" v-model="store.searchParams.dataStatus">
-              <option value="">DB등록여부</option>
-              <option value="1">미등록</option>
-              <option value="2">등록완료</option>
-              <option value="3">진행중</option>
-              <option value="4">등록실패</option>
-            </select>
-          </div>
+      <!-- 음식점 목록과 동일한 검색/필터 레이아웃 -->
+      <div class="row gx-2 gy-2 pb-30px accom-search">
+        <div class="col-xl-3 col-lg-6 col-12 d-flex align-items-center gap-2">
+          <VueDatePicker
+              v-model="dateRange.startDate"
+              format="yyyy-MM-dd"
+              :auto-apply="true"
+              :enable-time-picker="false"
+              placeholder="DB생성기간 (시작일)"
+          />
+          <span class="text-muted">
+            ~
+          </span>
+          <VueDatePicker
+              v-model="dateRange.endDate"
+              format="yyyy-MM-dd"
+              :auto-apply="true"
+              :enable-time-picker="false"
+              placeholder="DB생성기간 (종료일)"
+          />
         </div>
-
-        <!-- 2줄 -->
-        <div class="search-filter-row search-filter-row-bottom">
-          <div class="filter-item filter-search-type">
+        <div class="col-xl-1 col-lg-3 col-md-6">
+          <select class="form-select" v-model="store.searchParams.sidoCode">
+            <option value="">
+              시/도
+            </option>
+            <option v-for="item in store.sidoList" :key="item.sidoCode" :value="item.sidoCode">
+              {{ item.addrName }}
+            </option>
+          </select>
+        </div>
+        <div class="col-xl-2 col-lg-3 col-md-6">
+          <select
+              class="form-select"
+              v-model="store.searchParams.sigunCode"
+              :disabled="!store.searchParams.sidoCode"
+          >
+            <option value="">
+              시/군/구
+            </option>
+            <option v-for="item in filteredSigunList" :key="item.sigunCode" :value="item.sigunCode">
+              {{ item.addrName }}
+            </option>
+          </select>
+        </div>
+        <div class="col-xl-1 col-lg-3 col-md-4">
+          <select class="form-select" v-model="store.searchParams.appType">
+            <option value="">
+              플랫폼 타입
+            </option>
+            <option value="1">
+              여기어때
+            </option>
+            <option value="2">
+              야놀자
+            </option>
+          </select>
+        </div>
+        <div class="col-xl-1 col-lg-3 col-md-4">
+          <select class="form-select" v-model="store.searchParams.accomType">
+            <option value="">
+              숙소유형
+            </option>
+            <option value="1">
+              모텔
+            </option>
+            <option value="2">
+              호텔/리조트
+            </option>
+            <option value="3">
+              펜션
+            </option>
+            <option value="4">
+              홈 &amp; 빌라
+            </option>
+            <option value="5">
+              캠핑
+            </option>
+            <option value="6">
+              게하/한옥
+            </option>
+            <option value="7">
+              레지던스
+            </option>
+          </select>
+        </div>
+        <div class="col-xl-1 col-lg-3 col-md-4">
+          <select class="form-select" v-model="store.searchParams.dataStatus">
+            <option value="">
+              DB등록여부
+            </option>
+            <option value="1">
+              미등록
+            </option>
+            <option value="2">
+              등록완료
+            </option>
+            <option value="3">
+              진행중
+            </option>
+            <option value="4">
+              등록실패
+            </option>
+          </select>
+        </div>
+        <div class="col-xl-3 col-lg-6 col-12 d-flex align-items-stretch">
+          <div class="input-group">
             <select class="form-select" v-model="store.searchParams.searchType">
-              <option value="">전체</option>
-              <option value="bizName">사업자상호</option>
-              <option value="bizNum">사업자번호</option>
-              <option value="accomName">등록상호</option>
-              <option value="accomCode">숙소코드</option>
+              <option value="">
+                전체
+              </option>
+              <option value="bizName">
+                사업자상호
+              </option>
+              <option value="bizNum">
+                사업자번호
+              </option>
+              <option value="accomName">
+                등록상호
+              </option>
+              <option value="accomCode">
+                숙소코드
+              </option>
             </select>
-          </div>
-
-          <div class="filter-item filter-keyword">
-            <div class="filter-keyword-box">
-              <i class="fa fa-search filter-keyword-icon"></i>
-              <input
-                  type="text"
-                  class="form-control filter-keyword-input"
-                  v-model="store.searchParams.keyword"
-                  placeholder="검색어를 입력해주세요."
-                  @keyup.enter="search"
-              />
-              <button type="button" class="btn btn-dark filter-keyword-btn" :disabled="loading" @click="search">
-                <i v-if="loading" class="fa fa-spinner fa-spin me-1"></i>
-                {{ loading ? '검색 중' : '검색' }}
-              </button>
+            <div class="btn btn-white d-flex align-items-center p-0" style="flex: 3; min-width: 0;">
+              <i class="fa fa-search ms-2 me-2 text-muted">
+              </i>
+              <div class="input-group">
+                <input
+                    class="form-control bg-light border-0"
+                    v-model="store.searchParams.keyword"
+                    placeholder="검색어를 입력해주세요."
+                    @keyup.enter="search"
+                />
+                <button type="button" class="btn btn-sm btn-white border-0" :disabled="loading" @click="search">
+                  <i class="fa fa-fw" :class="loading ? 'fa-spinner fa-spin' : 'fa-search'">
+                  </i>
+                  {{ loading ? '검색중' : '검색' }}
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <!-- 보조 액션 -->
-      <div class="d-flex justify-content-between">
-        <!--        <div class="card border-0">
-                  <div class="d-md-flex fw-bold ms-auto">
-                    <div class="mt-md-0 mt-2 btn btn-white btn-sm d-flex me-2 pe-3 rounded-3 border" @click="resetSearch">
-                      <div class="text-decoration-none rounded">
-                        <i class="fa fa-rotate-right fa-fw me-1"></i> 초기화
-                      </div>
-                    </div>
-                  </div>
-                </div>화-->
-        <div class="card border-0" @click="deleteCode()">
-          <div class="d-md-flex fw-bold ms-auto">
-            <div class="mt-md-0 mt-2 btn btn-danger btn-sm d-flex me-2 pe-3 rounded-3">
-              <div class="text-white text-decoration-none rounded"><i class="fa fa-cancel fa-fw me-1 text-white"></i> 삭제</div>
-            </div>
+      <div class="accom-toolbar">
+        <div class="accom-toolbar-left">
+          <button type="button" class="btn btn-danger btn-sm" @click="deleteCode">
+            <i class="fa fa-cancel fa-fw me-1">
+            </i>
+            삭제
+          </button>
+          <div class="fw-bold text-secondary">
+            전체
+            <span class="text-primary">
+              {{ Number(store.totalSize || 0).toLocaleString() }}
+            </span>
+            건
           </div>
         </div>
-        <!--        <div
-                    class="mt-md-0 mt-2 btn btn-success btn-sm d-flex me-2 pe-3 rounded-3"
-                    @click="excelDownload"
-                >
-                  <div class="text-white text-decoration-none rounded">
-                    <i class="fa fa-file-excel fa-fw me-1 text-white"></i>
-                    엑셀 다운로드
-                  </div>
-                </div>-->
-        <!--<div class="card border-0">
-           <div class="d-md-flex fw-bold ms-auto">
-             <div class="mt-md-0 mt-2 btn btn-success btn-sm d-flex me-2 pe-3 rounded-3" @click="goToCreate">
-               <div class="text-white text-decoration-none rounded">
-                 <i class="fa fa-plus fa-fw me-1 text-white"></i> 숙박업소 등록
-               </div>
-             </div>
-           </div>
-         </div>-->
+        <div class="accom-toolbar-right">
+          <div class="segment-group">
+            <button type="button" class="segment-button" :disabled="excelDownloading" @click="excelDownload">
+              <i class="fa fa-fw me-1" :class="excelDownloading ? 'fa-spinner fa-spin' : 'fa-file-excel'">
+              </i>
+              {{ excelDownloading ? '생성중' : '조회내역 엑셀 다운로드' }}
+            </button>
+          </div>
+          <div class="segment-group">
+            <button type="button" class="segment-button" :disabled="excelUploading" @click="openExcelUpload">
+              <i class="fa fa-fw me-1" :class="excelUploading ? 'fa-spinner fa-spin' : 'fa-upload'">
+              </i>
+              {{ excelUploading ? '등록중' : '숙박 데이터 업로드' }}
+            </button>
+            <button type="button" class="segment-button" @click="excelTemplateDownload">
+              <i class="fa fa-file-arrow-down fa-fw me-1">
+              </i>
+              양식 다운로드
+            </button>
+          </div>
+          <div class="segment-group">
+            <button
+                type="button"
+                class="segment-button"
+                :disabled="selectedUploadRunning"
+                @click="goodsUpload(1)"
+            >
+              <i class="fa fa-rotate fa-fw me-1"></i>
+              기존데이터삭제후 신규업로드
+            </button>
+            <button
+                type="button"
+                class="segment-button"
+                :disabled="selectedUploadRunning"
+                @click="goodsUpload(2)"
+            >
+              <i class="fa fa-plus fa-fw me-1"></i>
+              기존데이터유지후 추가
+            </button>
+          </div>
+          <input
+              ref="excelFileInput"
+              type="file"
+              accept=".xlsx,.xls"
+              class="d-none"
+              @change="excelUpload"
+          />
+        </div>
       </div>
-
       <hr />
-
-      <!-- 테이블 -->
       <div class="card border-0 accommodation-list-card" :aria-busy="loading">
-        <div v-if="loading" class="list-progress-track" role="progressbar" aria-label="숙박업소 목록 조회 중" aria-valuetext="조회 중">
-          <div class="list-progress-indicator"></div>
+        <div v-if="loading" class="list-progress-track" role="progressbar" aria-label="숙박업소 목록 조회 중">
+          <div class="list-progress-indicator">
+          </div>
         </div>
         <div v-if="loading" class="list-loading-overlay" aria-live="polite">
           <div class="list-loading-content">
-            <i class="fa fa-spinner fa-spin list-loading-spinner" aria-hidden="true"></i>
-            <strong>조회 중입니다</strong>
-            <span>숙박업소 목록을 불러오고 있습니다.</span>
+            <i class="fa fa-spinner fa-spin list-loading-spinner">
+            </i>
+            <strong>
+              조회 중입니다
+            </strong>
+            <span>
+              숙박업소 목록을 불러오고 있습니다.
+            </span>
           </div>
         </div>
         <div class="table-responsive mb-3">
-          <table class="table table-hover table-panel text-nowrap align-middle mb-0" style="min-width: 1400px; overflow-x: auto">
+          <table class="table table-hover table-panel text-nowrap align-middle mb-0" style="min-width: 1480px">
             <thead>
             <tr>
               <th class="w-10px">
                 <div class="form-check">
-                  <input
-                      type="checkbox"
-                      class="form-check-input"
-                      id="allCheck"
-                      v-model="allChecked"
-                      @change="toggleAll"
-                  />
-                  <label class="form-check-label" for="allCheck"></label>
+                  <input id="allCheck" type="checkbox" class="form-check-input" v-model="allChecked" @change="toggleAll" />
+                  <label for="allCheck" class="form-check-label">
+                  </label>
                 </div>
               </th>
-              <th>일련번호</th>
-              <th>숙박업소 앱 등록상호</th>
-              <th>플랫폼 타입</th>
-              <th>숙소유형</th>
-              <th>주소</th>
-              <th>객실 수</th>
-              <th>수집일</th>
-              <th>DB등록상태</th>
-              <th width="140px">DB 수정일</th>
-              <th>숙소코드</th>
+              <th>
+                일련번호
+              </th>
+              <th>
+                숙박업소 앱 등록상호
+              </th>
+              <th>
+                보유스킴
+              </th>
+              <th>
+                플랫폼 타입
+              </th>
+              <th>
+                숙소유형
+              </th>
+              <th>
+                주소
+              </th>
+              <th>
+                객실 수
+              </th>
+              <th>
+                수집일
+              </th>
+              <th>
+                DB등록상태
+              </th>
+              <th>
+                DB 수정일
+              </th>
+              <th>
+                숙소코드
+              </th>
             </tr>
             </thead>
-
             <tbody>
             <tr v-if="!loading && store.items.length === 0">
-              <td colspan="11" class="text-center py-4 text-muted">
+              <td colspan="12" class="text-center py-4 text-muted">
                 조회된 숙박업소가 없습니다.
               </td>
             </tr>
-
             <tr
                 v-for="(item, index) in store.items"
                 :key="item.accomId"
                 @click="goToDetail(item.accomId)"
-                style="cursor: pointer"
+                style="cursor:pointer"
             >
               <td class="w-10px align-middle" @click.stop="toggleItem(item.accomId)">
                 <div class="form-check">
@@ -218,51 +291,84 @@
                       type="checkbox"
                       class="form-check-input"
                       :id="`accom-${item.accomId}`"
-                      :value="item.accomId"
                       :checked="checkedItems.includes(item.accomId)"
                   />
-                  <label
-                      class="form-check-label"
-                      :for="`accom-${item.accomId}`"
-                  ></label>
+                  <label class="form-check-label" :for="`accom-${item.accomId}`">
+                  </label>
                 </div>
               </td>
-
-              <td>{{ rowNumber(index) }}</td>
-              <td>{{ item.accomName || '-' }}</td>
-
+              <td>
+                {{ rowNumber(index) }}
+              </td>
+              <td>
+                {{ item.accomName || '-' }}
+              </td>
+              <td>
+                <div class="platform-url-list">
+                    <span v-if="item.yanoljaUrl" class="platform-url yanolja" title="야놀자 URL 보유">
+                      야놀자
+                    </span>
+                  <span v-if="item.yeogiUrl" class="platform-url yeogi" title="여기어때 URL 보유">
+                      여기어때
+                    </span>
+                  <span v-if="item.tripUrl" class="platform-url trip" title="트립닷컴 URL 보유">
+                      트립닷컴
+                    </span>
+                  <span v-if="item.agodaUrl" class="platform-url agoda" title="아고다 URL 보유">
+                      아고다
+                    </span>
+                  <span v-if="!item.yanoljaUrl && !item.yeogiUrl && !item.tripUrl && !item.agodaUrl" class="text-muted">
+                      -
+                    </span>
+                </div>
+              </td>
               <td>
                   <span
                       class="badge border px-2 pt-5px pb-5px rounded fs-12px d-inline-flex align-items-center"
                       :class="appTypeClass(item.appType)"
                   >
-                    <i class="fa fa-circle fs-9px fa-fw me-5px"></i>
+                    <i class="fa fa-circle fs-9px fa-fw me-5px">
+                    </i>
                     {{ getAppName(item.appType) }}
                   </span>
               </td>
-
-              <td>{{ getAccomTypeName(item.accomType) }}</td>
-              <td>{{ item.accomAddr || '-' }}</td>
-              <td>{{ item.roomCnt ?? 0 }} 실</td>
-              <td>{{ item.putDate }}</td>
+              <td>
+                {{ getAccomTypeName(item.accomType) }}
+              </td>
+              <td>
+                {{ item.accomAddr || '-' }}
+              </td>
+              <td>
+                {{ item.roomCnt ?? 0 }} 실
+              </td>
+              <td>
+                {{ item.putDate || '-' }}
+              </td>
               <td>
                   <span :class="dbResultFont(item.dataStatus)">
                     {{ convertDataStatus(item.dataStatus) }}
                   </span>
               </td>
-              <td>{{ formatDate(item.modDate) }}</td>
-              <td style="min-width: 150px; max-width: 150px"   @click.stop>
-                <div class="input-group" style="width: 150px">
+              <td>
+                {{ formatDate(item.modDate) }}
+              </td>
+              <td style="min-width:150px;max-width:150px" @click.stop>
+                <div class="input-group" style="width:150px">
                   <input
-                      type="text"
-                      @click.stop
-                      class="form-control bg-light border-0"
                       v-model="item.accomCode"
+                      type="text"
+                      class="form-control bg-light border-0"
                       placeholder="숙박코드"
-                      style="width: 60px"
+                      style="width:60px"
                   />
-                  <button type="button" @click.stop="updateStCode(item.accomId, item.accomCode)" class="btn btn-sm btn-white">
-                    <i class="fa fa-fw fa-plus"></i> 수정
+                  <button
+                      type="button"
+                      class="btn btn-sm btn-white"
+                      @click.stop="updateStCode(item.accomId, item.accomCode)"
+                  >
+                    <i class="fa fa-fw fa-plus">
+                    </i>
+                    수정
                   </button>
                 </div>
               </td>
@@ -270,45 +376,11 @@
             </tbody>
           </table>
         </div>
-
-        <!-- 페이지 -->
-        <div class="d-flex justify-content-between align-items-center px-2 pb-2">
-          <div>
-            총 {{ store.totalSize }}건
-            <span class="text-muted ms-2">
-      {{ store.currentPage }} / {{ store.totalPages }} 페이지
-    </span>
-          </div>
-
-          <ul class="pagination mb-0">
-            <li class="page-item" :class="{ disabled: store.currentPage <= 1 }">
-              <a class="page-link" href="#" @click.prevent="movePage(1)"><<</a>
-            </li>
-
-            <li class="page-item" :class="{ disabled: store.currentPage <= 1 }">
-              <a class="page-link" href="#" @click.prevent="movePage(store.currentPage - 1)"><</a>
-            </li>
-
-            <li
-                v-for="page in visiblePages"
-                :key="page"
-                class="page-item"
-                :class="{ active: page === store.currentPage }"
-            >
-              <a class="page-link" href="#" @click.prevent="movePage(page)">
-                {{ page }}
-              </a>
-            </li>
-
-            <li class="page-item" :class="{ disabled: store.currentPage >= store.totalPages }">
-              <a class="page-link" href="#" @click.prevent="movePage(store.currentPage + 1)">></a>
-            </li>
-
-            <li class="page-item" :class="{ disabled: store.currentPage >= store.totalPages }">
-              <a class="page-link" href="#" @click.prevent="movePage(store.totalPages)">>></a>
-            </li>
-          </ul>
-        </div>
+        <Pagenation
+            v-model="currentPage"
+            :total="Number(store.totalSize || 0)"
+            :perPage="Number(store.searchParams.size || 13)"
+        />
       </div>
     </panel-body>
   </panel>
@@ -322,9 +394,167 @@ import { useRouter } from 'vue-router';
 import { useAccommodationStore } from '@/stores/accommodation/useAccommodationStore';
 import {toast} from "vue3-toastify";
 import * as XLSX from 'xlsx';
+import Pagenation from '@/components/common/Pagenation.vue';
 const router = useRouter();
 const store = useAccommodationStore();
 const loading = ref(false);
+const currentPage = computed({
+  get: () => Number(store.currentPage || 1),
+  set: (page: number) => { void movePage(page); },
+});
+const excelFileInput = ref<HTMLInputElement | null>(null);
+const excelUploading = ref(false);
+
+interface AccommodationUploadRow {
+  accomId: number;
+  accomCode: string;
+  dbType: 1 | 2 | 3;
+}
+
+type AccommodationBatchStore = {
+  excelBatchUpload?: (data: AccommodationUploadRow[], callback: () => void | Promise<void>) => Promise<unknown>;
+  goodsUpload?: (
+      params: { accomIdList: Array<string | number> },
+      callback: () => void | Promise<void>,
+      type: 1 | 2,
+      dbType: number
+  ) => Promise<unknown>;
+};
+
+// 추후 숙박 전용 Store/API 분리 시 이 두 메서드만 구현하면 된다.
+const batchStore = store as unknown as AccommodationBatchStore;
+const EXCEL_DB_TYPE_HEADER = '구분(1:기존데이터삭제후등록, 2:기존데이터유지후추가, 3:숙소코드매칭)';
+const selectedUploadRunning = ref(false);
+
+const openExcelUpload = () => {
+  if (excelUploading.value) return;
+  if (excelFileInput.value) excelFileInput.value.value = '';
+  excelFileInput.value?.click();
+};
+
+const excelTemplateDownload = () => {
+  const rows = [
+    ['일련번호', '숙소코드', EXCEL_DB_TYPE_HEADER],
+    [10001, '', 1],
+    [10002, '', 2],
+    [10003, 'ACCOM00003', 3],
+  ];
+  const worksheet = XLSX.utils.aoa_to_sheet(rows);
+  worksheet['!cols'] = [{ wch: 18 }, { wch: 24 }, { wch: 65 }];
+  worksheet['!autofilter'] = { ref: `A1:C${rows.length}` };
+
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, '숙박데이터_일괄등록');
+  XLSX.writeFile(workbook, '숙박데이터_일괄등록_양식.xlsx');
+};
+
+const excelUpload = async (event: Event) => {
+  const input = event.target as HTMLInputElement;
+  const file = input.files?.[0];
+  if (!file || excelUploading.value) return;
+
+  excelUploading.value = true;
+  try {
+    const workbook = XLSX.read(await file.arrayBuffer(), { type: 'array' });
+    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+    if (!worksheet) throw new Error('엑셀 시트를 찾을 수 없습니다.');
+
+    const rows = XLSX.utils.sheet_to_json<Record<string, unknown>>(worksheet, {
+      raw: false,
+      defval: '',
+    });
+    const data: AccommodationUploadRow[] = rows
+        .filter((row) =>
+            ['일련번호', '숙소코드', EXCEL_DB_TYPE_HEADER].some((key) =>
+                String(row[key] ?? '').trim() !== ''
+            )
+        )
+        .map((row, index) => {
+          const excelRow = index + 2;
+          const idValue = String(row['일련번호'] ?? '').trim();
+          const accomId = Number(idValue);
+          const accomCode = String(row['숙소코드'] ?? '').trim();
+          const dbTypeValue = String(row[EXCEL_DB_TYPE_HEADER] ?? '').trim();
+          const dbType = Number(dbTypeValue);
+
+          if (!/^\d+$/.test(idValue) || !Number.isSafeInteger(accomId) || accomId <= 0) {
+            throw new Error(`${excelRow}행의 일련번호가 올바르지 않습니다.`);
+          }
+          if (![1, 2, 3].includes(dbType)) {
+            throw new Error(`${excelRow}행의 구분은 1, 2, 3 중 하나여야 합니다.`);
+          }
+          if (dbType === 3 && !accomCode) {
+            throw new Error(`${excelRow}행은 숙소코드 매칭이므로 숙소코드가 필요합니다.`);
+          }
+          return { accomId, accomCode, dbType: dbType as 1 | 2 | 3 };
+        });
+
+    if (!data.length) throw new Error('등록할 데이터가 없습니다.');
+    const ids = new Set(data.map((row) => row.accomId));
+    if (ids.size !== data.length) throw new Error('중복된 일련번호가 있습니다.');
+
+    if (!batchStore.excelBatchUpload) {
+      window.$emitter.emit('warning', '숙박 일괄등록 API 연결 전입니다. 양식 확인과 검증까지만 가능합니다.');
+      return;
+    }
+
+    window.$emitter.emit('confirm', {
+      message: `숙박 데이터 ${data.length}건을 일괄 처리하시겠습니까?`,
+      callback: async () => {
+        try {
+          await batchStore.excelBatchUpload!(data, async () => {
+            window.$emitter.emit('success', `총 ${data.length}건의 숙박 데이터 처리가 완료되었습니다.`);
+            await search();
+          });
+        } catch (error) {
+          console.error('숙박 일괄등록 API 오류:', error);
+          window.$emitter.emit('warning', '숙박 일괄등록 처리 중 오류가 발생했습니다.');
+        }
+      },
+    });
+  } catch (error: any) {
+    console.error('숙박 데이터 업로드 오류:', error);
+    window.$emitter.emit('warning', error?.message || '엑셀 파일을 확인해주세요.');
+  } finally {
+    excelUploading.value = false;
+    input.value = '';
+  }
+};
+
+const goodsUpload = async (type: 1 | 2) => {
+  if (selectedUploadRunning.value) return;
+  if (!checkedItems.value.length) {
+    window.$emitter.emit('warning', '숙박업소를 한 개 이상 선택해주세요.');
+    return;
+  }
+  const selected = store.items.filter((item: any) => checkedItems.value.includes(item.accomId));
+  if (selected.some((item: any) => !String(item.accomCode ?? '').trim())) {
+    window.$emitter.emit('warning', '숙소코드가 없는 숙박업소가 존재합니다.');
+    return;
+  }
+  if (!batchStore.goodsUpload) {
+    window.$emitter.emit('warning', '숙박 데이터 업로드 API 연결 전입니다.');
+    return;
+  }
+
+  selectedUploadRunning.value = true;
+  try {
+    await batchStore.goodsUpload(
+        { accomIdList: [...checkedItems.value] },
+        async () => {
+          window.$emitter.emit('success', '선택한 숙박 데이터 업로드 요청이 완료되었습니다.');
+          await search();
+        },
+        type,
+        1
+    );
+  } catch (error) {
+    console.error('숙박 선택 업로드 오류:', error);
+    window.$emitter.emit('warning', '숙박 데이터 업로드 요청 중 오류가 발생했습니다.');
+  } finally {
+    selectedUploadRunning.value = false;
+  }
+};
 
 const allChecked = ref(false);
 const checkedItems = ref<Array<string | number>>([]);
@@ -380,7 +610,6 @@ const filteredSigunList = computed(() => {
       String(item.sigunCode).startsWith(String(sido))
   );
 });
-
 
 const excelDownloading = ref(false);
 
@@ -537,7 +766,6 @@ const excelDownload = async () => {
   }
 };
 
-
 const formatExcelDate = (value: string | null | undefined) => {
   if (!value) return '';
 
@@ -631,7 +859,6 @@ const rowNumber = (index: number) => {
   return (Number(store.currentPage) - 1) * Number(store.searchParams.size) + index + 1;
 };
 
-
 // 삭제
 const deleteCode = async () => {
   if (checkedItems.value.length === 0) {
@@ -661,8 +888,6 @@ const deleteCode = async () => {
     },
   });
 };
-
-
 
 const formatDate = (value: string) => {
   if (!value) return '-';
@@ -701,7 +926,6 @@ const movePage = async (page: number) => {
     loading.value = false;
   }
 };
-
 
 const updateStCode = async (accomId: number, accomCode: string) => {
   try {
@@ -849,7 +1073,6 @@ const appTypeClass = (appType: string | number) => {
   width: 320px;
 }
 
-
 .keyword-inline {
   position: relative;
   display: flex;
@@ -878,12 +1101,9 @@ const appTypeClass = (appType: string | number) => {
   border-bottom-left-radius: 0;
 }
 
-
 .search-line-wrap :deep(.dp__main) {
   width: 100%;
 }
-
-
 
 .search-filter-wrap {
   display: flex;
@@ -950,8 +1170,7 @@ const appTypeClass = (appType: string | number) => {
   border-bottom-left-radius: 0;
 }
 
-.search-filter-wrap .form-select,
-.search-filter-wrap .form-control {
+.search-filter-wrap .form-select, .search-filter-wrap .form-control {
   height: 42px;
 }
 
@@ -967,30 +1186,25 @@ const appTypeClass = (appType: string | number) => {
   .search-filter-row-top {
     grid-template-columns: repeat(3, minmax(180px, 1fr));
   }
-
   .search-filter-row-bottom {
     grid-template-columns: 180px minmax(240px, 1fr);
   }
 }
 
 @media (max-width: 991px) {
-  .search-filter-row-top,
-  .search-filter-row-bottom {
+  .search-filter-row-top, .search-filter-row-bottom {
     grid-template-columns: repeat(2, minmax(180px, 1fr));
   }
-
   .filter-date-group {
     grid-template-columns: 1fr;
   }
-
   .filter-date-tilde {
     display: none;
   }
 }
 
 @media (max-width: 767px) {
-  .search-filter-row-top,
-  .search-filter-row-bottom {
+  .search-filter-row-top, .search-filter-row-bottom {
     grid-template-columns: 1fr;
   }
 }
@@ -1011,6 +1225,7 @@ const appTypeClass = (appType: string | number) => {
   justify-content: center;
   z-index: 9999;
 }
+
 .text-bold {
   font-weight: bold
 }
@@ -1041,8 +1256,12 @@ const appTypeClass = (appType: string | number) => {
 }
 
 @keyframes accommodation-progress {
-  from { transform: translateX(-110%); }
-  to { transform: translateX(290%); }
+  from {
+    transform: translateX(-110%);
+  }
+  to {
+    transform: translateX(290%);
+  }
 }
 
 .list-loading-overlay {
@@ -1085,4 +1304,124 @@ const appTypeClass = (appType: string | number) => {
   color: #e5e7eb;
 }
 
+/* 음식점 목록과 동일한 상단 액션 그룹 */
+.accom-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.accom-toolbar-left, .accom-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.accom-toolbar-right {
+  justify-content: flex-end;
+}
+
+.segment-group {
+  display: inline-flex;
+  align-items: stretch;
+  overflow: hidden;
+  border: 1px solid #d8dde5;
+  border-radius: 8px;
+  background: #f1f3f6;
+}
+
+.segment-button {
+  height: 33px;
+  padding: 0 13px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-right: 1px solid #d0d5dd;
+  background: #f1f3f6;
+  color: #292d32;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.segment-button:last-child {
+  border-right: 0;
+}
+
+.segment-button:hover:not(:disabled) {
+  background: #e0e4ea;
+}
+
+.segment-button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+.platform-url-list {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.platform-url {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 7px;
+  border: 1px solid #d8dde5;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  background: #f5f7fa;
+  color: #475467;
+}
+
+.platform-url.yanolja {
+  color: #d83c68;
+  background: #fff2f5;
+  border-color: #f5c8d5;
+}
+
+.platform-url.yeogi {
+  color: #d74747;
+  background: #fff3f1;
+  border-color: #f3c9c5;
+}
+
+.platform-url.trip {
+  color: #2873b9;
+  background: #eff7ff;
+  border-color: #c9dff7;
+}
+
+.platform-url.agoda {
+  color: #574caf;
+  background: #f4f2ff;
+  border-color: #dcd7fa;
+}
+
+:global(html.dark-mode) .segment-group, :global(html.dark-mode) .segment-button {
+  background: #30353c;
+  border-color: #474e57;
+  color: #e2e8f0;
+}
+
+:global(html.dark-mode) .platform-url {
+  background: #30353c;
+  color: #e2e8f0;
+  border-color: #505863;
+}
+
+@media(max-width:767px) {
+  .accom-toolbar-right {
+    justify-content: flex-start;
+  }
+  .accom-toolbar {
+    align-items: flex-start;
+  }
+}
 </style>
