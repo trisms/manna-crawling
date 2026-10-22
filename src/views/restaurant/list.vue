@@ -943,7 +943,7 @@ const excelTemplateDownload = () => {
       EXCEL_DB_TYPE_HEADER,
     ],
 
-    /**
+    /**드
      * 샘플
      */
     [10001, '', 1],
