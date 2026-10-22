@@ -1,3 +1,4 @@
+```
 <template>
   <panel>
     <panel-body>
@@ -392,7 +393,6 @@ import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import { useRouter } from 'vue-router';
 import { useAccommodationStore } from '@/stores/accommodation/useAccommodationStore';
-import {toast} from "vue3-toastify";
 import * as XLSX from 'xlsx';
 import Pagenation from '@/components/common/Pagenation.vue';
 const router = useRouter();
@@ -559,24 +559,6 @@ const goodsUpload = async (type: 1 | 2) => {
 const allChecked = ref(false);
 const checkedItems = ref<Array<string | number>>([]);
 
-const options = {
-  onOpen: () => console.log('opened'),
-  /*onClose: () => ,*/
-  onClose: () => console.log(1),
-  closeButton: true,
-  closeOnClick: true,
-  autoClose: 300,
-  dangerouslyHTMLString: true,
-  type: toast.TYPE.SUCCESS,
-  hideProgressBar: true,
-  position: toast.POSITION.BOTTOM_RIGHT,
-  pauseOnHover: false,
-  progress: 0.2,
-  transition: 'slide',
-  theme: 'auto',
-  // and so on ...
-};
-
 const getDefaultDateRange = () => {
   const endDate = new Date();
   const startDate = new Date();
@@ -616,69 +598,32 @@ const excelDownloading = ref(false);
 const excelDownload = async () => {
   if (excelDownloading.value) return;
 
-  if (!store.totalSize || Number(store.totalSize) === 0) {
-    window.$emitter.emit(
-        'warning',
-        '다운로드할 데이터가 없습니다.'
-    );
+  // 현재 검색 결과의 화면 페이지에 표시된 데이터만 다운로드한다.
+  // searchParams.page/size를 변경하거나 목록 API를 재호출하지 않는다.
+  const currentItems = [...(store.items ?? [])];
+
+  if (currentItems.length === 0) {
+    window.$emitter.emit('warning', '다운로드할 데이터가 없습니다.');
     return;
   }
 
   excelDownloading.value = true;
 
-  // 기존 검색/페이지 정보 보관
-  const originalPage = store.searchParams.page;
-  const originalSize = store.searchParams.size;
-
   try {
-    /*
-     * 엑셀 다운로드할 때만
-     * 전체 데이터를 한 번에 조회
-     */
-    store.searchParams.page = 1;
-    store.searchParams.size = Number(store.totalSize);
-
-    await store.callListAPI();
-
-    const allItems = store.items.map((item: any) => ({
-      ...item
+    const excelData = currentItems.map((item: any, index: number) => ({
+      '번호': rowNumber(index),
+      '숙박업소 앱 등록상호': item.accomName ?? '',
+      '플랫폼 타입': getAppName(item.appType),
+      '숙소유형': getAccomTypeName(item.accomType),
+      '주소': item.accomAddr ?? '',
+      '객실 수': item.roomCnt ?? 0,
+      '수집일': formatExcelDate(item.putDate),
+      'DB등록상태': convertDataStatus(item.dataStatus),
+      'DB 수정일': formatExcelDate(item.modDate),
+      '숙소코드': item.accomCode ?? '',
     }));
 
-    if (allItems.length === 0) {
-      window.$emitter.emit(
-          'warning',
-          '다운로드할 데이터가 없습니다.'
-      );
-      return;
-    }
-
-    /*
-     * 엑셀 데이터
-     */
-    const excelData = allItems.map(
-        (item: any, index: number) => ({
-          '번호': index + 1,
-          '숙박업소 앱 등록상호': item.accomName ?? '',
-          '플랫폼 타입': getAppName(item.appType),
-          '숙소유형': getAccomTypeName(item.accomType),
-          '주소': item.accomAddr ?? '',
-          '객실 수': item.roomCnt ?? 0,
-          '수집일': formatExcelDate(item.putDate),
-          'DB등록상태': convertDataStatus(item.dataStatus),
-          'DB 수정일': formatExcelDate(item.modDate),
-          '숙소코드': item.accomCode ?? '',
-        })
-    );
-
-    /*
-     * Sheet 생성
-     */
-    const worksheet =
-        XLSX.utils.json_to_sheet(excelData);
-
-    /*
-     * 컬럼 너비
-     */
+    const worksheet = XLSX.utils.json_to_sheet(excelData);
     worksheet['!cols'] = [
       { wch: 8 },
       { wch: 35 },
@@ -692,76 +637,25 @@ const excelDownload = async () => {
       { wch: 20 },
     ];
 
-    /*
-     * Workbook
-     */
-    const workbook =
-        XLSX.utils.book_new();
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, '숙박업소 목록');
 
-    XLSX.utils.book_append_sheet(
-        workbook,
-        worksheet,
-        '숙박업소 목록'
-    );
-
-    /*
-     * 파일명
-     */
     const now = new Date();
+    const fileDate = [
+      now.getFullYear(),
+      String(now.getMonth() + 1).padStart(2, '0'),
+      String(now.getDate()).padStart(2, '0'),
+    ].join('');
+    const fileTime = [
+      String(now.getHours()).padStart(2, '0'),
+      String(now.getMinutes()).padStart(2, '0'),
+    ].join('');
 
-    const yyyy = now.getFullYear();
-
-    const MM = String(
-        now.getMonth() + 1
-    ).padStart(2, '0');
-
-    const dd = String(
-        now.getDate()
-    ).padStart(2, '0');
-
-    const HH = String(
-        now.getHours()
-    ).padStart(2, '0');
-
-    const mm = String(
-        now.getMinutes()
-    ).padStart(2, '0');
-
-    /*
-     * 실제 파일 다운로드
-     */
-    XLSX.writeFile(
-        workbook,
-        `숙박업소_DB목록_${yyyy}${MM}${dd}_${HH}${mm}.xlsx`
-    );
-
+    XLSX.writeFile(workbook, `숙박업소_조회내역_${fileDate}_${fileTime}.xlsx`);
   } catch (error) {
-    console.error(
-        '엑셀 다운로드 오류:',
-        error
-    );
-
-    window.$emitter.emit(
-        'warning',
-        '엑셀 다운로드 중 오류가 발생했습니다.'
-    );
-
+    console.error('엑셀 다운로드 오류:', error);
+    window.$emitter.emit('warning', '엑셀 다운로드 중 오류가 발생했습니다.');
   } finally {
-    /*
-     * 원래 페이지 설정 복구
-     */
-    store.searchParams.page = originalPage;
-    store.searchParams.size = originalSize;
-
-    try {
-      await store.callListAPI();
-    } catch (error) {
-      console.error(
-          '목록 복구 오류:',
-          error
-      );
-    }
-
     excelDownloading.value = false;
   }
 };
@@ -927,36 +821,23 @@ const movePage = async (page: number) => {
   }
 };
 
+// 숙소코드 수정 알림은 관리자 공통 알림을 사용합니다.
+// vue3-toastify의 기본 SVG 아이콘이 공통 CSS와 충돌해 크게 보이는 문제를 방지합니다.
 const updateStCode = async (accomId: number, accomCode: string) => {
   try {
-    /*  if (isBlank(stCode)) {
-          window.$emitter.emit('warning', '가맹점 코드를 입력해주세요.');
-          return;
-        }*/
-    await store.updateAccomAPI({ accomId: accomId, accomCode: accomCode }, () => {
-      toast.success(
-          '<div class="d-flex space-between flex-start">' +
-          ' <h5>수정에 성공하였습니다.</h5>' +
-          ' <h4 ></h4>' +
-          '</div>' +
-          '<hr class="mt-0 mb-2" /><strong> 변경된 숙박코드: ' +
-          accomCode +
-          '</strong> ',
-          options,
-      );
-      search(); // 필요시 리스트 새로고침
-    });
-  } catch (error) {
-    toast.error(
-        '<div class="d-flex space-between flex-start">' +
-        ' <h5>수정에 실패하였습니다.</h5>' +
-        ' <h4 ></h4>' +
-        '</div>' +
-        '<hr class="mt-0 mb-2" /><strong> 변경된값 : {{ stCode }}</strong> ',
-        options,
+    await store.updateAccomAPI(
+        { accomId, accomCode },
+        () => {
+          window.$emitter.emit('success', `숙소코드가 수정되었습니다. (${accomCode || '-'})`);
+          void search();
+        }
     );
+  } catch (error) {
+    console.error('숙소코드 수정 오류:', error);
+    window.$emitter.emit('warning', '숙소코드 수정 중 오류가 발생했습니다.');
   }
 };
+
 const resetSearch = async () => {
   store.resetSearchParams();
   const resetDateRange = getDefaultDateRange();
@@ -1425,3 +1306,5 @@ const appTypeClass = (appType: string | number) => {
   }
 }
 </style>
+
+```
