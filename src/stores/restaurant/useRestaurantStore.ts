@@ -12,7 +12,14 @@ export const useRestaurantStore = defineStore('useRestaurantStore', {
 		selectSido: String,
 		sidoList: [],
 		sigunList: [],
-		uploadHistoryList: [],
+		// 음식점 업로드 내역 팝업에서만 사용하는 서버 페이징 상태
+		uploadHistoryList: [] as any[],
+		uploadHistoryTotalPages: 0,
+		uploadHistoryTotalSize: 0,
+		uploadHistoryPage: 1, // UI: 1부터 시작
+		uploadHistorySize: 10,
+		uploadHistoryLoading: false,
+		uploadHistoryError: '',
 		frSubTypeCdList: [{}],
 		selectOnlyGoods:0,
 		selectSyCode: 'NM',
@@ -62,15 +69,15 @@ export const useRestaurantStore = defineStore('useRestaurantStore', {
 		searchParams: new SearchParams() as SearchParams,
 		searchParamsHistory: new SearchHistoryParams() as SearchHistoryParams,
 		/*userInfo: {
-			userNo: 0,
-			loginId: '',
-			userName: '',
-			departName: '',
-			phone: '',
-			role: '',
-			useYn: '',
-		},
-		info: JSON.parse(localStorage.getItem('userInfo')) || {},*/
+           userNo: 0,
+           loginId: '',
+           userName: '',
+           departName: '',
+           phone: '',
+           role: '',
+           useYn: '',
+        },
+        info: JSON.parse(localStorage.getItem('userInfo')) || {},*/
 	}),
 	actions: {
 		async callListAPI(callback: Function) {
@@ -93,11 +100,11 @@ export const useRestaurantStore = defineStore('useRestaurantStore', {
 		},
 		async callGrpListAPI(grStNo: number | string, grStGrpNo: any) {
 			/*const searchParams = { ...this.searchParams };
-			delete searchParams.userNo;
+            delete searchParams.userNo;
 
-			if (isBlank(searchParams.keyword)) {
-				delete searchParams.searchType;
-			}*/
+            if (isBlank(searchParams.keyword)) {
+               delete searchParams.searchType;
+            }*/
 
 			const res = await useCallAPI(() => restaurantAPI.grpList(grStNo, { grStGrpNo: grStGrpNo }));
 			if (res) {
@@ -122,18 +129,18 @@ export const useRestaurantStore = defineStore('useRestaurantStore', {
 			const message = '<h3>DB삭제시 복구가 불가능합니다 </h3>' + grStGoodsNoList.grStGoodsNoList.length + '개의 데이터를 삭제하시겠습니까?';
 			await useCallDeleteMsgAPI(() => restaurantAPI.deleteImage(grStGoodsNoList), message, callback);
 		},
-	/*	/!* 기존상품삭제후 신규 업로드 *!/
-		async rebaseUpload(grStNoList: any, callback: Function) {
-			const selectOnlyGoods = this.selectOnlyGoods ? 1 : 2
-			const userId = localStorage.getItem('userId');
-			await useCallUploadAPI(() => restaurantAPI.rebaseUpload(grStNoList ,selectOnlyGoods,userId), callback);
-		},
-		/!* 기존상품유지후 신규 업로드 *!/
-		async usageUpload(grStNoList: any, callback: Function) {
-			const selectOnlyGoods = this.selectOnlyGoods ? 1 : 2
-			const userId = localStorage.getItem('userId');
-			await useCallUploadAPI(() => restaurantAPI.usageUpload(grStNoList, selectOnlyGoods,userId), callback);
-		},*/
+		/* /!* 기존상품삭제후 신규 업로드 *!/
+           async rebaseUpload(grStNoList: any, callback: Function) {
+              const selectOnlyGoods = this.selectOnlyGoods ? 1 : 2
+              const userId = localStorage.getItem('userId');
+              await useCallUploadAPI(() => restaurantAPI.rebaseUpload(grStNoList ,selectOnlyGoods,userId), callback);
+           },
+           /!* 기존상품유지후 신규 업로드 *!/
+           async usageUpload(grStNoList: any, callback: Function) {
+              const selectOnlyGoods = this.selectOnlyGoods ? 1 : 2
+              const userId = localStorage.getItem('userId');
+              await useCallUploadAPI(() => restaurantAPI.usageUpload(grStNoList, selectOnlyGoods,userId), callback);
+           },*/
 		/* 가맹점코드 일괄등록용 */
 		async goodsUpload(grStNoList: any, callback: Function, type: any, uploadType: any) {
 			/* Type  : 1 (기존상품삭제후 신규 업로드) , 2 (기존상품유지후 추가) */
@@ -142,11 +149,11 @@ export const useRestaurantStore = defineStore('useRestaurantStore', {
 			const selectOnlyGoods = this.selectOnlyGoods ? 1 : 2;
 			const userId = localStorage.getItem('userId');
 
-		/*	if (uploadType === 1) {
-				userId = localStorage.getItem('userId');
-			} else {
-				userId = 'SYSTEM';
-			}*/
+			/* if (uploadType === 1) {
+                  userId = localStorage.getItem('userId');
+               } else {
+                  userId = 'SYSTEM';
+               }*/
 
 			console.log('STORE goodsUpload', {
 				grStNoList,
@@ -165,11 +172,11 @@ export const useRestaurantStore = defineStore('useRestaurantStore', {
 		/* 엑셀 일괄등록 */
 		async excelBatchUpload(data: any[], callback: Function) {
 			/*
-             * dbType
-             * 1 : 기존상품삭제후 신규 업로드
-             * 2 : 기존상품유지후 추가
-             * 3 : 가맹점코드 등록
-             */
+                * dbType
+                * 1 : 기존상품삭제후 신규 업로드
+                * 2 : 기존상품유지후 추가
+                * 3 : 가맹점코드 등록
+                */
 
 			const type1Items = data.filter((item: any) => item.dbType === 1);
 			const type2Items = data.filter((item: any) => item.dbType === 2);
@@ -191,8 +198,8 @@ export const useRestaurantStore = defineStore('useRestaurantStore', {
 			const userId = localStorage.getItem('userId');
 
 			/*
-             * 1. 가맹점코드 먼저 일괄등록
-             */
+                * 1. 가맹점코드 먼저 일괄등록
+                */
 			const stCodeParams = {
 				data: type3Items.map((item: any) => ({
 					grStNo: item.grStNo,
@@ -200,15 +207,15 @@ export const useRestaurantStore = defineStore('useRestaurantStore', {
 				})),
 			};
 
-		/*	console.log('엑셀 updateStCodeBatch', stCodeParams);*/
+			/* console.log('엑셀 updateStCodeBatch', stCodeParams);*/
 
 			const stCodeRes = await restaurantAPI.updateStCodeBatch(stCodeParams);
 
-		/*	console.log('엑셀 updateStCodeBatch 결과', stCodeRes);*/
+			/* console.log('엑셀 updateStCodeBatch 결과', stCodeRes);*/
 
 			/*
-             * updateStCodeBatch 성공 여부 확인
-             */
+                * updateStCodeBatch 성공 여부 확인
+                */
 			if (!stCodeRes || stCodeRes.data?.success !== true) {
 				throw new Error(
 					stCodeRes?.data?.message || '가맹점코드 일괄등록에 실패하였습니다.',
@@ -216,16 +223,16 @@ export const useRestaurantStore = defineStore('useRestaurantStore', {
 			}
 
 			/*
-             * 여기까지 왔다는 것은
-             * 가맹점코드 일괄등록 성공
-             *
-             * 이제 dbType 1 / 2 상품등록 진행
-             */
+                * 여기까지 왔다는 것은
+                * 가맹점코드 일괄등록 성공
+                *
+                * 이제 dbType 1 / 2 상품등록 진행
+                */
 			const requests: Promise<any>[] = [];
 
 			/*
-             * 2. 기존상품삭제후 신규 업로드
-             */
+                * 2. 기존상품삭제후 신규 업로드
+                */
 			if (type1Items.length > 0) {
 				const params = {
 					grStNoList: type1Items.map((item: any) => item.grStNo),
@@ -244,8 +251,8 @@ export const useRestaurantStore = defineStore('useRestaurantStore', {
 			}
 
 			/*
-             * 3. 기존상품유지후 추가
-             */
+                * 3. 기존상품유지후 추가
+                */
 			if (type2Items.length > 0) {
 				const params = {
 					grStNoList: type2Items.map((item: any) => item.grStNo),
@@ -264,8 +271,8 @@ export const useRestaurantStore = defineStore('useRestaurantStore', {
 			}
 
 			/*
-             * type 1 / 2 상품등록
-             */
+                * type 1 / 2 상품등록
+                */
 			if (requests.length > 0) {
 				await Promise.all(requests);
 			}
@@ -274,17 +281,71 @@ export const useRestaurantStore = defineStore('useRestaurantStore', {
 				await callback();
 			}
 		},
-		async callUploadHistory() {
-			const searchParams = { ...this.searchParamsHistory };
-			// delete searchParams.userNo;
+		/**
+		 * 음식점 > 업로드 내역 서버 페이지네이션.
+		 * 요청 페이지는 1부터 시작하며, API 응답은 data.histories 배열입니다.
+		 */
+		async callUploadHistory(page: number = 1) {
+			if (this.uploadHistoryLoading) return;
+
+			const targetPage = Math.max(1, Math.trunc(Number(page) || 1));
+			const requestedSize = Math.max(1, Math.trunc(Number(this.uploadHistorySize) || 10));
+			const searchParams: Record<string, any> = {
+				...this.searchParamsHistory,
+				page: targetPage, // 서버가 page >= 1을 요구함. -1 하지 않음.
+				size: requestedSize,
+			};
 
 			if (isBlank(searchParams.keyword)) {
 				delete searchParams.searchType;
 			}
 
-			const res = await useCallAPI(() => restaurantAPI.callUploadHistory(searchParams));
-			if (res) {
-				this.uploadHistoryList = res.data.data;
+			this.uploadHistoryLoading = true;
+			this.uploadHistoryError = '';
+
+			try {
+				const res = await useCallAPI(() => restaurantAPI.callUploadHistory(searchParams));
+				if (!res || res.data?.success === false) {
+					throw new Error(res?.data?.message || '업로드 내역 조회에 실패했습니다.');
+				}
+
+				// 확정된 API 응답: { success, code, message,
+				//   data: { totalPages, totalSize, page, size, histories: [] } }
+				const pageData = res.data?.data;
+				if (!pageData || !Array.isArray(pageData.histories)) {
+					console.error('[업로드 내역] 예상과 다른 API 응답:', res.data);
+					throw new Error('업로드 내역 API의 data.histories 배열을 확인해주세요.');
+				}
+
+				const serverSize = Number(pageData.size);
+				const size = Number.isInteger(serverSize) && serverSize > 0
+					? serverSize : requestedSize;
+				const serverTotalSize = Number(pageData.totalSize);
+				const totalSize = Number.isFinite(serverTotalSize) && serverTotalSize > 0
+					? serverTotalSize : pageData.histories.length;
+				const serverTotalPages = Number(pageData.totalPages);
+				// 명세의 예시처럼 totalPages=0으로 와도 totalSize로 보완합니다.
+				const totalPages = Math.max(
+					1,
+					Number.isInteger(serverTotalPages) && serverTotalPages > 0 ? serverTotalPages : 0,
+					Math.ceil(totalSize / size),
+				);
+
+				this.uploadHistoryList = pageData.histories;
+				this.uploadHistoryTotalSize = totalSize;
+				this.uploadHistoryTotalPages = totalPages;
+				// page 응답이 0-based일 수도 있으므로 UI는 요청한 1-based 페이지를 유지.
+				this.uploadHistoryPage = targetPage;
+				this.uploadHistorySize = size;
+			} catch (error: any) {
+				console.error('음식점 업로드 내역 조회 오류:', error);
+				this.uploadHistoryList = [];
+				this.uploadHistoryTotalSize = 0;
+				this.uploadHistoryTotalPages = 0;
+				this.uploadHistoryPage = targetPage;
+				this.uploadHistoryError = error?.message || '업로드 내역 조회 중 오류가 발생했습니다.';
+			} finally {
+				this.uploadHistoryLoading = false;
 			}
 		},
 
