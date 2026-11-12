@@ -81,6 +81,50 @@
                         </div>
                       </td>
                     </tr>
+                    <!-- 온누리 가맹점 및 취급 유형 (상세 API 응답) -->
+                    <tr>
+                      <td colspan="2">
+                        <div class="d-flex align-items-center">
+                          <div class="bg-indigo-100 w-15px h-15px rounded me-2 flex-shrink-0"></div>
+                          <div class="onr-info-row">
+                            <b>온누리 가맹점 여부</b> :
+                            <span class="onr-status" :class="onrStatusClass(store.form.onrYn)">
+                              {{ onrStatusText(store.form.onrYn, '가맹점', '비가맹점') }}
+                            </span>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="2">
+                        <div class="d-flex align-items-center">
+                          <div class="bg-indigo-100 w-15px h-15px rounded me-2 flex-shrink-0"></div>
+                          <div class="onr-info-row onr-types">
+                            <b>온누리 취급 유형</b> :
+                            <span class="onr-type-item"><span>지류</span>
+                              <span class="onr-status" :class="onrStatusClass(store.form.onrPaperYn)">
+                                {{ onrStatusText(store.form.onrPaperYn, '취급', '미취급') }}
+                              </span>
+                            </span>
+                            <span class="onr-type-item"><span>카드</span>
+                              <span class="onr-status" :class="onrStatusClass(store.form.onrCardYn)">
+                                {{ onrStatusText(store.form.onrCardYn, '취급', '미취급') }}
+                              </span>
+                            </span>
+                            <span class="onr-type-item"><span>QR</span>
+                              <span class="onr-status" :class="onrStatusClass(store.form.onrQrYn)">
+                                {{ onrStatusText(store.form.onrQrYn, '취급', '미취급') }}
+                              </span>
+                            </span>
+                            <span class="onr-type-item"><span>디지털</span>
+                              <span class="onr-status" :class="onrStatusClass(store.form.onrDigitalYn)">
+                                {{ onrStatusText(store.form.onrDigitalYn, '취급', '미취급') }}
+                              </span>
+                            </span>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
                     <tr>
                       <td nowrap="" colspan="2">
                         <div class="d-flex align-items-center">
@@ -411,6 +455,21 @@ import { isBlank } from '@/utils/ValidateUtils';
 import AddProductModal from "@/views/restaurant/components/addProductModal.vue";
 
 const store = useRestaurantStore();
+// 상세 조회 API의 Y/N/null 값을 화면에 표시합니다.
+const onrStatusText = (value: unknown, yes: string, no: string): string => {
+  const normalized = String(value ?? '').trim().toUpperCase();
+  if (normalized === 'Y') return yes;
+  if (normalized === 'N') return no;
+  return '-';
+};
+
+const onrStatusClass = (value: unknown): string => {
+  const normalized = String(value ?? '').trim().toUpperCase();
+  if (normalized === 'Y') return 'onr-status--yes';
+  if (normalized === 'N') return 'onr-status--no';
+  return 'onr-status--unknown';
+};
+
 const selectGrStGrpNo = ref(1);
 onBeforeMount(() => {
   if (store.grpList) {
@@ -730,6 +789,31 @@ function convertExt(fileName): string {
 
 </script>
 <style scoped>
+/* 기존 상세정보 스타일에 맞춘 온누리 표시 */
+.onr-info-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-height: 24px;
+}
+.onr-types { column-gap: 12px; row-gap: 6px; }
+.onr-type-item { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+.onr-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 8px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.onr-status--yes { color: #956500; background: #fff5d7; border-color: #f4dfa4; }
+.onr-status--no { color: #6c757d; background: #f1f3f5; border-color: #dee2e6; }
+.onr-status--unknown { color: #868e96; background: #f8f9fa; border-color: #e9ecef; }
+
 .borde-radius-0 {
   border-radius: 0px;
 }

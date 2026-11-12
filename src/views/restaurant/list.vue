@@ -4,7 +4,7 @@
       <!-- 검색 및 필터 영역 -->
       <div class="row gx-2 pb-30px">
         <!-- 날짜 -->
-        <div class="col-lg-3 d-lg-block d-none">
+        <div class="col-lg-2 d-lg-block d-none date-range-filter">
           <div class="d-flex align-items-center rounded-3 p-0">
             <VueDatePicker
                 v-model="store.searchParams.startDate"
@@ -79,6 +79,18 @@
               { label: '지역화폐', value: '' },
               { label: '있음', value: 'Y' },
               { label: '없음', value: 'N' },
+            ]"
+        />
+
+        <!-- 온누리 가맹점 여부 -->
+        <SelectLabel
+            size="col-lg-1"
+            icon="fas fa-lg fa-fw fa-store"
+            v-model="store.searchParams.onrYn"
+            :options="[
+              { label: '온누리', value: '' },
+              { label: '가맹점', value: 'Y' },
+              { label: '비가맹점', value: 'N' },
             ]"
         />
 
@@ -293,6 +305,7 @@
               <th>음식점 사업자번호</th>
               <th>사업자 상호</th>
               <th>지역화폐 존재여부</th>
+              <th>온누리 가맹점 여부</th>
               <th>보유스킴</th>
               <th>주문앱</th>
               <th>주소</th>
@@ -351,6 +364,23 @@
                 >
                   <i class="fas fa-circle-minus" aria-hidden="true"></i>
                   없음
+                </span>
+                <span v-else class="text-muted">-</span>
+              </td>
+              <td class="text-center">
+                <span
+                    v-if="String(item.onrYn ?? '').toUpperCase() === 'Y'"
+                    class="onr-badge onr-badge--yes"
+                >
+                  <i class="fas fa-circle-check" aria-hidden="true"></i>
+                  가맹점
+                </span>
+                <span
+                    v-else-if="String(item.onrYn ?? '').toUpperCase() === 'N'"
+                    class="onr-badge onr-badge--no"
+                >
+                  <i class="fas fa-circle-minus" aria-hidden="true"></i>
+                  비가맹점
                 </span>
                 <span v-else class="text-muted">-</span>
               </td>
@@ -1628,6 +1658,34 @@ const dbResultFont = (
   border-color: #dee2e6;
 }
 
+/* 온누리 가맹점 여부 배지 */
+.onr-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 76px;
+  padding: 5px 9px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.onr-badge--yes {
+  color: #8a6016;
+  background: #fff5dc;
+  border-color: #f2dfab;
+}
+
+.onr-badge--no {
+  color: #6c757d;
+  background: #f1f3f5;
+  border-color: #dee2e6;
+}
+
 /* 검색 중 테이블을 가리고 상단에 무한 진행바를 표시 */
 .search-list-container {
   position: relative;
@@ -1886,4 +1944,3 @@ const dbResultFont = (
   background: #7952b3;
 }
 </style>
-
